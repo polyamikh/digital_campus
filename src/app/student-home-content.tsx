@@ -21,8 +21,13 @@ const lessons = [
     kind: "СЕМИНАР · ПРИМЕР",
     teacher: "Мария Волкова",
     room: "Аудитория — пример",
-    color: "pink",
+    color: "violet",
   },
+];
+
+const demoNotifications = [
+  { title: "Обновление учебных материалов", detail: "Digital Marketing", tone: "cyan" },
+  { title: "Напоминание о дедлайне", detail: "Анализ кампании · 18:00", tone: "pink" },
 ];
 
 function getMoscowCalendarWeek(now: Date) {
@@ -193,8 +198,8 @@ function DeadlinesWidget() {
     <article className="mini-widget deadlines-widget">
       <div className="mini-widget-heading"><span className="mini-icon">◷</span><span className="home-eyebrow">ДЕДЛАЙНЫ</span><span className="mini-demo">ДЕМО</span></div>
       <div className="deadline-number"><strong>3</strong><span>ближайшие<br />задачи</span></div>
-      <div className="deadline-track" aria-hidden="true"><i /><i /><i /><i /></div>
-      <p className="mini-caption">Пример ближайших сроков</p>
+      <div className="deadline-track" role="img" aria-label="Три ближайшие задачи в демонстрационном примере"><i /><i /><i /></div>
+      <p className="mini-caption">Одна отметка — одна задача</p>
     </article>
   );
 }
@@ -203,9 +208,17 @@ function NotificationsWidget() {
   return (
     <article className="mini-widget notifications-widget">
       <div className="mini-widget-heading"><span className="mini-icon">♧</span><span className="home-eyebrow">УВЕДОМЛЕНИЯ</span><span className="mini-demo">ДЕМО</span></div>
-      <div className="notification-number"><strong>2</strong><span>новых<br />события</span><b aria-hidden="true">✦</b></div>
-      <div className="notification-spectrum" aria-hidden="true"><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /></div>
-      <p className="mini-caption">Примеры событий</p>
+      <div className="notification-body">
+        <div className="notification-number"><strong>2</strong><span>новых<br />события</span></div>
+        <ul className="notification-preview-list" aria-label="Примеры последних уведомлений">
+          {demoNotifications.map((notification) => (
+            <li className={`notification-preview preview-${notification.tone}`} key={notification.title}>
+              <span className="preview-dot" aria-hidden="true" />
+              <span><strong>{notification.title}</strong><small>{notification.detail}</small></span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </article>
   );
 }
