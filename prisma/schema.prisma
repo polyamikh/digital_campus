@@ -1,0 +1,1416 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// A user's active role is selected at login. Authorization is always checked
+// server-side against this assignment and the resource's ownership/scope.
+enum Role {
+  STUDENT
+  TEACHER
+  DEAN
+}
+
+enum PublicationState {
+  DRAFT
+  PUBLISHED
+  WITHDRAWN
+}
+
+enum LessonState {
+  SCHEDULED
+  CANCELLED
+  COMPLETED
+}
+
+enum ScheduleChangeKind {
+  RESCHEDULE
+  ROOM
+  FORMAT
+  CANCEL
+  SUBSTITUTE
+}
+
+enum ScheduleRequestState {
+  PENDING
+  APPROVED
+  REJECTED
+  WITHDRAWN
+}
+
+enum ConsentState {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+enum AssessmentState {
+  DRAFT
+  PUBLISHED
+  CLOSED
+}
+
+enum GradeRevisionState {
+  DRAFT
+  PUBLISHED
+  SUPERSEDED
+}
+
+enum HomeworkSubmissionState {
+  TO_SUBMIT
+  UNDER_REVIEW
+  REVISION_REQUIRED
+  CHECKED
+}
+
+enum TestAttemptState {
+  IN_PROGRESS
+  SUBMITTED
+  REVIEWED
+  PUBLISHED
+}
+
+enum RequestKind {
+  DOCUMENT
+  APPEAL
+  REQUEST
+}
+
+enum ServiceRequestState {
+  SUBMITTED
+  IN_REVIEW
+  CLARIFICATION_REQUESTED
+  READY_FOR_ISSUE
+  COMPLETED
+  REJECTED
+  CANCELLED
+}
+
+enum PassRequestKind {
+  TEMPORARY_DEMO_QR
+  REPLACEMENT
+}
+
+enum PassRequestState {
+  SUBMITTED
+  IN_REVIEW
+  APPROVED
+  ISSUED
+  REJECTED
+  CANCELLED
+}
+
+enum NotificationCategory {
+  CRITICAL_OFFICIAL
+  OFFICIAL_ANNOUNCEMENT
+  COURSE_ANNOUNCEMENT
+  SCHEDULE
+  HOMEWORK
+  TEST
+  REQUEST
+  TASK
+  CHAT
+  OTHER
+}
+
+enum NotificationChannel {
+  IN_APP
+}
+
+enum CalendarDayKind {
+  WORKING
+  NON_WORKING
+}
+
+enum AssignedTaskState {
+  TO_DO
+  IN_PROGRESS
+  NEEDS_REVISION
+  COMPLETED
+  CANCELLED
+}
+
+enum PersonalTaskState {
+  OPEN
+  COMPLETED
+  CANCELLED
+}
+
+enum CalendarEventKind {
+  LESSON
+  HOMEWORK_DEADLINE
+  TEST_DEADLINE
+  PERSONAL_TASK
+  ASSIGNED_TASK
+}
+
+enum AIMessageRole {
+  USER
+  ASSISTANT
+  TOOL
+}
+
+enum AIDraftKind {
+  STUDY_PLAN
+  MATERIAL
+  TEST
+  RUBRIC_HINT
+  REPORT
+  ACTION
+  OTHER
+}
+
+enum AIActionState {
+  PREVIEWED
+  CONFIRMED
+  EXECUTING
+  SUCCEEDED
+  PARTIALLY_FAILED
+  FAILED
+  EXPIRED
+  CANCELLED
+}
+
+enum AIReportState {
+  DRAFT
+  CONFIRMED
+  EXPORTED
+  EXPIRED
+}
+
+enum CareerOpportunityState {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum AuditOutcome {
+  SUCCEEDED
+  DENIED
+  FAILED
+}
+
+model User {
+  id              String       @id @default(uuid()) @db.Uuid
+  login           String       @unique @db.VarChar(190)
+  passwordHash    String       @db.VarChar(255)
+  isActive        Boolean      @default(true)
+  createdAt       DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime     @updatedAt @db.Timestamptz(6)
+  version         Int          @default(1)
+  profile         UserProfile?
+  roles           UserRole[]
+  sessions        Session[]
+  memberships     GroupMembership[]
+  teaching        TeacherAssignment[]
+  taughtCourses   Course[]     @relation("CourseOwner")
+  taughtLessons   Lesson[]     @relation("LessonTeacher")
+  substituteFor   Lesson[]     @relation("LessonSubstitute")
+  scheduleRequests ScheduleChangeRequest[] @relation("ScheduleRequester")
+  scheduleDecisions ScheduleChangeRequest[] @relation("ScheduleDecider")
+  proposedSubstitutions ScheduleChangeProposal[] @relation("ProposedSubstitute")
+  consents        SubstituteConsent[]
+  submissions     Submission[]
+  testAttempts    TestAttempt[]
+  authoredAssessments Assessment[] @relation("AssessmentAuthor")
+  gradeEntries    GradebookEntry[]
+  gradeRevisions  GradeRevision[]
+  finalGradeClosuresAsStudent FinalGradeClosure[] @relation("FinalGradeStudent")
+  finalGradeClosuresAsTeacher FinalGradeClosure[] @relation("FinalGradeTeacher")
+  confirmedDebts  ConfirmedAcademicDebt[] @relation("DebtStudent")
+  recordedDebts   ConfirmedAcademicDebt[] @relation("DebtRecorder")
+  authoredHomework Homework[] @relation("HomeworkAuthor")
+  authoredTests   Test[] @relation("TestAuthor")
+  authoredMaterials Material[] @relation("MaterialAuthor")
+  serviceRequests ServiceRequest[] @relation("RequestStudent")
+  assignedRequests ServiceRequest[] @relation("RequestAssignee")
+  requestHistory  RequestStatusHistory[]
+  clarifications  RequestClarification[]
+  passRequests    PassRequest[]
+  temporaryPasses TemporaryDemoPass[]
+  authoredAnnouncements OfficialAnnouncement[] @relation("OfficialAuthor")
+  authoredCourseAnnouncements CourseAnnouncement[]
+  acknowledgements Acknowledgement[]
+  chatMemberships ChatMember[]
+  messages        Message[]
+  notifications   NotificationDelivery[]
+  notificationPreferences NotificationPreference[]
+  personalTasks   PersonalTask[]
+  assignedTasksCreated AssignedTask[] @relation("TaskAssigner")
+  assignedTasksOwned AssignedTask[] @relation("TaskAssignee")
+  taskHistory     TaskHistory[]
+  aiConversations AIConversation[]
+  aiActionPreviews AIActionPreview[]
+  aiConfirmations AIActionConfirmation[]
+  aiReports       AIReport[]
+  aiFeedback      AIFeedback[]
+  auditEvents     AuditEvent[]
+  idempotencyOperations IdempotencyOperation[]
+
+  @@index([isActive])
+}
+
+model UserProfile {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @unique @db.Uuid
+  displayName String   @db.VarChar(200)
+  email       String?  @db.VarChar(320)
+  phone       String?  @db.VarChar(40)
+  settings    Json?
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+  version     Int      @default(1)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserRole {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  role      Role
+  grantedAt DateTime @default(now()) @db.Timestamptz(6)
+  revokedAt DateTime? @db.Timestamptz(6)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, role])
+  @@index([role, revokedAt])
+}
+
+model Session {
+  id          String   @id @default(uuid()) @db.Uuid
+  tokenHash   String   @unique @db.VarChar(255)
+  userId      String   @db.Uuid
+  activeRole  Role
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  expiresAt   DateTime @db.Timestamptz(6)
+  revokedAt   DateTime? @db.Timestamptz(6)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@index([revokedAt, expiresAt])
+}
+
+model Group {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String   @unique @db.VarChar(40)
+  name        String   @db.VarChar(160)
+  memberships GroupMembership[]
+  assignments TeacherAssignment[]
+  courseLinks CourseGroup[]
+  lessons     Lesson[]
+  assessments Assessment[]
+  requests    GroupAnnouncementAudience[]
+}
+
+model GroupMembership {
+  id        String   @id @default(uuid()) @db.Uuid
+  groupId   String   @db.Uuid
+  studentId String   @db.Uuid
+  startsAt  DateTime? @db.Timestamptz(6)
+  endsAt    DateTime? @db.Timestamptz(6)
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Restrict)
+
+  @@unique([groupId, studentId])
+  @@index([studentId, endsAt])
+}
+
+model Subject {
+  id      String   @id @default(uuid()) @db.Uuid
+  code    String?  @unique @db.VarChar(60)
+  name    String   @db.VarChar(200)
+  courses Course[]
+}
+
+model Course {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String?  @db.VarChar(80)
+  name        String   @db.VarChar(200)
+  subjectId   String   @db.Uuid
+  ownerId     String   @db.Uuid
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  subject     Subject  @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  owner       User     @relation("CourseOwner", fields: [ownerId], references: [id], onDelete: Restrict)
+  groups      CourseGroup[]
+  assignments TeacherAssignment[]
+  lessons     Lesson[]
+  components  AssessmentComponent[]
+  assessments Assessment[]
+  finalGradeClosures FinalGradeClosure[]
+  confirmedDebts ConfirmedAcademicDebt[]
+  homework    Homework[]
+  tests       Test[]
+  materials   Material[]
+  chats       Chat[]
+  announcements CourseAnnouncement[]
+
+  @@index([code])
+  @@index([ownerId])
+  @@index([subjectId])
+}
+
+model CourseGroup {
+  id       String @id @default(uuid()) @db.Uuid
+  courseId String @db.Uuid
+  groupId  String @db.Uuid
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  group    Group  @relation(fields: [groupId], references: [id], onDelete: Restrict)
+
+  @@unique([courseId, groupId])
+  @@index([groupId])
+}
+
+model TeacherAssignment {
+  id         String   @id @default(uuid()) @db.Uuid
+  teacherId  String   @db.Uuid
+  courseId   String   @db.Uuid
+  groupId    String   @db.Uuid
+  startsAt   DateTime? @db.Timestamptz(6)
+  endsAt     DateTime? @db.Timestamptz(6)
+  teacher    User     @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  group      Group    @relation(fields: [groupId], references: [id], onDelete: Restrict)
+
+  @@unique([teacherId, courseId, groupId])
+  @@index([teacherId, endsAt])
+  @@index([courseId, groupId])
+}
+
+// One row per calendar year; days and source must come from the official RF
+// production calendar. The database intentionally contains no assumed dates.
+model ProductionCalendarYear {
+  id          String   @id @default(uuid()) @db.Uuid
+  year        Int      @unique
+  sourceName  String   @db.VarChar(300)
+  sourceUrl   String   @db.VarChar(2000)
+  sourcePublishedAt DateTime? @db.Timestamptz(6)
+  importedAt  DateTime @default(now()) @db.Timestamptz(6)
+  verifiedAt  DateTime? @db.Timestamptz(6)
+  days        ProductionCalendarDay[]
+  requestCalendars ServiceRequestCalendar[]
+}
+
+model ProductionCalendarDay {
+  id          String   @id @default(uuid()) @db.Uuid
+  calendarId  String   @db.Uuid
+  date        DateTime @db.Date
+  kind        CalendarDayKind
+  note        String?  @db.VarChar(300)
+  calendar    ProductionCalendarYear @relation(fields: [calendarId], references: [id], onDelete: Cascade)
+
+  @@unique([calendarId, date])
+  @@index([date, kind])
+}
+
+model AssessmentComponent {
+  id          String   @id @default(uuid()) @db.Uuid
+  courseId    String   @db.Uuid
+  name        String   @db.VarChar(160)
+  isRequired  Boolean  @default(false)
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  assessments Assessment[]
+  weights     AssessmentWeight[]
+
+  @@unique([courseId, name])
+  @@index([courseId, isRequired])
+}
+
+model AssessmentWeight {
+  id          String   @id @default(uuid()) @db.Uuid
+  componentId String   @db.Uuid
+  weight      Decimal  @db.Decimal(7, 4)
+  effectiveAt DateTime @default(now()) @db.Timestamptz(6)
+  component   AssessmentComponent @relation(fields: [componentId], references: [id], onDelete: Cascade)
+
+  @@index([componentId, effectiveAt])
+}
+
+model Assessment {
+  id          String   @id @default(uuid()) @db.Uuid
+  courseId    String   @db.Uuid
+  groupId     String   @db.Uuid
+  componentId String   @db.Uuid
+  authorId    String   @db.Uuid
+  title       String   @db.VarChar(240)
+  state       AssessmentState @default(DRAFT)
+  publishedAt DateTime? @db.Timestamptz(6)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  version     Int      @default(1)
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  group       Group    @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  component   AssessmentComponent @relation(fields: [componentId], references: [id], onDelete: Restrict)
+  author      User     @relation("AssessmentAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+  gradeEntries GradebookEntry[]
+  homework    Homework?
+  test        Test?
+
+  @@index([courseId, groupId, state])
+  @@index([componentId])
+}
+
+model GradebookEntry {
+  id          String   @id @default(uuid()) @db.Uuid
+  assessmentId String  @db.Uuid
+  studentId   String   @db.Uuid
+  currentRevisionId String? @unique @db.Uuid
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+  version     Int      @default(1)
+  assessment  Assessment @relation(fields: [assessmentId], references: [id], onDelete: Restrict)
+  student     User     @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  revisions   GradeRevision[] @relation("EntryRevisions")
+  currentRevision GradeRevision? @relation("CurrentGradeRevision", fields: [currentRevisionId, id], references: [id, entryId], onDelete: Restrict)
+  retakes     Retake[]
+
+  @@unique([assessmentId, studentId])
+  @@unique([currentRevisionId, id])
+  @@index([studentId, createdAt])
+}
+
+model GradeRevision {
+  id          String   @id @default(uuid()) @db.Uuid
+  entryId     String   @db.Uuid
+  authorId    String   @db.Uuid
+  retakeId    String?  @db.Uuid
+  score       Decimal  @db.Decimal(5, 2)
+  state       GradeRevisionState @default(DRAFT)
+  reason      String?  @db.Text
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  publishedAt DateTime? @db.Timestamptz(6)
+  entry       GradebookEntry @relation("EntryRevisions", fields: [entryId], references: [id], onDelete: Restrict)
+  currentFor  GradebookEntry? @relation("CurrentGradeRevision")
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Restrict)
+  retake      Retake?  @relation(fields: [retakeId], references: [id], onDelete: SetNull)
+
+  @@index([entryId, state, publishedAt])
+  @@unique([id, entryId])
+}
+
+model Retake {
+  id          String   @id @default(uuid()) @db.Uuid
+  entryId     String   @db.Uuid
+  attemptNo   Int
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  entry       GradebookEntry @relation(fields: [entryId], references: [id], onDelete: Restrict)
+  revisions   GradeRevision[]
+
+  @@unique([entryId, attemptNo])
+}
+
+model FinalGradeClosure {
+  id          String   @id @default(uuid()) @db.Uuid
+  studentId   String   @db.Uuid
+  courseId    String   @db.Uuid
+  teacherId   String   @db.Uuid
+  closedAt    DateTime @default(now()) @db.Timestamptz(6)
+  version     Int      @default(1)
+  student     User     @relation("FinalGradeStudent", fields: [studentId], references: [id], onDelete: Restrict)
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  teacher     User     @relation("FinalGradeTeacher", fields: [teacherId], references: [id], onDelete: Restrict)
+
+  @@unique([studentId, courseId])
+  @@index([courseId, closedAt])
+}
+
+model ConfirmedAcademicDebt {
+  id          String   @id @default(uuid()) @db.Uuid
+  studentId   String   @db.Uuid
+  courseId    String   @db.Uuid
+  confirmedById String @db.Uuid
+  confirmedAt DateTime @default(now()) @db.Timestamptz(6)
+  resolvedAt  DateTime? @db.Timestamptz(6)
+  reason      String?  @db.Text
+  student     User     @relation("DebtStudent", fields: [studentId], references: [id], onDelete: Restrict)
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  confirmedBy User     @relation("DebtRecorder", fields: [confirmedById], references: [id], onDelete: Restrict)
+
+  @@index([studentId, resolvedAt])
+  @@index([courseId, confirmedAt])
+}
+
+model Homework {
+  id          String   @id @default(uuid()) @db.Uuid
+  courseId    String   @db.Uuid
+  authorId    String   @db.Uuid
+  assessmentId String? @unique @db.Uuid
+  title       String   @db.VarChar(240)
+  instructions String @db.Text
+  deadline    DateTime? @db.Timestamptz(6)
+  state       PublicationState @default(DRAFT)
+  aiPolicy    Json?
+  publishedAt DateTime? @db.Timestamptz(6)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  version     Int      @default(1)
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  author      User     @relation("HomeworkAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+  assessment  Assessment? @relation(fields: [assessmentId], references: [id], onDelete: SetNull)
+  submissions Submission[]
+  calendarEvents AcademicCalendarEvent[]
+  reminders   Reminder[]
+  revisions   PublicationVersion[]
+
+  @@index([courseId, state, deadline])
+  @@index([authorId, createdAt])
+}
+
+model Submission {
+  id          String   @id @default(uuid()) @db.Uuid
+  homeworkId  String   @db.Uuid
+  studentId   String   @db.Uuid
+  state       HomeworkSubmissionState @default(TO_SUBMIT)
+  submittedAt DateTime? @db.Timestamptz(6)
+  reviewedAt  DateTime? @db.Timestamptz(6)
+  feedback    String?  @db.Text
+  version     Int      @default(1)
+  homework    Homework @relation(fields: [homeworkId], references: [id], onDelete: Restrict)
+  student     User     @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  revisions   SubmissionRevision[]
+
+  @@unique([homeworkId, studentId])
+  @@index([studentId, state])
+  @@index([homeworkId, state])
+}
+
+model SubmissionRevision {
+  id           String   @id @default(uuid()) @db.Uuid
+  submissionId String   @db.Uuid
+  objectKey    String?  @db.VarChar(1000)
+  textContent  String?  @db.Text
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Restrict)
+
+  @@index([submissionId, createdAt])
+}
+
+model Test {
+  id          String   @id @default(uuid()) @db.Uuid
+  courseId    String   @db.Uuid
+  authorId    String   @db.Uuid
+  assessmentId String? @unique @db.Uuid
+  title       String   @db.VarChar(240)
+  opensAt     DateTime? @db.Timestamptz(6)
+  closesAt    DateTime? @db.Timestamptz(6)
+  attemptLimit Int?
+  state       PublicationState @default(DRAFT)
+  aiPolicy    Json?
+  publishedAt DateTime? @db.Timestamptz(6)
+  version     Int      @default(1)
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  author      User     @relation("TestAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+  assessment  Assessment? @relation(fields: [assessmentId], references: [id], onDelete: SetNull)
+  questions   Question[]
+  attempts    TestAttempt[]
+  calendarEvents AcademicCalendarEvent[]
+  reminders   Reminder[]
+  revisions   PublicationVersion[]
+
+  @@index([courseId, state, closesAt])
+}
+
+model Question {
+  id          String   @id @default(uuid()) @db.Uuid
+  testId      String   @db.Uuid
+  prompt      String   @db.Text
+  kind        String   @db.VarChar(60)
+  position    Int
+  config      Json
+  test        Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
+  answers     TestAnswer[]
+
+  @@unique([testId, position])
+  @@unique([id, testId])
+}
+
+model TestAttempt {
+  id          String   @id @default(uuid()) @db.Uuid
+  testId      String   @db.Uuid
+  studentId   String   @db.Uuid
+  attemptNo   Int
+  state       TestAttemptState @default(IN_PROGRESS)
+  startedAt   DateTime @default(now()) @db.Timestamptz(6)
+  submittedAt DateTime? @db.Timestamptz(6)
+  reviewedAt  DateTime? @db.Timestamptz(6)
+  publishedAt DateTime? @db.Timestamptz(6)
+  test        Test     @relation(fields: [testId], references: [id], onDelete: Restrict)
+  student     User     @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  answers     TestAnswer[]
+
+  @@unique([testId, studentId, attemptNo])
+  @@unique([id, testId])
+  @@index([studentId, state])
+}
+
+model TestAnswer {
+  id          String   @id @default(uuid()) @db.Uuid
+  attemptId   String   @db.Uuid
+  questionId  String   @db.Uuid
+  testId      String   @db.Uuid
+  response    Json
+  score       Decimal? @db.Decimal(5, 2)
+  reviewedAt  DateTime? @db.Timestamptz(6)
+  attempt     TestAttempt @relation(fields: [attemptId, testId], references: [id, testId], onDelete: Restrict)
+  question    Question @relation(fields: [questionId, testId], references: [id, testId], onDelete: Restrict)
+
+  @@unique([attemptId, questionId])
+}
+
+model Material {
+  id          String   @id @default(uuid()) @db.Uuid
+  courseId    String   @db.Uuid
+  authorId    String   @db.Uuid
+  title       String   @db.VarChar(240)
+  description String?  @db.Text
+  state       PublicationState @default(DRAFT)
+  publishedAt DateTime? @db.Timestamptz(6)
+  version     Int      @default(1)
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  author      User     @relation("MaterialAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+  versions    PublicationVersion[]
+
+  @@index([courseId, state])
+  @@index([authorId])
+}
+
+// A version may belong to one publishable object. Enforce exactly one owner
+// with a PostgreSQL CHECK constraint in a reviewed migration.
+model PublicationVersion {
+  id          String   @id @default(uuid()) @db.Uuid
+  materialId  String?  @db.Uuid
+  homeworkId  String?  @db.Uuid
+  testId      String?  @db.Uuid
+  number      Int
+  state       PublicationState
+  content     Json
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  publishedAt DateTime? @db.Timestamptz(6)
+  material    Material? @relation(fields: [materialId], references: [id], onDelete: Restrict)
+  homework    Homework? @relation(fields: [homeworkId], references: [id], onDelete: Restrict)
+  test        Test?     @relation(fields: [testId], references: [id], onDelete: Restrict)
+
+  @@unique([materialId, number])
+  @@unique([homeworkId, number])
+  @@unique([testId, number])
+}
+
+model Room {
+  id       String   @id @default(uuid()) @db.Uuid
+  code     String   @unique @db.VarChar(80)
+  name     String?  @db.VarChar(160)
+  lessons  Lesson[]
+  proposals ScheduleChangeProposal[]
+}
+
+model Lesson {
+  id          String   @id @default(uuid()) @db.Uuid
+  courseId    String   @db.Uuid
+  groupId     String   @db.Uuid
+  teacherId   String   @db.Uuid
+  substituteId String? @db.Uuid
+  roomId      String?  @db.Uuid
+  title       String   @db.VarChar(240)
+  format      String?  @db.VarChar(100)
+  startsAt    DateTime @db.Timestamptz(6)
+  endsAt      DateTime @db.Timestamptz(6)
+  state       LessonState @default(SCHEDULED)
+  version     Int      @default(1)
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  group       Group    @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  teacher     User     @relation("LessonTeacher", fields: [teacherId], references: [id], onDelete: Restrict)
+  substitute  User?    @relation("LessonSubstitute", fields: [substituteId], references: [id], onDelete: Restrict)
+  room        Room?    @relation(fields: [roomId], references: [id], onDelete: Restrict)
+  versions    LessonScheduleVersion[]
+  changeRequests ScheduleChangeRequest[]
+  calendarEvents AcademicCalendarEvent[]
+
+  @@index([groupId, startsAt, state])
+  @@index([teacherId, startsAt, state])
+  @@index([roomId, startsAt, state])
+}
+
+model LessonScheduleVersion {
+  id          String   @id @default(uuid()) @db.Uuid
+  lessonId    String   @db.Uuid
+  version     Int
+  snapshot    Json
+  changedAt   DateTime @default(now()) @db.Timestamptz(6)
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Restrict)
+
+  @@unique([lessonId, version])
+  @@index([changedAt])
+}
+
+model ScheduleChangeRequest {
+  id          String   @id @default(uuid()) @db.Uuid
+  lessonId    String   @db.Uuid
+  requesterId String   @db.Uuid
+  baseVersion Int
+  kind        ScheduleChangeKind
+  state       ScheduleRequestState @default(PENDING)
+  reason      String?  @db.Text
+  submittedAt DateTime @default(now()) @db.Timestamptz(6)
+  decidedAt   DateTime? @db.Timestamptz(6)
+  decidedById String?  @db.Uuid
+  approvedProposalId String? @db.Uuid
+  decisionReason String? @db.Text
+  version     Int      @default(1)
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Restrict)
+  requester   User     @relation("ScheduleRequester", fields: [requesterId], references: [id], onDelete: Restrict)
+  decidedBy   User?    @relation("ScheduleDecider", fields: [decidedById], references: [id], onDelete: Restrict)
+  proposals   ScheduleChangeProposal[]
+  approvedProposal ScheduleChangeProposal? @relation("ApprovedScheduleProposal", fields: [approvedProposalId, id], references: [id, requestId], onDelete: Restrict)
+  consents    SubstituteConsent[]
+
+  @@unique([approvedProposalId, id])
+  @@index([state, submittedAt])
+  @@index([lessonId, baseVersion])
+  @@index([requesterId, state])
+}
+
+model ScheduleChangeProposal {
+  id          String   @id @default(uuid()) @db.Uuid
+  requestId   String   @db.Uuid
+  startsAt    DateTime? @db.Timestamptz(6)
+  endsAt      DateTime? @db.Timestamptz(6)
+  roomId      String?  @db.Uuid
+  format      String?  @db.VarChar(100)
+  substituteId String? @db.Uuid
+  cancelled   Boolean?
+  request     ScheduleChangeRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+  room        Room?    @relation(fields: [roomId], references: [id], onDelete: Restrict)
+  substitute User?    @relation("ProposedSubstitute", fields: [substituteId], references: [id], onDelete: Restrict)
+  consents   SubstituteConsent[]
+  approvedByRequest ScheduleChangeRequest? @relation("ApprovedScheduleProposal")
+
+  @@index([requestId])
+  @@unique([id, requestId])
+  @@unique([id, requestId, substituteId])
+}
+
+model SubstituteConsent {
+  id          String   @id @default(uuid()) @db.Uuid
+  requestId   String   @db.Uuid
+  proposalId  String   @db.Uuid
+  teacherId   String   @db.Uuid
+  state       ConsentState @default(PENDING)
+  respondedAt DateTime? @db.Timestamptz(6)
+  request     ScheduleChangeRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+  proposal    ScheduleChangeProposal @relation(fields: [proposalId, requestId, teacherId], references: [id, requestId, substituteId], onDelete: Restrict)
+  teacher     User     @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+
+  @@unique([requestId, teacherId])
+}
+
+model ServiceRequest {
+  id          String   @id @default(uuid()) @db.Uuid
+  studentId   String   @db.Uuid
+  assignedToId String? @db.Uuid
+  kind        RequestKind
+  state       ServiceRequestState @default(SUBMITTED)
+  title       String   @db.VarChar(240)
+  body        String   @db.Text
+  priority    Int      @default(0)
+  submittedAt DateTime @default(now()) @db.Timestamptz(6)
+  slaWorkingDays Int
+  deadlineAt  DateTime? @db.Timestamptz(6)
+  completedAt DateTime? @db.Timestamptz(6)
+  rejectionReason String? @db.Text
+  version     Int      @default(1)
+  student     User     @relation("RequestStudent", fields: [studentId], references: [id], onDelete: Restrict)
+  assignedTo  User?    @relation("RequestAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  slaCalendars ServiceRequestCalendar[]
+  history     RequestStatusHistory[]
+  clarifications RequestClarification[]
+  documents   DocumentArtifact[]
+  escalations Escalation[]
+
+  @@index([studentId, submittedAt])
+  @@index([state, deadlineAt])
+  @@index([assignedToId, state, deadlineAt])
+}
+
+// A request near New Year can depend on official calendar data for two years.
+model ServiceRequestCalendar {
+  id          String   @id @default(uuid()) @db.Uuid
+  requestId   String   @db.Uuid
+  calendarId  String   @db.Uuid
+  request     ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  calendar    ProductionCalendarYear @relation(fields: [calendarId], references: [id], onDelete: Restrict)
+
+  @@unique([requestId, calendarId])
+  @@index([calendarId, requestId])
+}
+
+model RequestStatusHistory {
+  id          String   @id @default(uuid()) @db.Uuid
+  requestId   String   @db.Uuid
+  actorId     String   @db.Uuid
+  fromState   ServiceRequestState?
+  toState     ServiceRequestState
+  reason      String?  @db.Text
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  request     ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+  actor       User     @relation(fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([requestId, createdAt])
+}
+
+model RequestClarification {
+  id          String   @id @default(uuid()) @db.Uuid
+  requestId   String   @db.Uuid
+  requestedById String @db.Uuid
+  question    String   @db.Text
+  answer      String?  @db.Text
+  requestedAt DateTime @default(now()) @db.Timestamptz(6)
+  answeredAt  DateTime? @db.Timestamptz(6)
+  request     ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+  requestedBy User    @relation(fields: [requestedById], references: [id], onDelete: Restrict)
+
+  @@index([requestId, requestedAt])
+}
+
+model DocumentArtifact {
+  id          String   @id @default(uuid()) @db.Uuid
+  requestId   String   @db.Uuid
+  objectKey   String   @unique @db.VarChar(1000)
+  fileName    String   @db.VarChar(255)
+  mimeType    String   @db.VarChar(150)
+  byteSize    BigInt
+  issuedAt    DateTime? @db.Timestamptz(6)
+  revokedAt   DateTime? @db.Timestamptz(6)
+  request     ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+
+  @@index([requestId, issuedAt])
+}
+
+model Escalation {
+  id          String   @id @default(uuid()) @db.Uuid
+  requestId   String   @db.Uuid
+  episodeStartedAt DateTime @db.Timestamptz(6)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  closedAt    DateTime? @db.Timestamptz(6)
+  request     ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+
+  @@unique([requestId, episodeStartedAt])
+  @@index([closedAt, createdAt])
+}
+
+model PassRequest {
+  id          String   @id @default(uuid()) @db.Uuid
+  studentId   String   @db.Uuid
+  kind        PassRequestKind
+  state       PassRequestState @default(SUBMITTED)
+  submittedAt DateTime @default(now()) @db.Timestamptz(6)
+  issuedAt    DateTime? @db.Timestamptz(6)
+  version     Int      @default(1)
+  student     User     @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  temporaryPass TemporaryDemoPass?
+
+  @@index([studentId, state, submittedAt])
+}
+
+// One temporary demo pass may be issued per student and Moscow calendar day.
+// validDate is calculated by server logic from the issuance time in Europe/Moscow;
+// expiry or revocation does not permit another issuance for that day.
+model TemporaryDemoPass {
+  id          String   @id @default(uuid()) @db.Uuid
+  requestId   String   @unique @db.Uuid
+  studentId   String   @db.Uuid
+  validDate   DateTime @db.Date
+  tokenHash   String   @unique @db.VarChar(255)
+  issuedAt    DateTime @default(now()) @db.Timestamptz(6)
+  expiresAt   DateTime @db.Timestamptz(6)
+  revokedAt   DateTime? @db.Timestamptz(6)
+  request     PassRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+  student     User     @relation(fields: [studentId], references: [id], onDelete: Restrict)
+
+  @@unique([studentId, validDate])
+  @@index([studentId, validDate, revokedAt, expiresAt])
+}
+
+model OfficialAnnouncement {
+  id          String   @id @default(uuid()) @db.Uuid
+  authorId    String   @db.Uuid
+  state       PublicationState @default(DRAFT)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  withdrawnAt DateTime? @db.Timestamptz(6)
+  version     Int      @default(1)
+  author      User     @relation("OfficialAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+  versions    AnnouncementVersion[]
+  roleAudiences RoleAnnouncementAudience[]
+  groupAudiences GroupAnnouncementAudience[]
+  acknowledgements Acknowledgement[]
+
+  @@index([state, createdAt])
+}
+
+model AnnouncementVersion {
+  id              String   @id @default(uuid()) @db.Uuid
+  announcementId  String   @db.Uuid
+  number          Int
+  title           String   @db.VarChar(240)
+  body            String   @db.Text
+  publishedAt     DateTime? @db.Timestamptz(6)
+  announcement    OfficialAnnouncement @relation(fields: [announcementId], references: [id], onDelete: Restrict)
+  acknowledgements Acknowledgement[]
+
+  @@unique([announcementId, number])
+  @@unique([id, announcementId])
+  @@index([publishedAt])
+}
+
+model RoleAnnouncementAudience {
+  id             String   @id @default(uuid()) @db.Uuid
+  announcementId String   @db.Uuid
+  role           Role
+  announcement   OfficialAnnouncement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+
+  @@unique([announcementId, role])
+}
+
+model GroupAnnouncementAudience {
+  id             String   @id @default(uuid()) @db.Uuid
+  announcementId String   @db.Uuid
+  groupId        String   @db.Uuid
+  announcement   OfficialAnnouncement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  group          Group    @relation(fields: [groupId], references: [id], onDelete: Restrict)
+
+  @@unique([announcementId, groupId])
+}
+
+model Acknowledgement {
+  id              String   @id @default(uuid()) @db.Uuid
+  announcementId  String   @db.Uuid
+  versionId       String   @db.Uuid
+  userId          String   @db.Uuid
+  acknowledgedAt  DateTime @default(now()) @db.Timestamptz(6)
+  announcement    OfficialAnnouncement @relation(fields: [announcementId], references: [id], onDelete: Restrict)
+  version         AnnouncementVersion @relation(fields: [versionId, announcementId], references: [id, announcementId], onDelete: Restrict)
+  user            User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([versionId, userId])
+  @@index([announcementId, userId])
+}
+
+model CourseAnnouncement {
+  id          String   @id @default(uuid()) @db.Uuid
+  courseId    String   @db.Uuid
+  authorId    String   @db.Uuid
+  title       String   @db.VarChar(240)
+  body        String   @db.Text
+  publishedAt DateTime @default(now()) @db.Timestamptz(6)
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@index([courseId, publishedAt])
+}
+
+model Chat {
+  id        String   @id @default(uuid()) @db.Uuid
+  courseId  String   @db.Uuid
+  name      String?  @db.VarChar(200)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  members   ChatMember[]
+  messages  Message[]
+}
+
+model ChatMember {
+  id       String   @id @default(uuid()) @db.Uuid
+  chatId   String   @db.Uuid
+  userId   String   @db.Uuid
+  joinedAt DateTime @default(now()) @db.Timestamptz(6)
+  leftAt   DateTime? @db.Timestamptz(6)
+  chat     Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([chatId, userId])
+  @@index([userId, leftAt])
+}
+
+model Message {
+  id        String   @id @default(uuid()) @db.Uuid
+  chatId    String   @db.Uuid
+  senderId  String   @db.Uuid
+  body      String   @db.Text
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  sender    User     @relation(fields: [senderId], references: [id], onDelete: Restrict)
+
+  @@index([chatId, createdAt])
+}
+
+model Notification {
+  id          String   @id @default(uuid()) @db.Uuid
+  category    NotificationCategory
+  critical    Boolean  @default(false)
+  sourceType  String   @db.VarChar(80)
+  sourceId    String   @db.Uuid
+  eventKey    String   @unique @db.VarChar(240)
+  title       String   @db.VarChar(240)
+  body        String   @db.Text
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  deliveries  NotificationDelivery[]
+
+  @@index([category, createdAt])
+  @@index([sourceType, sourceId])
+}
+
+model NotificationDelivery {
+  id             String   @id @default(uuid()) @db.Uuid
+  notificationId String   @db.Uuid
+  recipientId    String   @db.Uuid
+  channel        NotificationChannel @default(IN_APP)
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+  deliveredAt    DateTime? @db.Timestamptz(6)
+  readAt         DateTime? @db.Timestamptz(6)
+  mutedAt        DateTime? @db.Timestamptz(6)
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  recipient      User     @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@unique([notificationId, recipientId, channel])
+  @@index([recipientId, readAt, createdAt])
+}
+
+model NotificationPreference {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
+  category    NotificationCategory
+  muted       Boolean  @default(false)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, category])
+}
+
+model PersonalTask {
+  id          String   @id @default(uuid()) @db.Uuid
+  ownerId     String   @db.Uuid
+  title       String   @db.VarChar(240)
+  details     String?  @db.Text
+  dueAt       DateTime? @db.Timestamptz(6)
+  state       PersonalTaskState @default(OPEN)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+  version     Int      @default(1)
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  reminders   Reminder[]
+  calendarEvents AcademicCalendarEvent[]
+
+  @@index([ownerId, state, dueAt])
+}
+
+model AssignedTask {
+  id          String   @id @default(uuid()) @db.Uuid
+  assignerId  String   @db.Uuid
+  assigneeId  String   @db.Uuid
+  title       String   @db.VarChar(240)
+  details     String?  @db.Text
+  dueAt       DateTime? @db.Timestamptz(6)
+  state       AssignedTaskState @default(TO_DO)
+  cancelledReason String? @db.Text
+  completedAt DateTime? @db.Timestamptz(6)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+  version     Int      @default(1)
+  assigner    User     @relation("TaskAssigner", fields: [assignerId], references: [id], onDelete: Restrict)
+  assignee    User     @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: Restrict)
+  history     TaskHistory[]
+  reminders   Reminder[]
+  calendarEvents AcademicCalendarEvent[]
+
+  @@index([assignerId, state, dueAt])
+  @@index([assigneeId, state, dueAt])
+}
+
+model TaskHistory {
+  id          String   @id @default(uuid()) @db.Uuid
+  taskId      String   @db.Uuid
+  actorId     String   @db.Uuid
+  fromState   AssignedTaskState?
+  toState     AssignedTaskState
+  previousAssigneeId String? @db.Uuid
+  nextAssigneeId String? @db.Uuid
+  reason      String?  @db.Text
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  task        AssignedTask @relation(fields: [taskId], references: [id], onDelete: Restrict)
+  actor       User     @relation(fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([taskId, createdAt])
+}
+
+model AcademicCalendarEvent {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
+  kind        CalendarEventKind
+  sourceType  String   @db.VarChar(80)
+  sourceId    String   @db.Uuid
+  startsAt    DateTime @db.Timestamptz(6)
+  endsAt      DateTime? @db.Timestamptz(6)
+  lessonId    String?  @db.Uuid
+  homeworkId  String?  @db.Uuid
+  testId      String?  @db.Uuid
+  personalTaskId String? @db.Uuid
+  assignedTaskId String? @db.Uuid
+  lesson      Lesson?  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  homework    Homework? @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
+  test        Test?    @relation(fields: [testId], references: [id], onDelete: Cascade)
+  personalTask PersonalTask? @relation(fields: [personalTaskId], references: [id], onDelete: Cascade)
+  assignedTask AssignedTask? @relation(fields: [assignedTaskId], references: [id], onDelete: Cascade)
+
+  // This is a rebuildable, authorized projection, never a source of truth.
+  @@unique([userId, sourceType, sourceId])
+  @@index([userId, startsAt])
+}
+
+model Reminder {
+  id          String   @id @default(uuid()) @db.Uuid
+  kind        CalendarEventKind
+  sourceType  String   @db.VarChar(80)
+  sourceId    String   @db.Uuid
+  dueAt       DateTime @db.Timestamptz(6)
+  scheduledAt DateTime @db.Timestamptz(6)
+  sentAt      DateTime? @db.Timestamptz(6)
+  homeworkId  String?  @db.Uuid
+  testId      String?  @db.Uuid
+  personalTaskId String? @db.Uuid
+  assignedTaskId String? @db.Uuid
+  homework    Homework? @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
+  test        Test?    @relation(fields: [testId], references: [id], onDelete: Cascade)
+  personalTask PersonalTask? @relation(fields: [personalTaskId], references: [id], onDelete: Cascade)
+  assignedTask AssignedTask? @relation(fields: [assignedTaskId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceType, sourceId, scheduledAt])
+  @@index([scheduledAt, sentAt])
+}
+
+model AIConversation {
+  id          String   @id @default(uuid()) @db.Uuid
+  ownerId     String   @db.Uuid
+  title       String?  @db.VarChar(240)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+  deletedAt   DateTime? @db.Timestamptz(6)
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  messages    AIMessage[]
+  attachments AIAttachment[]
+  drafts      AIDraft[]
+  previews    AIActionPreview[]
+  reports     AIReport[]
+  contextReferences AIContextReference[]
+  usage       AIUsage[]
+
+  @@index([ownerId, updatedAt])
+  @@unique([id, ownerId])
+}
+
+model AIMessage {
+  id             String   @id @default(uuid()) @db.Uuid
+  conversationId String   @db.Uuid
+  role           AIMessageRole
+  content        String   @db.Text
+  providerModel  String?  @db.VarChar(160)
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+  deletedAt      DateTime? @db.Timestamptz(6)
+  conversation   AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  feedback       AIFeedback[]
+
+  @@index([conversationId, createdAt])
+}
+
+model AIAttachment {
+  id             String   @id @default(uuid()) @db.Uuid
+  conversationId String   @db.Uuid
+  objectKey      String   @unique @db.VarChar(1000)
+  fileName       String   @db.VarChar(255)
+  mimeType       String   @db.VarChar(150)
+  byteSize       BigInt
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+  revokedAt      DateTime? @db.Timestamptz(6)
+  conversation   AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, revokedAt])
+}
+
+model AIDraft {
+  id             String   @id @default(uuid()) @db.Uuid
+  conversationId String   @db.Uuid
+  kind           AIDraftKind
+  content        Json
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+  deletedAt      DateTime? @db.Timestamptz(6)
+  conversation   AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+}
+
+model AIContextReference {
+  id             String   @id @default(uuid()) @db.Uuid
+  conversationId String   @db.Uuid
+  sourceType     String   @db.VarChar(80)
+  sourceId       String   @db.Uuid
+  sourceVersion  Int?
+  checkedAt      DateTime @default(now()) @db.Timestamptz(6)
+  staleAt        DateTime? @db.Timestamptz(6)
+  allowed        Boolean
+  conversation   AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, checkedAt])
+  @@index([sourceType, sourceId])
+}
+
+model AIActionPreview {
+  id             String   @id @default(uuid()) @db.Uuid
+  conversationId String   @db.Uuid
+  actorId        String   @db.Uuid
+  actionType     String   @db.VarChar(120)
+  proposal       Json
+  baseVersions   Json
+  state          AIActionState @default(PREVIEWED)
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+  expiresAt      DateTime @db.Timestamptz(6)
+  conversation   AIConversation @relation(fields: [conversationId, actorId], references: [id, ownerId], onDelete: Restrict)
+  actor          User     @relation(fields: [actorId], references: [id], onDelete: Restrict)
+  confirmations  AIActionConfirmation[]
+
+  @@index([actorId, state, expiresAt])
+  @@unique([id, actorId])
+}
+
+model AIActionConfirmation {
+  id             String   @id @default(uuid()) @db.Uuid
+  previewId      String   @db.Uuid
+  confirmedById  String   @db.Uuid
+  confirmedAt    DateTime @default(now()) @db.Timestamptz(6)
+  operationId    String   @unique @db.Uuid
+  confirmedBy    User     @relation(fields: [confirmedById], references: [id], onDelete: Restrict)
+  preview        AIActionPreview @relation(fields: [previewId, confirmedById], references: [id, actorId], onDelete: Restrict)
+  operation      IdempotencyOperation @relation(fields: [operationId, confirmedById], references: [id, actorId], onDelete: Restrict)
+
+  @@unique([previewId])
+  @@unique([operationId, confirmedById])
+}
+
+model AIReport {
+  id          String   @id @default(uuid()) @db.Uuid
+  conversationId String @db.Uuid
+  ownerId     String   @db.Uuid
+  state       AIReportState @default(DRAFT)
+  title       String   @db.VarChar(240)
+  content     Json
+  sources     Json
+  periodStart DateTime? @db.Timestamptz(6)
+  periodEnd   DateTime? @db.Timestamptz(6)
+  sampleSize  Int?
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  expiresAt   DateTime @db.Timestamptz(6)
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  conversation AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId, state, expiresAt])
+}
+
+model AIFeedback {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
+  messageId   String   @db.Uuid
+  rating      Int?
+  comment     String?  @db.Text
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message     AIMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, messageId])
+  @@index([createdAt])
+}
+
+model AIUsage {
+  id             String   @id @default(uuid()) @db.Uuid
+  conversationId String   @db.Uuid
+  model          String   @db.VarChar(160)
+  inputTokens    Int      @default(0)
+  outputTokens   Int      @default(0)
+  estimatedCost  Decimal? @db.Decimal(14, 6)
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+  conversation   AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt, model])
+  @@index([conversationId, createdAt])
+}
+
+model CareerCategory {
+  id            String   @id @default(uuid()) @db.Uuid
+  name          String   @unique @db.VarChar(160)
+  opportunities CareerOpportunity[]
+}
+
+model CareerOpportunity {
+  id          String   @id @default(uuid()) @db.Uuid
+  categoryId  String   @db.Uuid
+  title       String   @db.VarChar(240)
+  organization String @db.VarChar(240)
+  description String   @db.Text
+  location    String?  @db.VarChar(200)
+  closesAt    DateTime? @db.Timestamptz(6)
+  isDemo      Boolean  @default(true)
+  state       CareerOpportunityState @default(DRAFT)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  category    CareerCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@index([categoryId, state, closesAt])
+}
+
+model AuditEvent {
+  id          String   @id @default(uuid()) @db.Uuid
+  actorId     String?  @db.Uuid
+  action      String   @db.VarChar(120)
+  targetType  String   @db.VarChar(100)
+  targetId    String?  @db.Uuid
+  outcome     AuditOutcome
+  reason      String?  @db.Text
+  metadata    Json?
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  actor       User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  // Never put credentials, private document contents or AI prompt/response
+  // bodies into metadata. targetType/targetId is intentionally polymorphic.
+  @@index([actorId, createdAt])
+  @@index([targetType, targetId, createdAt])
+  @@index([action, createdAt])
+}
+
+model IdempotencyOperation {
+  id          String   @id @default(uuid()) @db.Uuid
+  actorId     String   @db.Uuid
+  operationKey String  @db.VarChar(240)
+  operationType String @db.VarChar(120)
+  requestHash String   @db.VarChar(128)
+  resultRefType String? @db.VarChar(100)
+  resultRefId String?  @db.Uuid
+  result      Json?
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  completedAt DateTime? @db.Timestamptz(6)
+  actor       User     @relation(fields: [actorId], references: [id], onDelete: Restrict)
+  aiConfirmation AIActionConfirmation?
+
+  @@unique([actorId, operationKey])
+  @@unique([id, actorId])
+  @@index([operationType, createdAt])
+}
+
+model RecordVersion {
+  id          String   @id @default(uuid()) @db.Uuid
+  entityType  String   @db.VarChar(100)
+  entityId    String   @db.Uuid
+  version     Int
+  snapshot    Json
+  changedAt   DateTime @default(now()) @db.Timestamptz(6)
+  changedById String?  @db.Uuid
+
+  // Domain tables retain a version column for compare-and-swap. This record
+  // stores only the snapshots needed for conflict comparison and audit.
+  @@unique([entityType, entityId, version])
+  @@index([entityType, entityId, changedAt])
+}
