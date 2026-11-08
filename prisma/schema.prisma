@@ -21,6 +21,32 @@ enum PublicationState {
   WITHDRAWN
 }
 
+enum LessonKind {
+  CLASS
+  EXAM
+}
+
+enum AttendanceStatus {
+  PRESENT
+  LATE
+  ABSENT
+}
+
+enum ServiceRequestCategory {
+  STUDY_CERTIFICATE
+  STUDY_PERIOD_CERTIFICATE
+  GRADE_TRANSCRIPT
+  ACADEMIC_QUESTION
+  PERSONAL_DATA_CORRECTION
+}
+
+// Legacy broad request kind retained for existing-column compatibility.
+enum RequestKind {
+  DOCUMENT
+  APPEAL
+  REQUEST
+}
+
 enum LessonState {
   SCHEDULED
   CANCELLED
@@ -72,12 +98,6 @@ enum TestAttemptState {
   SUBMITTED
   REVIEWED
   PUBLISHED
-}
-
-enum RequestKind {
-  DOCUMENT
-  APPEAL
-  REQUEST
 }
 
 enum ServiceRequestState {
@@ -142,6 +162,7 @@ enum PersonalTaskState {
 
 enum CalendarEventKind {
   LESSON
+  EXAM
   HOMEWORK_DEADLINE
   TEST_DEADLINE
   PERSONAL_TASK
@@ -197,7 +218,8 @@ enum AuditOutcome {
 model User {
   id              String       @id @default(uuid()) @db.Uuid
   login           String       @unique @db.VarChar(190)
-  passwordHash    String       @db.VarChar(255)
+  passwordHash    String?      @db.VarChar(255)
+  activatedAt     DateTime?    @db.Timestamptz(6)
   isActive        Boolean      @default(true)
   createdAt       DateTime     @default(now()) @db.Timestamptz(6)
   updatedAt       DateTime     @updatedAt @db.Timestamptz(6)
@@ -209,6 +231,7 @@ model User {
   teaching        TeacherAssignment[]
   taughtCourses   Course[]     @relation("CourseOwner")
   taughtLessons   Lesson[]     @relation("LessonTeacher")
+  examinedLessons Lesson[]     @relation("LessonExaminer")
   substituteFor   Lesson[]     @relation("LessonSubstitute")
   scheduleRequests ScheduleChangeRequest[] @relation("ScheduleRequester")
   scheduleDecisions ScheduleChangeRequest[] @relation("ScheduleDecider")
@@ -250,6 +273,12 @@ model User {
   aiFeedback      AIFeedback[]
   auditEvents     AuditEvent[]
   idempotencyOperations IdempotencyOperation[]
+  attendanceRecords AttendanceRecord[] @relation("AttendanceStudent")
+  attendanceMarked AttendanceRecord[] @relation("AttendanceMarker")
+  assessmentStructuresCreated AssessmentStructureVersion[] @relation("AssessmentStructureAuthor")
+  accountActivations AccountActivation[]
+  accountActivationsIssued AccountActivation[] @relation("AccountActivationIssuer")
+  scheduleStaffReservations ScheduleStaffReservation[]
 
   @@index([isActive])
 }
@@ -293,6 +322,22 @@ model Session {
   @@index([revokedAt, expiresAt])
 }
 
+// University-provisioned, single-use activation links. Store only token hashes.
+model AccountActivation {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
+  tokenHash   String   @unique @db.VarChar(255)
+  createdById String?  @db.Uuid
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  expiresAt   DateTime @db.Timestamptz(6)
+  consumedAt  DateTime? @db.Timestamptz(6)
+  revokedAt   DateTime? @db.Timestamptz(6)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  createdBy   User?    @relation("AccountActivationIssuer", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([userId, expiresAt])
+}
+
 model Group {
   id          String   @id @default(uuid()) @db.Uuid
   code        String   @unique @db.VarChar(40)
@@ -311,6 +356,7 @@ model GroupMembership {
   studentId String   @db.Uuid
   startsAt  DateTime? @db.Timestamptz(6)
   endsAt    DateTime? @db.Timestamptz(6)
+  attendanceRecords AttendanceRecord[]
   group     Group    @relation(fields: [groupId], references: [id], onDelete: Restrict)
   student   User     @relation(fields: [studentId], references: [id], onDelete: Restrict)
 
@@ -338,6 +384,7 @@ model Course {
   assignments TeacherAssignment[]
   lessons     Lesson[]
   components  AssessmentComponent[]
+  assessmentStructures AssessmentStructureVersion[]
   assessments Assessment[]
   finalGradeClosures FinalGradeClosure[]
   confirmedDebts ConfirmedAcademicDebt[]
@@ -415,17 +462,49 @@ model AssessmentComponent {
   weights     AssessmentWeight[]
 
   @@unique([courseId, name])
+  @@unique([id, courseId])
   @@index([courseId, isRequired])
+}
+
+// Immutable published versions pin the point allocation used by assessments.
+model AssessmentStructureVersion {
+  id          String   @id @default(uuid()) @db.Uuid
+  courseId    String   @db.Uuid
+  version     Int
+  createdById String   @db.Uuid
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  publishedAt DateTime? @db.Timestamptz(6)
+  reason      String?  @db.Text
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  createdBy   User     @relation("AssessmentStructureAuthor", fields: [createdById], references: [id], onDelete: Restrict)
+  weights     AssessmentWeight[]
+  assessments Assessment[]
+
+  @@unique([courseId, version])
+  @@unique([id, courseId])
+  @@index([courseId, publishedAt])
 }
 
 model AssessmentWeight {
   id          String   @id @default(uuid()) @db.Uuid
   componentId String   @db.Uuid
-  weight      Decimal  @db.Decimal(7, 4)
+  courseId    String   @db.Uuid
+  structureVersionId String @db.Uuid
+  componentName String @db.VarChar(160)
+  // The physical column keeps its legacy name; this is the maximum points
+  // allocation in one immutable AssessmentStructureVersion, not a second weight.
+  maximumPoints Decimal @map("weight") @db.Decimal(7, 4)
+  isRequired  Boolean  @default(false)
+  position    Int      @default(0)
   effectiveAt DateTime @default(now()) @db.Timestamptz(6)
-  component   AssessmentComponent @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  component   AssessmentComponent @relation(fields: [componentId, courseId], references: [id, courseId], onDelete: Restrict)
+  structureVersion AssessmentStructureVersion @relation(fields: [structureVersionId, courseId], references: [id, courseId], onDelete: Restrict)
+  assessments Assessment[]
 
+  @@unique([structureVersionId, componentId])
+  @@unique([structureVersionId, componentId, courseId])
   @@index([componentId, effectiveAt])
+  @@index([structureVersionId, position])
 }
 
 model Assessment {
@@ -433,6 +512,7 @@ model Assessment {
   courseId    String   @db.Uuid
   groupId     String   @db.Uuid
   componentId String   @db.Uuid
+  structureVersionId String @db.Uuid
   authorId    String   @db.Uuid
   title       String   @db.VarChar(240)
   state       AssessmentState @default(DRAFT)
@@ -441,7 +521,9 @@ model Assessment {
   version     Int      @default(1)
   course      Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
   group       Group    @relation(fields: [groupId], references: [id], onDelete: Restrict)
-  component   AssessmentComponent @relation(fields: [componentId], references: [id], onDelete: Restrict)
+  component   AssessmentComponent @relation(fields: [componentId, courseId], references: [id, courseId], onDelete: Restrict)
+  structureVersion AssessmentStructureVersion @relation(fields: [structureVersionId, courseId], references: [id, courseId], onDelete: Restrict)
+  componentAllocation AssessmentWeight @relation(fields: [structureVersionId, componentId, courseId], references: [structureVersionId, componentId, courseId], onDelete: Restrict)
   author      User     @relation("AssessmentAuthor", fields: [authorId], references: [id], onDelete: Restrict)
   gradeEntries GradebookEntry[]
   homework    Homework?
@@ -449,6 +531,7 @@ model Assessment {
 
   @@index([courseId, groupId, state])
   @@index([componentId])
+  @@index([structureVersionId, componentId])
 }
 
 model GradebookEntry {
@@ -707,27 +790,71 @@ model Lesson {
   id          String   @id @default(uuid()) @db.Uuid
   courseId    String   @db.Uuid
   groupId     String   @db.Uuid
-  teacherId   String   @db.Uuid
+  teacherId   String?  @db.Uuid
+  examinerId  String?  @db.Uuid
   substituteId String? @db.Uuid
   roomId      String?  @db.Uuid
   title       String   @db.VarChar(240)
   format      String?  @db.VarChar(100)
+  kind        LessonKind @default(CLASS)
   startsAt    DateTime @db.Timestamptz(6)
   endsAt      DateTime @db.Timestamptz(6)
   state       LessonState @default(SCHEDULED)
   version     Int      @default(1)
   course      Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
   group       Group    @relation(fields: [groupId], references: [id], onDelete: Restrict)
-  teacher     User     @relation("LessonTeacher", fields: [teacherId], references: [id], onDelete: Restrict)
+  teacher     User?    @relation("LessonTeacher", fields: [teacherId], references: [id], onDelete: Restrict)
+  examiner    User?    @relation("LessonExaminer", fields: [examinerId], references: [id], onDelete: Restrict)
   substitute  User?    @relation("LessonSubstitute", fields: [substituteId], references: [id], onDelete: Restrict)
   room        Room?    @relation(fields: [roomId], references: [id], onDelete: Restrict)
   versions    LessonScheduleVersion[]
   changeRequests ScheduleChangeRequest[]
   calendarEvents AcademicCalendarEvent[]
+  attendanceRecords AttendanceRecord[]
+  staffReservations ScheduleStaffReservation[]
 
+  @@unique([id, groupId])
   @@index([groupId, startsAt, state])
   @@index([teacherId, startsAt, state])
+  @@index([examinerId, startsAt, state])
   @@index([roomId, startsAt, state])
+}
+
+model AttendanceRecord {
+  id         String   @id @default(uuid()) @db.Uuid
+  lessonId   String   @db.Uuid
+  groupId    String   @db.Uuid
+  studentId  String   @db.Uuid
+  status     AttendanceStatus
+  markedById String   @db.Uuid
+  markedAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @db.Timestamptz(6)
+  version    Int      @default(1)
+  lesson     Lesson   @relation(fields: [lessonId, groupId], references: [id, groupId], onDelete: Restrict)
+  membership GroupMembership @relation(fields: [groupId, studentId], references: [groupId, studentId], onDelete: Restrict)
+  student    User     @relation("AttendanceStudent", fields: [studentId], references: [id], onDelete: Restrict)
+  markedBy   User     @relation("AttendanceMarker", fields: [markedById], references: [id], onDelete: Restrict)
+
+  @@unique([lessonId, studentId])
+  @@index([lessonId, status])
+  @@index([studentId, markedAt])
+}
+
+// Integrity projection for all teaching staff occupied by a scheduled slot.
+// Lesson remains the canonical event; PostgreSQL exclusion protects overlaps
+// between a lesson teacher, an exam examiner, and other scheduled events.
+model ScheduleStaffReservation {
+  id        String   @id @default(uuid()) @db.Uuid
+  lessonId  String   @db.Uuid
+  staffId   String   @db.Uuid
+  startsAt  DateTime @db.Timestamptz(6)
+  endsAt    DateTime @db.Timestamptz(6)
+  isActive  Boolean  @default(true)
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  staff     User     @relation(fields: [staffId], references: [id], onDelete: Restrict)
+
+  @@unique([lessonId, staffId])
+  @@index([staffId, startsAt])
 }
 
 model LessonScheduleVersion {
@@ -807,7 +934,9 @@ model ServiceRequest {
   id          String   @id @default(uuid()) @db.Uuid
   studentId   String   @db.Uuid
   assignedToId String? @db.Uuid
-  kind        RequestKind
+  // Legacy broad classification is retained for compatibility; category is authoritative.
+  kind        RequestKind?
+  category    ServiceRequestCategory
   state       ServiceRequestState @default(SUBMITTED)
   title       String   @db.VarChar(240)
   body        String   @db.Text
@@ -829,6 +958,7 @@ model ServiceRequest {
   @@index([studentId, submittedAt])
   @@index([state, deadlineAt])
   @@index([assignedToId, state, deadlineAt])
+  @@index([category, state, deadlineAt])
 }
 
 // A request near New Year can depend on official calendar data for two years.
@@ -908,6 +1038,7 @@ model PassRequest {
   student     User     @relation(fields: [studentId], references: [id], onDelete: Restrict)
   temporaryPass TemporaryDemoPass?
 
+  @@unique([id, studentId])
   @@index([studentId, state, submittedAt])
 }
 
@@ -923,10 +1054,11 @@ model TemporaryDemoPass {
   issuedAt    DateTime @default(now()) @db.Timestamptz(6)
   expiresAt   DateTime @db.Timestamptz(6)
   revokedAt   DateTime? @db.Timestamptz(6)
-  request     PassRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+  request     PassRequest @relation(fields: [requestId, studentId], references: [id, studentId], onDelete: Restrict)
   student     User     @relation(fields: [studentId], references: [id], onDelete: Restrict)
 
   @@unique([studentId, validDate])
+  @@unique([requestId, studentId])
   @@index([studentId, validDate, revokedAt, expiresAt])
 }
 
@@ -952,6 +1084,7 @@ model AnnouncementVersion {
   number          Int
   title           String   @db.VarChar(240)
   body            String   @db.Text
+  requiresAcknowledgement Boolean @default(false)
   publishedAt     DateTime? @db.Timestamptz(6)
   announcement    OfficialAnnouncement @relation(fields: [announcementId], references: [id], onDelete: Restrict)
   acknowledgements Acknowledgement[]
@@ -959,6 +1092,7 @@ model AnnouncementVersion {
   @@unique([announcementId, number])
   @@unique([id, announcementId])
   @@index([publishedAt])
+  @@index([publishedAt, requiresAcknowledgement])
 }
 
 model RoleAnnouncementAudience {
