@@ -125,11 +125,15 @@ function CalendarWidget() {
           <div className={`calendar-day${item.isToday ? " is-today" : ""}`} aria-current={item.isToday ? "date" : undefined} key={item.weekday}>
             <span>{item.weekday}</span>
             <strong>{item.date ?? "—"}</strong>
-            {item.isToday ? <i aria-label="Сегодня" /> : null}
+            {item.isToday ? (
+              <span className="calendar-event-markers" aria-hidden="true">
+                {lessons.map((lesson) => <i className={`event-marker-${lesson.color}`} key={lesson.start} />)}
+              </span>
+            ) : null}
           </div>
         ))}
       </div>
-      <div className="calendar-foot"><span className="calendar-live-dot" />Дата по Москве · UTC+3</div>
+      <div className="calendar-foot"><span className="calendar-live-dot" />Europe/Moscow <i />Маркеры — демо-занятия</div>
     </section>
   );
 }
