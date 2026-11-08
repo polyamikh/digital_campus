@@ -1,69 +1,85 @@
-import Image from "next/image";
+import StudentHomeContent from "./student-home-content";
+
+const navigation = [
+  { label: "Главная", icon: "⌂", active: true },
+  { label: "Мой профиль", icon: "◉" },
+  { label: "Расписание", icon: "▦" },
+  { label: "Успеваемость", icon: "▥" },
+  { label: "Заявки и справки", icon: "▤" },
+  { label: "Уведомления", icon: "♧" },
+  { label: "Календарь задач", icon: "▣" },
+  { label: "Тестирование", icon: "✓" },
+  { label: "Материалы", icon: "▱" },
+  { label: "Домашнее задание", icon: "▧" },
+  { label: "Чаты", icon: "▰" },
+  { label: "Нет пропуска?", icon: "▣" },
+  { label: "Карьерные возможности", icon: "↗" },
+  { label: "AI-помощник", icon: "✳" },
+];
+
+function Icon({ children }: { children: string }) {
+  return <span className="icon" aria-hidden="true">{children}</span>;
+}
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="app-shell">
+      <a className="skip-link" href="#main-content">Перейти к содержимому</a>
+
+      <aside className="sidebar" aria-label="Студенческая навигация">
+        <a className="brand" href="#main-content" aria-label="Digital Campus — главная">
+          <span className="brand-mark" aria-hidden="true"><i /><i /><i /><i /></span>
+          <span className="brand-name">DIGITAL<br />CAMPUS<small>МГИМО</small></span>
+        </a>
+
+        <div className="role-chip"><span className="role-dot" />Кабинет студента</div>
+        <nav className="side-nav" aria-label="Разделы студента">
+          <span className="nav-caption">УЧЁБА И КАМПУС</span>
+          {navigation.map((item) => (
+            item.active || item.label === "Мой профиль" ? (
+              <a
+                className={`nav-item${item.active ? " is-active" : ""}`}
+                href={item.active ? "#main-content" : "#profile"}
+                aria-current={item.active ? "page" : undefined}
+                key={item.label}
+              >
+                <Icon>{item.icon}</Icon><span className="nav-label">{item.label}</span>
+                {!item.active ? <span className="nav-status">В разработке</span> : null}
+              </a>
+            ) : (
+              <div className="nav-item nav-disabled" aria-disabled="true" key={item.label}>
+                <Icon>{item.icon}</Icon><span className="nav-label">{item.label}</span><span className="nav-status">В разработке</span>
+              </div>
+            )
+          ))}
+        </nav>
+        <div className="sidebar-foot"><span className="status-light" />Демонстрационный интерфейс</div>
+      </aside>
+
+      <div className="workspace">
+        <header className="topbar">
+          <div className="breadcrumbs"><span>Студент</span><span className="crumb-separator">/</span><strong>Главная</strong></div>
+          <div className="topbar-tools">
+            <span className="demo-badge"><span />Демо-режим</span>
+            <button className="icon-button notification-button" type="button" aria-label="Уведомления, демонстрационный просмотр">
+              <Icon>♧</Icon><span className="notification-dot" />
+            </button>
+            <div className="profile-menu" id="profile" aria-label="Профиль Алисы Соколовой">
+              <span className="avatar">АС</span><span className="profile-name">Алиса Соколова<small>ЦМ-26-1</small></span><span className="chevron">⌄</span>
+            </div>
+          </div>
+        </header>
+
+        <main className="main-content" id="main-content">
+          <section className="hero" aria-labelledby="welcome-title">
+            <h1 className="hero-title" id="welcome-title"><span>ПРИВЕТ,</span><span>АЛИСА!</span></h1>
+            <span className="hero-divider" aria-hidden="true" />
+            <p className="hero-copy">Твой учебный день,<br />задачи и возможности —<br />в одном пространстве</p>
+          </section>
+
+          <StudentHomeContent />
+        </main>
+      </div>
     </div>
   );
 }
