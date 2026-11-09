@@ -232,7 +232,7 @@ export default function StudentHomeContent() {
     <>
       <div className="demo-status-line" role="note">
         <span className="demo-status-mark" />
-        <span><strong>Демо-режим</strong><i />Календарь показывает дату по Москве; расписание и показатели ниже — примеры.</span>
+        <span><strong>Демо-режим</strong><i />Календарь показывает дату по Москве; учебные виджеты ниже — демонстрационные примеры, не персональные данные.</span>
       </div>
 
       <div className="student-home-grid">

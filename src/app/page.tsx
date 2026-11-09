@@ -1,4 +1,12 @@
+import { Suspense } from "react";
+import { redirect } from "next/navigation";
+import { Role } from "@/generated/prisma/enums";
+import { currentUser } from "@/lib/auth/session";
+import { homePathForRole } from "@/lib/auth/role-routes";
+import { prisma } from "@/lib/prisma";
+import LogoutButton from "./logout-button";
 import StudentHomeContent from "./student-home-content";
+import AuthRouteFallback from "./auth-route-fallback";
 
 const navigation = [
   { label: "Главная", icon: "⌂", active: true },
@@ -22,6 +30,35 @@ function Icon({ children }: { children: string }) {
 }
 
 export default function Home() {
+  return (
+    <Suspense fallback={<AuthRouteFallback />}>
+      <AuthenticatedStudentHome />
+    </Suspense>
+  );
+}
+
+async function AuthenticatedStudentHome() {
+  const user = await currentUser();
+  if (!user) redirect("/login");
+  if (user.activeRole !== Role.STUDENT) redirect(homePathForRole(user.activeRole));
+
+  const identity = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: {
+      login: true,
+      profile: { select: { displayName: true } },
+      memberships: {
+        where: { endsAt: null },
+        select: { group: { select: { code: true } } },
+        take: 1,
+      },
+    },
+  });
+  const displayName = identity?.profile?.displayName || identity?.login || user.login;
+  const firstName = displayName.trim().split(/\s+/)[0] || displayName;
+  const initials = displayName.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toLocaleUpperCase("ru-RU");
+  const groupCode = identity?.memberships[0]?.group.code;
+
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main-content">Перейти к содержимому</a>
@@ -64,15 +101,16 @@ export default function Home() {
             <button className="icon-button notification-button" type="button" aria-label="Уведомления, демонстрационный просмотр">
               <Icon>♧</Icon><span className="notification-dot" />
             </button>
-            <div className="profile-menu" id="profile" aria-label="Профиль Алисы Соколовой">
-              <span className="avatar">АС</span><span className="profile-name">Алиса Соколова<small>ЦМ-26-1</small></span><span className="chevron">⌄</span>
+            <div className="profile-menu" id="profile" aria-label={`Профиль ${displayName}`}>
+              <span className="avatar">{initials}</span><span className="profile-name">{displayName}<small>{groupCode ?? "Студент"}</small></span>
             </div>
+            <LogoutButton />
           </div>
         </header>
 
         <main className="main-content" id="main-content">
           <section className="hero" aria-labelledby="welcome-title">
-            <h1 className="hero-title" id="welcome-title"><span>ПРИВЕТ,</span><span>АЛИСА!</span></h1>
+            <h1 className="hero-title" id="welcome-title"><span>ПРИВЕТ,</span><span>{firstName.toLocaleUpperCase("ru-RU")}!</span></h1>
             <span className="hero-divider" aria-hidden="true" />
             <p className="hero-copy">Твой учебный день,<br />задачи и возможности —<br />в одном пространстве</p>
           </section>
