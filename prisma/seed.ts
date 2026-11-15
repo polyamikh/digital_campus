@@ -1,12 +1,13 @@
 import "dotenv/config";
 
-import { createHash, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
+import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Prisma, PrismaClient } from "../src/generated/prisma/client";
+import { findScheduleConflicts, lessonScheduleViolation } from "../src/lib/schedule/lesson-rules";
+import { DEMO_OFFERING_SCHEDULE, demoOfferingSchedule, stableDemoSeedId as stableId } from "./demo-schedule-layout";
 
 const SEED_CONFIRMATION = "I_CONFIRM_DEMO_DATABASE_SEED";
 const ALLOWED_DATABASES = new Set(["digital_campus", "digital_campus_seed_test"]);
-const SEED_NAMESPACE = "digital-campus-contest-seed-v1";
 const FIXTURE_NOW = new Date("2026-11-08T09:00:00.000+03:00");
 const SEMESTER_START = new Date("2026-09-01T00:00:00.000+03:00");
 const MOSCOW_OFFSET = "+03:00";
@@ -39,6 +40,7 @@ type OfferingFixture = {
   teacherKey: string;
   weekdayOffset: number;
   startTime: string;
+  endTime: string;
   roomCode: string;
   courseIndex: number;
 };
@@ -123,14 +125,6 @@ const officialAnnouncementFixtures = [
   { key: "library-rules-ack", title: "Порядок работы с учебными материалами", body: "Демонстрационное объявление, требующее подтверждения ознакомления. Оно не является официальным сообщением университета.", requiresAcknowledgement: true, state: "PUBLISHED", createdAt: new Date("2026-10-05T11:00:00.000+03:00"), publishedAt: new Date("2026-10-05T11:15:00.000+03:00"), groups: groupOrder, roles: ["TEACHER"] },
   { key: "e2e-04-draft", title: "Черновик объявления для подтверждения ознакомления", body: "Черновик подготовлен для сценария E2E-04. Его публикация и подтверждения должны произойти во время демонстрации.", requiresAcknowledgement: true, state: "DRAFT", createdAt: new Date("2026-11-01T09:00:00.000+03:00"), publishedAt: null, groups: ["ЦМ-26-1" as GroupCode], roles: ["TEACHER"] },
 ];
-
-function stableId(key: string): string {
-  const hex = createHash("sha256").update(`${SEED_NAMESPACE}:${key}`).digest("hex").slice(0, 32).split("");
-  hex[12] = "5";
-  hex[16] = ((Number.parseInt(hex[16] ?? "0", 16) & 0x3) | 0x8).toString(16);
-  const raw = hex.join("");
-  return `${raw.slice(0, 8)}-${raw.slice(8, 12)}-${raw.slice(12, 16)}-${raw.slice(16, 20)}-${raw.slice(20)}`;
-}
 
 function normalize(value: unknown): string {
   if (value instanceof Date) return `date:${value.toISOString()}`;
@@ -270,16 +264,24 @@ const offerings: OfferingFixture[] = [];
 for (const [courseIndex, course] of courseFixtures.entries()) {
   for (const groupCode of course.groups) {
     const slotIndex = offerings.length;
-    const weekdayOffset = slotIndex < 3 ? 0 : slotIndex < 6 ? 1 : slotIndex < 9 ? 2 : 3;
-    const withinDayIndex = slotIndex < 3 ? slotIndex : slotIndex < 6 ? slotIndex - 3 : slotIndex < 9 ? slotIndex - 6 : slotIndex - 9;
+    const schedule = demoOfferingSchedule(course.key, groupCode);
+    const expectedSchedule = DEMO_OFFERING_SCHEDULE[slotIndex];
+    const assignedTeacher = staffByKey.get(course.teacherKey);
+    if (!expectedSchedule || expectedSchedule.courseKey !== course.key || expectedSchedule.groupCode !== groupCode) {
+      throw new Error(`Demo schedule layout does not match the canonical offering order at ${course.key}:${groupCode}`);
+    }
+    if (!assignedTeacher || schedule.teacherLogin !== assignedTeacher.login || schedule.roomCode !== roomCodes[slotIndex % roomCodes.length]) {
+      throw new Error(`Demo schedule staff/room layout does not match the canonical offering at ${course.key}:${groupCode}`);
+    }
     offerings.push({
       key: `${course.key}:${groupCode}`,
       courseKey: course.key,
       groupCode,
       teacherKey: course.teacherKey,
-      weekdayOffset,
-      startTime: ["19:00", "20:00", "21:00"][withinDayIndex] ?? "19:00",
-      roomCode: roomCodes[slotIndex % roomCodes.length] ?? roomCodes[0] ?? "А-201",
+      weekdayOffset: schedule.weekdayOffset,
+      startTime: schedule.startTime,
+      endTime: schedule.endTime,
+      roomCode: schedule.roomCode,
       courseIndex,
     });
   }
@@ -373,7 +375,7 @@ function buildLessons(): LessonFixture[] {
       if (!calendarDateIsWorking(date)) continue;
       const dateKey = isoDate(date);
       const startsAt = moscowDateTime(dateKey, offering.startTime);
-      const endsAt = new Date(startsAt.getTime() + 60 * 60 * 1000);
+      const endsAt = moscowDateTime(dateKey, offering.endTime);
       const course = courses.get(offering.courseKey);
       const teacher = staffByKey.get(offering.teacherKey);
       if (!course || !teacher) throw new Error(`Schedule fixture is missing ${offering.key}`);
@@ -424,39 +426,30 @@ function buildLessons(): LessonFixture[] {
       weekIndex: 15,
     });
   }
+  for (const row of rows) {
+    const violation = lessonScheduleViolation(row.kind, row.startsAt, row.endsAt);
+    if (violation) throw new Error(`Invalid demo ${row.kind.toLowerCase()} ${row.id}: ${violation}`);
+  }
   assertScheduleHasNoConflicts(rows);
   return rows;
 }
 
 function assertScheduleHasNoConflicts(rows: LessonFixture[]): void {
-  const staffSlots = new Map<string, LessonFixture[]>();
-  const groupSlots = new Map<string, LessonFixture[]>();
-  const roomSlots = new Map<string, LessonFixture[]>();
-  for (const row of rows.filter((lesson) => lesson.state === "SCHEDULED")) {
-    for (const staffId of [row.teacherId, row.examinerId].filter((value): value is string => Boolean(value))) {
-      const list = staffSlots.get(staffId) ?? [];
-      list.push(row);
-      staffSlots.set(staffId, list);
-    }
-    const groupKey = row.groupCode;
-    const groupList = groupSlots.get(groupKey) ?? [];
-    groupList.push(row);
-    groupSlots.set(groupKey, groupList);
-    const roomList = roomSlots.get(row.roomCode) ?? [];
-    roomList.push(row);
-    roomSlots.set(row.roomCode, roomList);
-  }
-  for (const [label, slots] of [["staff", staffSlots], ["group", groupSlots], ["room", roomSlots]] as const) {
-    for (const [key, lessons] of slots) {
-      lessons.sort((left, right) => left.startsAt.getTime() - right.startsAt.getTime());
-      for (let index = 1; index < lessons.length; index += 1) {
-        const previous = lessons[index - 1];
-        const current = lessons[index];
-        if (previous && current && previous.endsAt > current.startsAt) {
-          throw new Error(`Schedule fixture conflict for ${label} ${key}: ${previous.id} overlaps ${current.id}`);
-        }
-      }
-    }
+  const conflicts = findScheduleConflicts(rows.map((row) => ({
+    id: row.id,
+    kind: row.kind,
+    state: row.state,
+    startsAt: row.startsAt,
+    endsAt: row.endsAt,
+    groupId: groups.get(row.groupCode)?.id ?? stableId(`group:${row.groupCode}`),
+    roomId: stableId(`room:${row.roomCode}`),
+    teacherId: row.teacherId,
+    substituteId: null,
+    examinerId: row.examinerId,
+  })));
+  if (conflicts.length > 0) {
+    const conflict = conflicts[0];
+    throw new Error(`Schedule fixture conflict for ${conflict?.resource} ${conflict?.resourceId}: ${conflict?.lessonIds.join(" overlaps ")}`);
   }
 }
 
@@ -643,8 +636,8 @@ async function runSeed(tx: Prisma.TransactionClient, passwords: Map<string, stri
     state: lesson.state,
     version: 1,
   }));
-  await ensureMany("Lesson", tx.lesson, lessonRows, ["teacherId", "examinerId", "substituteId", "roomId", "title", "format", "startsAt", "endsAt", "state", "version"]);
-  const scheduleVersionRows: SeedRow[] = lessons.map((lesson) => ({
+  const newLessonIds = await ensureMany("Lesson", tx.lesson, lessonRows, ["teacherId", "examinerId", "substituteId", "roomId", "title", "format", "startsAt", "endsAt", "state", "version"]);
+  const scheduleVersionRows: SeedRow[] = lessons.filter((lesson) => newLessonIds.has(lesson.id)).map((lesson) => ({
     id: stableId(`lesson-schedule-version:${lesson.id}:1`),
     lessonId: lesson.id,
     version: 1,

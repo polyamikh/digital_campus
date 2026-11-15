@@ -110,7 +110,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--color-cyan); ou
 .demo-status-mark { width: 6px; height: 6px; flex: 0 0 auto; border-radius: 50%; background: #ffc857; box-shadow: 0 0 8px rgba(255, 200, 87, .6); }
 .student-home-grid { display: grid; grid-template-columns: minmax(245px, .87fr) minmax(0, 1.45fr); grid-template-areas: "calendar schedule" "ai schedule" "widgets widgets"; align-items: stretch; gap: 14px; }
 .home-calendar, .home-schedule, .campus-ai, .mini-widget { position: relative; min-width: 0; overflow: hidden; border: 1px solid rgba(95, 112, 189, .36); border-radius: 12px; background: linear-gradient(145deg, rgba(22, 30, 72, .98), rgba(12, 18, 49, .97)); box-shadow: inset 0 1px rgba(255, 255, 255, .035), 0 11px 30px rgba(3, 6, 24, .16); }
-.home-calendar { grid-area: calendar; min-height: 207px; padding: 13px 15px 11px; background: radial-gradient(ellipse at 0 0, rgba(123, 97, 255, .2), transparent 58%), linear-gradient(145deg, #1b2055, #11173e 72%); }
+.home-calendar { grid-area: calendar; min-height: 188px; padding: 13px 15px 11px; background: radial-gradient(ellipse at 0 0, rgba(123, 97, 255, .2), transparent 58%), linear-gradient(145deg, #1b2055, #11173e 72%); }
 .home-calendar::after { position: absolute; top: 0; left: 20px; width: 64px; height: 1px; background: var(--color-violet); box-shadow: 0 0 9px var(--color-violet); content: ""; }
 .calendar-heading, .home-section-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .home-eyebrow { color: #9ba7cc; font-size: 8px; font-weight: 700; letter-spacing: .14em; }
@@ -121,19 +121,22 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--color-cyan); ou
 .calendar-date > span:not(.calendar-loading) { color: #d2d7f1; font-size: 12px; text-transform: capitalize; }
 .calendar-loading { color: #9aa4c4; font-size: 11px; }
 .calendar-week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
-.calendar-day { position: relative; display: flex; min-width: 0; height: 46px; flex-direction: column; align-items: center; justify-content: center; gap: 3px; border: 1px solid transparent; border-radius: 8px; color: #aeb8d2; }
+.calendar-day { position: relative; display: flex; min-width: 0; height: 46px; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 0; appearance: none; border: 1px solid transparent; border-radius: 8px; background: transparent; color: #aeb8d2; font: inherit; cursor: pointer; transition: border-color .16s ease, background .16s ease, box-shadow .16s ease, transform .16s ease; }
+.calendar-day:hover:not(:disabled) { border-color: rgba(43, 231, 255, .42); background: rgba(43, 231, 255, .07); }
+.calendar-day:focus-visible { z-index: 2; outline: 2px solid var(--color-pink); outline-offset: 2px; }
+.calendar-day:disabled { cursor: default; }
 .calendar-day > span { font-size: 8px; font-weight: 700; }
 .calendar-day > strong { color: #e5e9fa; font-size: 11px; font-weight: 650; }
 .calendar-day.is-today { z-index: 1; transform: translateY(-1px); border-color: rgba(43, 231, 255, .66); background: linear-gradient(180deg, rgba(43, 231, 255, .25), rgba(43, 231, 255, .08)); box-shadow: 0 0 17px rgba(43, 231, 255, .2), inset 0 0 12px rgba(43, 231, 255, .1); color: #fff; }
 .calendar-day.is-today > strong { color: #70f1ff; font-weight: 800; text-shadow: 0 0 9px rgba(43, 231, 255, .6); }
-.calendar-day.is-today > .calendar-event-markers { display: flex; height: 4px; align-items: center; gap: 3px; }
+.calendar-day.is-selected { z-index: 1; border-color: rgba(255, 45, 156, .82); background: linear-gradient(180deg, rgba(255, 45, 156, .2), rgba(123, 97, 255, .12)); box-shadow: 0 0 15px rgba(255, 45, 156, .16), inset 0 0 10px rgba(255, 45, 156, .08); color: #fff; }
+.calendar-day.is-selected > strong { color: #ffd2e9; text-shadow: 0 0 9px rgba(255, 45, 156, .45); }
+.calendar-day.is-today.is-selected { border-color: rgba(43, 231, 255, .9); background: linear-gradient(145deg, rgba(43, 231, 255, .18), rgba(255, 45, 156, .15)); box-shadow: 0 0 17px rgba(43, 231, 255, .2), inset 0 0 11px rgba(255, 45, 156, .1); }
+.calendar-event-markers { display: flex; height: 4px; align-items: center; gap: 3px; }
 .calendar-event-markers i { width: 4px; height: 4px; border-radius: 50%; }
-.event-marker-cyan { background: var(--color-cyan); box-shadow: 0 0 6px rgba(43, 231, 255, .75); }
-.event-marker-violet { background: #a995ff; box-shadow: 0 0 6px rgba(123, 97, 255, .85); }
-.event-marker-pink { background: #ff70bb; box-shadow: 0 0 6px rgba(255, 45, 156, .8); }
-.calendar-foot { display: flex; align-items: center; gap: 7px; margin-top: 7px; color: #b0bad3; font-size: 9px; }
-.calendar-foot > i { width: 2px; height: 2px; border-radius: 50%; background: #7581a2; }
-.calendar-live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--color-cyan); box-shadow: 0 0 7px var(--color-cyan); }
+.event-marker-0 { background: var(--color-cyan); box-shadow: 0 0 6px rgba(43, 231, 255, .75); }
+.event-marker-1 { background: #a995ff; box-shadow: 0 0 6px rgba(123, 97, 255, .85); }
+.event-marker-2 { background: #ff70bb; box-shadow: 0 0 6px rgba(255, 45, 156, .8); }
 .home-schedule { grid-area: schedule; min-height: 370px; padding: 15px 17px 11px; background: radial-gradient(ellipse at 100% 0, rgba(43, 231, 255, .1), transparent 42%), linear-gradient(145deg, rgba(19, 26, 63, .98), rgba(11, 17, 46, .99)); }
 .home-section-title { padding-bottom: 10px; border-bottom: 1px solid rgba(112, 128, 201, .24); }
 .home-section-marker { padding: 5px 7px; border: 1px solid rgba(255, 200, 87, .3); border-radius: 6px; background: rgba(255, 200, 87, .07); color: #f0d78f; font-size: 8px; font-weight: 700; letter-spacing: .08em; }
@@ -155,7 +158,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--color-cyan); ou
 .home-lesson-details p { display: flex; flex-wrap: wrap; gap: 5px; margin: 0; color: #c0c9df; font-size: 9px; line-height: 1.35; }
 .home-lesson-details p span { color: var(--lesson-color); }
 .lesson-corner { position: absolute; top: 0; right: 0; width: 28px; height: 28px; border-top: 1px solid color-mix(in srgb, var(--lesson-color), transparent 40%); border-right: 1px solid color-mix(in srgb, var(--lesson-color), transparent 40%); opacity: .65; }
-.schedule-disclaimer { margin: 8px 0 0; color: #a1acc8; font-size: 9px; line-height: 1.45; }
+.schedule-empty { margin: 9px 0 3px; padding: 14px 13px; border: 1px dashed rgba(112, 128, 201, .34); border-radius: 9px; background: rgba(11, 15, 43, .32); color: #c0c9df; font-size: 11px; line-height: 1.5; }
+.schedule-data-warning { margin: 0 0 9px; padding: 9px 11px; border: 1px solid rgba(255, 200, 87, .43); border-radius: 8px; background: rgba(255, 200, 87, .08); color: #ffe3a0; font-size: 10px; line-height: 1.45; }
 .campus-ai { grid-area: ai; display: flex; min-height: 164px; align-items: center; gap: 14px; padding: 14px; border-color: rgba(255, 45, 156, .43); background: radial-gradient(ellipse at 12% 50%, rgba(255, 45, 156, .22), transparent 43%), radial-gradient(ellipse at 100% 0, rgba(43, 231, 255, .1), transparent 48%), linear-gradient(135deg, #25164f, #111536 74%); }
 .campus-ai::before { position: absolute; top: 0; right: 14px; left: 14px; height: 1px; background: linear-gradient(90deg, transparent, var(--color-pink), transparent); opacity: .8; content: ""; }
 .ai-art { position: relative; display: grid; width: 86px; height: 86px; flex: 0 0 auto; place-items: center; border: 1px solid rgba(123, 97, 255, .42); border-radius: 50%; background: radial-gradient(circle, rgba(43, 231, 255, .2), rgba(123, 97, 255, .16) 45%, rgba(255, 45, 156, .05) 68%, transparent 72%); box-shadow: 0 0 22px rgba(123, 97, 255, .2), inset 0 0 18px rgba(43, 231, 255, .08); }
@@ -272,7 +276,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--color-cyan); ou
   .hero-copy { grid-column: 2; grid-row: 2; font-size: clamp(11px, 3.2vw, 13px); line-height: 1.5; }
   .demo-status-line { align-items: flex-start; margin: 11px 1px; font-size: 9px; }
   .student-home-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "calendar" "schedule" "ai" "widgets"; gap: 10px; }
-  .home-calendar { min-height: 204px; }
+  .home-calendar { min-height: 188px; }
   .home-schedule { min-height: unset; padding: 16px 14px 12px; }
   .home-lesson { min-height: 100px; grid-template-columns: 53px 2px minmax(0, 1fr); gap: 11px; }
   .home-lesson-details h3 { font-size: 12px; }

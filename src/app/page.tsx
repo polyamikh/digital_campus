@@ -4,6 +4,7 @@ import { Role } from "@/generated/prisma/enums";
 import { currentUser } from "@/lib/auth/session";
 import { homePathForRole } from "@/lib/auth/role-routes";
 import { prisma } from "@/lib/prisma";
+import { getStudentHomeSchedule } from "@/lib/schedule/student-home-schedule";
 import LogoutButton from "./logout-button";
 import StudentHomeContent from "./student-home-content";
 import AuthRouteFallback from "./auth-route-fallback";
@@ -42,22 +43,23 @@ async function AuthenticatedStudentHome() {
   if (!user) redirect("/login");
   if (user.activeRole !== Role.STUDENT) redirect(homePathForRole(user.activeRole));
 
-  const identity = await prisma.user.findUnique({
-    where: { id: user.id },
-    select: {
-      login: true,
-      profile: { select: { displayName: true } },
-      memberships: {
-        where: { endsAt: null },
-        select: { group: { select: { code: true } } },
-        take: 1,
-      },
-    },
-  });
+  const [identity, schedule] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: user.id },
+      select: { login: true, profile: { select: { displayName: true } } },
+    }),
+    getStudentHomeSchedule(user.id),
+  ]);
   const displayName = identity?.profile?.displayName || identity?.login || user.login;
   const firstName = displayName.trim().split(/\s+/)[0] || displayName;
   const initials = displayName.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toLocaleUpperCase("ru-RU");
-  const groupCode = identity?.memberships[0]?.group.code;
+  const groupCode = schedule.groupCode;
+  const studentSchedule = {
+    todayDate: schedule.todayDate,
+    lessons: schedule.lessons,
+    timeWindowViolationCount: schedule.timeWindowViolationCount,
+    membershipProblem: schedule.membershipProblem,
+  };
 
   return (
     <div className="app-shell">
@@ -115,7 +117,7 @@ async function AuthenticatedStudentHome() {
             <p className="hero-copy">Твой учебный день,<br />задачи и возможности —<br />в одном пространстве</p>
           </section>
 
-          <StudentHomeContent />
+          <StudentHomeContent schedule={studentSchedule} />
         </main>
       </div>
     </div>
