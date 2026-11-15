@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "db:seed": "prisma db seed",
-    "db:update-demo-schedule": "tsx prisma/update-demo-schedule.ts"
+    "db:update-demo-schedule": "tsx prisma/update-demo-schedule.ts",
+    "db:fill-demo-profiles": "tsx prisma/fill-demo-profiles.ts",
+    "db:update-demo-institute": "tsx prisma/update-demo-academic-program.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.1",

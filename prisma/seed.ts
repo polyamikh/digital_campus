@@ -5,6 +5,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { Prisma, PrismaClient } from "../src/generated/prisma/client";
 import { findScheduleConflicts, lessonScheduleViolation } from "../src/lib/schedule/lesson-rules";
 import { DEMO_OFFERING_SCHEDULE, demoOfferingSchedule, stableDemoSeedId as stableId } from "./demo-schedule-layout";
+import { buildDemoProfilePlan, DEMO_ACADEMIC_PROGRAM, DEMO_PROFILE_CREATED_AT } from "./demo-profile-fill-core";
 
 const SEED_CONFIRMATION = "I_CONFIRM_DEMO_DATABASE_SEED";
 const ALLOWED_DATABASES = new Set(["digital_campus", "digital_campus_seed_test"]);
@@ -192,6 +193,50 @@ async function ensureMany(
     if (collision) throw new Error(`${label}: a conflicting unique key prevented fixture ${collision}; no existing data was overwritten`);
   }
   return new Set(missing.map((row) => row.id));
+}
+
+async function readDemoProfilePlan(tx: Prisma.TransactionClient) {
+  const ids = students.map((student) => student.id);
+  const groupIds = groupOrder.map((code) => stableId(`group:${code}`));
+  const [programRows, groupRows, profileRows] = await Promise.all([
+    tx.$queryRaw<Array<typeof DEMO_ACADEMIC_PROGRAM>>`SELECT "id", "code", "name", "instituteName", "facultyName", "directionName", "studyMode"
+      FROM "AcademicProgram" WHERE "id" = ${DEMO_ACADEMIC_PROGRAM.id}::uuid`,
+    tx.$queryRaw<Array<{ id: string; code: string; academicProgramId: string | null }>>`SELECT "id", "code", "academicProgramId"
+      FROM "Group" WHERE "id" IN (${Prisma.join(groupIds.map((id) => Prisma.sql`${id}::uuid`))})`,
+    tx.$queryRaw<Array<{ id: string; userId: string; studentNumber: string | null; admissionYear: number | null; academicStatus: string | null }>>`SELECT "id", "userId", "studentNumber", "admissionYear", "academicStatus"
+      FROM "StudentAcademicProfile" WHERE "userId" IN (${Prisma.join(ids.map((id) => Prisma.sql`${id}::uuid`))})`,
+  ]);
+  return buildDemoProfilePlan({
+    students: students.map((student) => ({ id: student.id, login: student.login, groupId: stableId(`group:${student.groupCode}`), groupCode: student.groupCode })),
+    existingProfiles: profileRows,
+    existingProgram: programRows[0] ?? null,
+    groups: groupRows,
+    at: DEMO_PROFILE_CREATED_AT,
+  });
+}
+
+async function ensureDemoAcademicData(tx: Prisma.TransactionClient): Promise<void> {
+  const plan = await readDemoProfilePlan(tx);
+  if (plan.program === "create") {
+    await tx.$executeRaw(Prisma.sql`INSERT INTO "AcademicProgram"
+      ("id", "code", "name", "instituteName", "facultyName", "directionName", "studyMode")
+      VALUES (${DEMO_ACADEMIC_PROGRAM.id}::uuid, ${DEMO_ACADEMIC_PROGRAM.code}, ${DEMO_ACADEMIC_PROGRAM.name}, ${DEMO_ACADEMIC_PROGRAM.instituteName}, ${DEMO_ACADEMIC_PROGRAM.facultyName}, ${DEMO_ACADEMIC_PROGRAM.directionName}, ${DEMO_ACADEMIC_PROGRAM.studyMode})
+      ON CONFLICT DO NOTHING`);
+  }
+  if (plan.profilesToCreate.length) {
+    await tx.$executeRaw(Prisma.sql`INSERT INTO "StudentAcademicProfile"
+      ("id", "userId", "studentNumber", "admissionYear", "academicStatus", "createdAt", "updatedAt")
+      VALUES ${Prisma.join(plan.profilesToCreate.map((row) => Prisma.sql`(${row.id}::uuid, ${row.userId}::uuid, ${row.studentNumber}, ${row.admissionYear}, ${row.academicStatus}, ${row.createdAt}, ${row.updatedAt})`))}
+      ON CONFLICT DO NOTHING`);
+  }
+  for (const groupId of plan.groupsToLink) {
+    await tx.$executeRaw`UPDATE "Group" SET "academicProgramId" = ${DEMO_ACADEMIC_PROGRAM.id}::uuid
+      WHERE "id" = ${groupId}::uuid AND "academicProgramId" IS NULL`;
+  }
+  const verified = await readDemoProfilePlan(tx);
+  if (verified.program !== "keep" || verified.groupsToLink.length || verified.profilesToCreate.length) {
+    throw new Error("Demo academic profile fixtures were not created consistently; transaction rolled back.");
+  }
 }
 
 function requireLocalDemoDatabase(): { connectionString: string; databaseName: string } {
@@ -561,6 +606,7 @@ async function runSeed(tx: Prisma.TransactionClient, passwords: Map<string, stri
   await ensureMany("Group", tx.group, groupRows);
   const membershipRows: SeedRow[] = students.map((student) => ({ id: stableId(`membership:${student.groupCode}:${student.login}`), groupId: groups.get(student.groupCode)?.id, studentId: student.id, startsAt: SEMESTER_START, endsAt: null }));
   await ensureMany("GroupMembership", tx.groupMembership, membershipRows, ["startsAt", "endsAt"]);
+  await ensureDemoAcademicData(tx);
 
   const subjectRows: SeedRow[] = courseFixtures.map((course) => ({ id: stableId(`subject:${course.key}`), code: `SUB-${course.code}`, name: course.name }));
   await ensureMany("Subject", tx.subject, subjectRows);

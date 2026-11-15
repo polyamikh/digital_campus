@@ -36,6 +36,9 @@ yarn-error.log*
 # generated Prisma Client
 /src/generated/prisma/
 
+# Private student profile uploads (never served as static files)
+/.private-data/
+
 # vercel
 .vercel
 

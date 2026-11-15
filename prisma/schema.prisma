@@ -225,6 +225,7 @@ model User {
   updatedAt       DateTime     @updatedAt @db.Timestamptz(6)
   version         Int          @default(1)
   profile         UserProfile?
+  studentAcademicProfile StudentAcademicProfile?
   roles           UserRole[]
   sessions        Session[]
   memberships     GroupMembership[]
@@ -296,6 +297,21 @@ model UserProfile {
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+// Individual student identity and academic standing. Program attributes live
+// on AcademicProgram and are linked through Group to avoid per-student copies.
+model StudentAcademicProfile {
+  id             String   @id @default(uuid()) @db.Uuid
+  userId         String   @unique @db.Uuid
+  studentNumber  String?  @unique @db.VarChar(80)
+  admissionYear  Int?
+  academicStatus String?  @db.VarChar(80)
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  student        User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([admissionYear])
+}
+
 model UserRole {
   id        String   @id @default(uuid()) @db.Uuid
   userId    String   @db.Uuid
@@ -339,15 +355,32 @@ model AccountActivation {
 }
 
 model Group {
-  id          String   @id @default(uuid()) @db.Uuid
-  code        String   @unique @db.VarChar(40)
-  name        String   @db.VarChar(160)
-  memberships GroupMembership[]
-  assignments TeacherAssignment[]
-  courseLinks CourseGroup[]
-  lessons     Lesson[]
-  assessments Assessment[]
-  requests    GroupAnnouncementAudience[]
+  id                String           @id @default(uuid()) @db.Uuid
+  code              String           @unique @db.VarChar(40)
+  name              String           @db.VarChar(160)
+  academicProgramId String?          @db.Uuid
+  academicProgram   AcademicProgram? @relation(fields: [academicProgramId], references: [id], onDelete: Restrict)
+  memberships       GroupMembership[]
+  assignments       TeacherAssignment[]
+  courseLinks       CourseGroup[]
+  lessons           Lesson[]
+  assessments       Assessment[]
+  requests          GroupAnnouncementAudience[]
+
+  @@index([academicProgramId])
+}
+
+// Institute, faculty, direction, program and mode belong to the shared
+// educational program, not to each student's profile.
+model AcademicProgram {
+  id              String  @id @default(uuid()) @db.Uuid
+  code            String? @unique @db.VarChar(80)
+  name            String? @db.VarChar(200)
+  instituteName   String? @db.VarChar(200)
+  facultyName     String? @db.VarChar(200)
+  directionName   String? @db.VarChar(200)
+  studyMode       String? @db.VarChar(80)
+  groups          Group[]
 }
 
 model GroupMembership {
