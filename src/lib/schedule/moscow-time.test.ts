@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { getMoscowDayBounds, getMoscowWeekBounds, moscowDateKey, moscowTime } from "./moscow-time";
 import { isLessonScheduleValid } from "./lesson-rules";
-import { studentLessonWhere } from "./schedule-query";
+import { activeMembershipWhere, studentLessonWhere } from "./schedule-query";
 import { lessonCountsByMoscowDate, lessonsOnMoscowDate } from "./schedule-view";
 
 test("Moscow midnight and week boundaries use local calendar dates", () => {
@@ -36,6 +36,16 @@ test("students in different groups receive distinct group-scoped official schedu
   assert.notDeepEqual(where, otherStudentWhere);
   assert.deepEqual(where.startsAt, { gte: new Date("2026-11-08T21:00:00Z"), lt: new Date("2026-11-15T21:00:00Z") });
   assert.deepEqual(where.state.in, ["SCHEDULED", "COMPLETED"]);
+});
+
+test("active group membership lookup is scoped to the authenticated user and current instant", () => {
+  const now = new Date("2026-11-09T10:00:00.000Z");
+  const where = activeMembershipWhere("authenticated-student", now);
+  assert.equal(where.studentId, "authenticated-student");
+  assert.deepEqual(where.AND, [
+    { OR: [{ startsAt: null }, { startsAt: { lte: now } }] },
+    { OR: [{ endsAt: null }, { endsAt: { gt: now } }] },
+  ]);
 });
 
 test("empty days and weeks have no lesson markers", () => {

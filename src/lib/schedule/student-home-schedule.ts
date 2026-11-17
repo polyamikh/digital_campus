@@ -24,7 +24,7 @@ export type StudentHomeSchedule = {
   membershipProblem: "missing" | "ambiguous" | null;
 };
 
-export async function getStudentHomeSchedule(studentId: string, now = new Date()): Promise<StudentHomeSchedule> {
+export async function getStudentScheduleForWeek(studentId: string, weekContaining: Date, now = new Date()): Promise<StudentHomeSchedule> {
   const memberships = await prisma.groupMembership.findMany({
     where: activeMembershipWhere(studentId, now),
     select: { groupId: true, group: { select: { code: true } } },
@@ -41,7 +41,7 @@ export async function getStudentHomeSchedule(studentId: string, now = new Date()
     };
   }
 
-  const range = getMoscowWeekBounds(now);
+  const range = getMoscowWeekBounds(weekContaining);
   const rows = await prisma.lesson.findMany({
     where: studentLessonWhere(memberships[0].groupId, range.start, range.end),
     orderBy: { startsAt: "asc" },
@@ -80,4 +80,8 @@ export async function getStudentHomeSchedule(studentId: string, now = new Date()
     timeWindowViolationCount: rows.filter((lesson) => !isLessonScheduleValid(lesson.kind, lesson.startsAt, lesson.endsAt)).length,
     membershipProblem: null,
   };
+}
+
+export function getStudentHomeSchedule(studentId: string, now = new Date()): Promise<StudentHomeSchedule> {
+  return getStudentScheduleForWeek(studentId, now, now);
 }

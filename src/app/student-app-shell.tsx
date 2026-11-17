@@ -6,7 +6,7 @@ import LogoutButton from "./logout-button";
 const navigation = [
   { label: "Главная", icon: "⌂", href: "/", section: "home", available: true },
   { label: "Мой профиль", icon: "◉", href: "/profile", section: "profile", available: true },
-  { label: "Расписание", icon: "▦", section: "schedule" },
+  { label: "Расписание", icon: "▦", href: "/schedule", section: "schedule", available: true },
   { label: "Успеваемость", icon: "▥", section: "grades" },
   { label: "Заявки и справки", icon: "▤", section: "requests" },
   { label: "Уведомления", icon: "♧", section: "notifications" },
@@ -38,11 +38,11 @@ export default function StudentAppShell({
   displayName: string;
   groupCode: string | null;
   photoVersion?: number | null;
-  activeSection: "home" | "profile";
+  activeSection: "home" | "profile" | "schedule";
   children: ReactNode;
 }) {
   const initials = initialsFor(displayName);
-  const sectionTitle = activeSection === "profile" ? "Мой профиль" : "Главная";
+  const sectionTitle = activeSection === "profile" ? "Мой профиль" : activeSection === "schedule" ? "Расписание" : "Главная";
 
   return (
     <div className="app-shell">
