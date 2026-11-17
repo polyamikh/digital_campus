@@ -38,6 +38,7 @@ enum ServiceRequestCategory {
   GRADE_TRANSCRIPT
   ACADEMIC_QUESTION
   PERSONAL_DATA_CORRECTION
+  OTHER
 }
 
 // Legacy broad request kind retained for existing-column compatibility.

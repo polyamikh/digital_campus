@@ -8,7 +8,7 @@ const navigation = [
   { label: "Мой профиль", icon: "◉", href: "/profile", section: "profile", available: true },
   { label: "Расписание", icon: "▦", href: "/schedule", section: "schedule", available: true },
   { label: "Успеваемость", icon: "▥", href: "/grades", section: "grades", available: true },
-  { label: "Заявки и справки", icon: "▤", section: "requests" },
+  { label: "Заявки и справки", icon: "▤", href: "/requests", section: "requests", available: true },
   { label: "Уведомления", icon: "♧", section: "notifications" },
   { label: "Календарь задач", icon: "▣", section: "tasks" },
   { label: "Тестирование", icon: "✓", section: "testing" },
@@ -38,11 +38,11 @@ export default function StudentAppShell({
   displayName: string;
   groupCode: string | null;
   photoVersion?: number | null;
-  activeSection: "home" | "profile" | "schedule" | "grades";
+  activeSection: "home" | "profile" | "schedule" | "grades" | "requests";
   children: ReactNode;
 }) {
   const initials = initialsFor(displayName);
-  const sectionTitle = activeSection === "profile" ? "Мой профиль" : activeSection === "schedule" ? "Расписание" : activeSection === "grades" ? "Успеваемость" : "Главная";
+  const sectionTitle = activeSection === "profile" ? "Мой профиль" : activeSection === "schedule" ? "Расписание" : activeSection === "grades" ? "Успеваемость" : activeSection === "requests" ? "Заявки и справки" : "Главная";
 
   return (
     <div className="app-shell">
