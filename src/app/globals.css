@@ -511,3 +511,84 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--color-cyan); ou
   .schedule-week-day-lessons { grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); padding: 8px; }
   .schedule-day-empty { padding: 3px 5px; text-align: left; }
 }
+
+.grades-page-heading { margin-bottom: 16px; }
+.grades-semester-switcher { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; padding: 6px; width: fit-content; max-width: 100%; border: 1px solid rgba(80, 99, 177, .38); border-radius: 12px; background: rgba(9, 14, 41, .68); }
+.grades-semester-option { display: inline-flex; min-height: 40px; align-items: center; justify-content: center; padding: 8px 14px; border: 1px solid transparent; border-radius: 8px; color: #c1cbe3; font-size: 12px; font-weight: 700; line-height: 1.35; text-align: center; text-decoration: none; transition: color .16s ease, background .16s ease, border-color .16s ease; }
+.grades-semester-option:hover { border-color: rgba(43, 231, 255, .3); color: #f4f5ff; }
+.grades-semester-option:focus-visible { outline: 2px solid var(--color-cyan); outline-offset: 2px; }
+.grades-semester-option.is-selected { border-color: rgba(255, 45, 156, .42); background: linear-gradient(110deg, rgba(255, 45, 156, .17), rgba(123, 97, 255, .15)); color: #fff; box-shadow: 0 0 16px rgba(255, 45, 156, .08); }
+.grades-layout { display: grid; grid-template-columns: minmax(220px, .72fr) minmax(0, 1.65fr); gap: 15px; align-items: start; }
+.grades-course-list, .grades-detail { min-width: 0; overflow: hidden; border: 1px solid rgba(80, 99, 177, .38); border-radius: 14px; background: linear-gradient(145deg, rgba(22, 30, 70, .96), rgba(13, 19, 52, .98)); box-shadow: 0 14px 36px rgba(3, 6, 24, .16), inset 0 1px rgba(255, 255, 255, .025); }
+.grades-section-heading, .grades-debts-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 17px 18px 14px; border-bottom: 1px solid rgba(80, 99, 177, .26); }
+.grades-section-heading h2, .grades-debts-heading h3 { margin: 5px 0 0; color: #f4f5ff; font: 400 17px/1.2 var(--font-display); }
+.grades-count { display: inline-grid; min-width: 27px; height: 27px; padding: 0 7px; place-items: center; border: 1px solid rgba(43, 231, 255, .28); border-radius: 14px; background: rgba(43, 231, 255, .08); color: #c4f9ff; font-size: 11px; font-weight: 750; }
+.grades-course-options { display: grid; gap: 7px; padding: 10px; }
+.grades-course-option { display: grid; min-width: 0; gap: 9px; padding: 12px; border: 1px solid rgba(92, 108, 176, .25); border-radius: 9px; background: rgba(7, 12, 37, .42); color: #e8ecff; text-align: left; cursor: pointer; transition: background .16s ease, border-color .16s ease, transform .16s ease; }
+.grades-course-option:hover { border-color: rgba(43, 231, 255, .48); background: rgba(43, 231, 255, .055); transform: translateY(-1px); }
+.grades-course-option:focus-visible { outline: 2px solid var(--color-cyan); outline-offset: 2px; }
+.grades-course-option.is-selected { border-color: rgba(43, 231, 255, .62); background: linear-gradient(110deg, rgba(43, 231, 255, .1), rgba(123, 97, 255, .08)); box-shadow: inset 2px 0 #2be7ff, 0 0 20px rgba(43, 231, 255, .055); }
+.grades-course-option-top, .grades-course-option-score { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 9px; }
+.grades-course-option-top strong { overflow-wrap: anywhere; font-size: 12px; line-height: 1.35; }
+.grades-course-option-top i { flex: 0 0 auto; color: var(--color-cyan); font-size: 11px; font-style: normal; }
+.grades-course-option-score strong { color: #fff; font: 400 15px/1.2 var(--font-display); white-space: nowrap; }
+.grades-course-option-score small { color: #aeb8d6; font: 600 10px/1 var(--font-body); }
+.grades-course-option-score > span { color: #ff9bca; font-size: 11px; font-weight: 750; white-space: nowrap; }
+.grades-course-option-state { color: #aeb8d6; font-size: 10px; line-height: 1.4; }
+.grades-detail-heading { display: flex; min-width: 0; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 19px 21px 15px; border-bottom: 1px solid rgba(80, 99, 177, .28); background: radial-gradient(ellipse at 95% 0, rgba(123, 97, 255, .12), transparent 40%); }
+.grades-detail-heading h2 { margin: 6px 0 0; color: #f7f5ff; font: 400 clamp(18px, 2vw, 23px)/1.2 var(--font-display); overflow-wrap: anywhere; }
+.grades-state-badge { display: inline-flex; max-width: 100%; align-items: center; padding: 6px 9px; border: 1px solid rgba(43, 231, 255, .28); border-radius: 20px; background: rgba(43, 231, 255, .07); color: #c5f8ff; font-size: 9px; font-weight: 700; line-height: 1.35; }
+.grades-state-badge.state-AWAITING_PUBLICATION, .grades-state-badge.state-PARTIAL { border-color: rgba(255, 200, 87, .35); background: rgba(255, 200, 87, .07); color: #ffe3a4; }
+.grades-state-badge.state-NO_GRADES, .grades-state-badge.state-NO_PUBLISHED_STRUCTURE { border-color: rgba(142, 156, 197, .28); background: rgba(142, 156, 197, .06); color: #c0c8dd; }
+.grades-summary { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 15px; margin: 15px 18px 0; padding: 15px 17px; border: 1px solid rgba(43, 231, 255, .25); border-radius: 11px; background: radial-gradient(ellipse at 100% 0, rgba(255, 45, 156, .1), transparent 45%), linear-gradient(115deg, rgba(43, 231, 255, .07), rgba(123, 97, 255, .09)); }
+.grades-summary-score, .grades-summary-percent { display: grid; gap: 3px; }
+.grades-summary-score strong { color: #fff; font: 400 clamp(23px, 3vw, 31px)/1.05 var(--font-display); }
+.grades-summary-score span, .grades-summary-percent span { color: #bac4df; font-size: 10px; }
+.grades-summary-percent { justify-items: end; text-align: right; }
+.grades-summary-percent strong { color: #ff91c3; font: 400 clamp(20px, 2.5vw, 26px)/1.05 var(--font-display); text-shadow: 0 0 13px rgba(255, 45, 156, .17); }
+.grades-summary-note { margin: 9px 19px 0; color: #aab5d3; font-size: 10px; line-height: 1.5; }
+.grades-no-result-summary { margin: 15px 18px 0; padding: 14px 16px; border: 1px dashed rgba(112, 128, 201, .35); border-radius: 9px; background: rgba(7, 12, 37, .36); color: #c1cbe3; font-size: 10px; line-height: 1.5; }
+.grades-pending-note { margin: 12px 18px 0; padding: 9px 11px; border-left: 2px solid #ffc857; border-radius: 0 7px 7px 0; background: rgba(255, 200, 87, .055); color: #f1d99e; font-size: 10px; line-height: 1.45; }
+.grades-components { display: grid; gap: 9px; padding: 18px; }
+.grades-components > h3 { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 2px; color: #f0f2ff; font-size: 13px; }
+.grades-components > h3 span { color: #929fc4; font-size: 9px; font-weight: 600; }
+.grades-component { min-width: 0; padding: 12px; border: 1px solid rgba(83, 99, 165, .28); border-radius: 9px; background: linear-gradient(135deg, rgba(9, 15, 43, .68), rgba(20, 27, 63, .62)); }
+.grades-component-heading { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 12px; }
+.grades-component-heading h4 { margin: 0 0 4px; color: #edf0ff; font-size: 11px; line-height: 1.4; overflow-wrap: anywhere; }
+.grades-component-heading > div:first-child > span { color: #aab5d3; font-size: 9px; }
+.grades-component-result { display: grid; flex: 0 0 auto; justify-items: end; gap: 2px; }
+.grades-component-result strong { color: #9af4ff; font: 400 18px/1 var(--font-display); }
+.grades-component-result span { color: #aab5d3; font-size: 8px; }
+.grades-component-unscored { max-width: 145px; color: #929db9; font-size: 9px; line-height: 1.4; text-align: right; }
+.grades-component-average { margin: 9px 0 0; color: #b9c3de; font-size: 9px; }
+.grades-work-list { display: grid; gap: 0; margin: 9px 0 0; padding: 0; list-style: none; border-top: 1px solid rgba(83, 99, 165, .2); }
+.grades-work-list li { display: flex; min-width: 0; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 8px 0 0; color: #c3cbe1; font-size: 9px; line-height: 1.45; }
+.grades-work-list li > span { min-width: 0; overflow-wrap: anywhere; }
+.grades-work-list li > strong { display: flex; flex: 0 0 auto; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 5px; color: #f5f5ff; font-size: 10px; white-space: nowrap; }
+.grades-work-list li > strong em { padding: 3px 6px; border: 1px solid rgba(255, 45, 156, .32); border-radius: 10px; background: rgba(255, 45, 156, .08); color: #ffaad0; font-size: 8px; font-style: normal; }
+.grades-work-list li > small { flex: 0 0 auto; color: #929db9; font-size: 9px; }
+.grades-component-empty { margin: 9px 0 0; color: #939fbe; font-size: 9px; }
+.grades-no-structure { margin: 17px; padding: 19px; border: 1px dashed rgba(112, 128, 201, .35); border-radius: 9px; background: rgba(7, 12, 37, .36); }
+.grades-no-structure strong { color: #e7ebff; font-size: 12px; }
+.grades-no-structure p { margin: 7px 0 0; color: #aab5d3; font-size: 10px; line-height: 1.55; }
+.grades-final-status { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin: 0 18px 14px; padding: 12px 13px; border: 1px solid rgba(83, 99, 165, .25); border-radius: 9px; background: rgba(9, 14, 41, .45); }
+.grades-final-status h3, .grades-debts-heading h3 { margin: 4px 0 0; color: #e9edff; font-size: 11px; font-weight: 700; }
+.grades-final-status > p { display: flex; align-items: center; gap: 7px; margin: 0; color: #bfc8df; font-size: 9px; }
+.grades-status-dot { width: 7px; height: 7px; flex: 0 0 auto; border-radius: 50%; background: #7f8aa9; }
+.grades-status-dot.is-closed { background: #36d6b3; box-shadow: 0 0 8px rgba(54, 214, 179, .5); }
+.grades-debts { margin: 0 18px 18px; overflow: hidden; border: 1px solid rgba(83, 99, 165, .25); border-radius: 9px; background: rgba(9, 14, 41, .36); }
+.grades-debts-heading { padding: 11px 12px; }
+.grades-debts-heading .profile-heading-kicker { font-size: 8px; }
+.grades-no-debts { margin: 0; padding: 12px; color: #aeb9d5; font-size: 10px; }
+.grades-debt-list { display: grid; gap: 0; margin: 0; padding: 0 12px; list-style: none; }
+.grades-debt-list li { padding: 10px 0; border-top: 1px solid rgba(83, 99, 165, .18); }
+.grades-debt-list li > span { display: grid; gap: 4px; }
+.grades-debt-list strong { color: #ffc4dc; font-size: 10px; }
+.grades-debt-list small { color: #aeb9d5; font-size: 9px; line-height: 1.4; }
+.grades-empty { padding: 34px clamp(18px, 4vw, 36px); border: 1px solid rgba(80, 99, 177, .38); border-radius: 14px; background: radial-gradient(ellipse at 90% 0, rgba(43, 231, 255, .08), transparent 38%), linear-gradient(145deg, rgba(22, 30, 70, .94), rgba(13, 19, 52, .97)); text-align: center; }
+.grades-empty-mark { display: grid; width: 45px; height: 45px; margin: 0 auto 12px; place-items: center; border: 1px solid rgba(43, 231, 255, .32); border-radius: 50%; color: var(--color-cyan); font: 400 20px/1 var(--font-display); }
+.grades-empty h2 { margin: 0 0 6px; color: #f1f3ff; font: 400 18px/1.25 var(--font-display); }
+.grades-empty p { max-width: 560px; margin: 0 auto; color: #b5c0dc; font-size: 11px; line-height: 1.55; }
+.grades-error .grades-empty-mark { border-color: rgba(255, 100, 124, .4); color: #ff9bad; }
+@media (max-width: 940px) { .grades-layout { grid-template-columns: minmax(0, 1fr); } .grades-course-options { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .grades-semester-switcher { display: grid; width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); } .grades-semester-option { padding: 8px; font-size: 11px; } .grades-course-options { grid-template-columns: minmax(0, 1fr); } .grades-detail-heading { align-items: flex-start; flex-direction: column; padding: 16px; } .grades-summary { margin-right: 12px; margin-left: 12px; padding: 13px; } .grades-components { padding: 13px; } .grades-final-status { align-items: flex-start; flex-direction: column; margin-right: 12px; margin-left: 12px; } .grades-debts { margin-right: 12px; margin-left: 12px; } .grades-work-list li { flex-wrap: wrap; } .grades-work-list li > strong { justify-content: flex-start; } }

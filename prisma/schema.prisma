@@ -433,11 +433,13 @@ model Course {
 }
 
 model CourseGroup {
-  id       String @id @default(uuid()) @db.Uuid
-  courseId String @db.Uuid
-  groupId  String @db.Uuid
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  group    Group  @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  id             String  @id @default(uuid()) @db.Uuid
+  courseId       String  @db.Uuid
+  groupId        String  @db.Uuid
+  academicYear   String? @db.VarChar(9)
+  semesterNumber Int?
+  course         Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  group          Group   @relation(fields: [groupId], references: [id], onDelete: Restrict)
 
   @@unique([courseId, groupId])
   @@index([groupId])

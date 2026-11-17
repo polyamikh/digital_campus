@@ -11,6 +11,7 @@
     "db:update-demo-schedule": "tsx prisma/update-demo-schedule.ts",
     "db:reschedule-demo-classes": "tsx prisma/reschedule-demo-classes.ts",
     "db:update-demo-academic-year": "tsx prisma/apply-demo-academic-year.ts",
+    "db:backfill-course-group-semesters": "tsx prisma/backfill-course-group-semesters.ts",
     "db:fill-demo-profiles": "tsx prisma/fill-demo-profiles.ts",
     "db:update-demo-institute": "tsx prisma/update-demo-academic-program.ts"
   },
