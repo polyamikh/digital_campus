@@ -1,8 +1,10 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { createServiceRequestAction, getServiceRequestDetailsAction, type CreateServiceRequestState } from "@/app/actions/service-requests";
+import Link from "next/link";
+import { answerServiceClarificationAction, createServiceRequestAction, getServiceRequestDetailsAction, markRequestNotificationReadAction } from "@/app/actions/service-requests";
+import { initialRequestWorkflowActionState, type CreateServiceRequestState } from "@/lib/requests/request-action-state";
 import {
   filterStudentRequests,
   requestCategoryLabel,
@@ -12,6 +14,7 @@ import {
   REQUEST_CATEGORY_LABELS,
   REQUEST_STATE_LABELS,
   type RequestCategoryValue,
+  type RequestNotificationView,
   type RequestStateValue,
   type StudentRequestView,
 } from "@/lib/requests/requests-view-core";
@@ -20,7 +23,7 @@ const initialActionState: CreateServiceRequestState = { error: null, successId: 
 
 type RequestDetailsResult = Awaited<ReturnType<typeof getServiceRequestDetailsAction>>;
 
-export default function RequestsContent({ requests }: { requests: StudentRequestView[] }) {
+export default function RequestsContent({ requests, notifications }: { requests: StudentRequestView[]; notifications: RequestNotificationView[] }) {
   const router = useRouter();
   const [createOpen, setCreateOpen] = useState(false);
   const [newCategory, setNewCategory] = useState<RequestCategoryValue>("STUDY_CERTIFICATE");
@@ -48,6 +51,7 @@ export default function RequestsContent({ requests }: { requests: StudentRequest
 
   return (
     <div className="requests-page-content">
+      <RequestNotifications notifications={notifications} />
       <div className="requests-summary-grid" aria-label="Сводка заявок">
         <SummaryCard label="Активные" count={summary.active} tone="cyan" />
         <SummaryCard label="Выполненные" count={summary.completed} tone="success" />
@@ -102,7 +106,7 @@ export default function RequestsContent({ requests }: { requests: StudentRequest
             {visibleRequests.map((request) => {
               const expanded = selectedId === request.id;
               return (
-                <article className={`request-row${expanded ? " is-expanded" : ""}`} key={request.id}>
+                <article className={`request-row${expanded ? " is-expanded" : ""}`} id={`request-${request.id}`} key={request.id}>
                   <button
                     className="request-row-trigger"
                     type="button"
@@ -116,7 +120,7 @@ export default function RequestsContent({ requests }: { requests: StudentRequest
                     </span>
                     <span className="request-row-meta">
                       <span className={`request-status request-status-${request.state.toLowerCase()}`}>{requestStateLabel(request.state)}</span>
-                      <span className="request-deadline">{request.deadlineAt ? `Срок · ${formatRequestDate(request.deadlineAt)}` : "Срок не указан"}</span>
+                      <span className="request-deadline">{request.state === "CLARIFICATION_REQUESTED" ? "Срок приостановлен до ответа" : request.deadlineAt ? `Срок · ${formatRequestDate(request.deadlineAt)}` : "Срок не указан"}</span>
                     </span>
                   </button>
                   {expanded ? <RequestDetailsPanel result={details} loading={detailsLoading} /> : null}
@@ -199,8 +203,11 @@ function RequestDetailsPanel({ result, loading }: { result: RequestDetailsResult
 
   return (
     <div className="request-details-panel">
-      <p className="request-details-body">{request.body}</p>
       {request.rejectionReason ? <p className="request-rejection-reason"><strong>Причина отказа:</strong> {request.rejectionReason}</p> : null}
+      {request.resolution ? <section className="request-resolution"><strong>Решение деканата</strong><p>{request.resolution}</p></section> : null}
+      {request.documents.length ? <section className="request-document-list" aria-label="Документы по заявке"><h3>Готовые документы</h3>{request.documents.map((document) => <a className="request-document-link" key={document.id} href={`/api/requests/documents/${document.id}`}><span aria-hidden="true">PDF</span><span><strong>{document.fileName}</strong><small>{formatBytes(Number(document.byteSize))}{document.issuedAt ? ` · ${formatRequestDate(document.issuedAt)}` : ""}</small></span><span aria-hidden="true">↓</span></a>)}</section> : null}
+      {request.clarifications?.length ? <section className="request-clarification-list"><h3>Уточнения</h3>{request.clarifications.map((clarification) => <article key={clarification.id} className="request-clarification-entry"><p><strong>Вопрос деканата</strong><small>{formatRequestDateTime(clarification.requestedAt)}</small>{clarification.question}</p>{clarification.answer ? <p><strong>Ваш ответ</strong><small>{clarification.answeredAt ? formatRequestDateTime(clarification.answeredAt) : ""}</small>{clarification.answer}</p> : request.state === "CLARIFICATION_REQUESTED" ? <ClarificationAnswerForm requestId={request.id} clarificationId={clarification.id} /> : <p className="request-history-empty">Ожидается ответ студента.</p>}</article>)}</section> : null}
+      {request.body ? <p className="request-details-body">{request.body}</p> : null}
       <h3>История статусов</h3>
       {request.history.length === 0 ? <p className="request-history-empty">История пока не заполнена.</p> : (
         <ol className="request-history-list">
@@ -216,6 +223,22 @@ function RequestDetailsPanel({ result, loading }: { result: RequestDetailsResult
   );
 }
 
+function ClarificationAnswerForm({ requestId, clarificationId }: { requestId: string; clarificationId: string }) {
+  const [state, action, pending] = useActionState(answerServiceClarificationAction, initialRequestWorkflowActionState);
+  const refreshed = useRef(false);
+  const router = useRouter();
+  useEffect(() => {
+    if (state.success && !refreshed.current) { refreshed.current = true; router.refresh(); }
+  }, [router, state.success]);
+  return <form action={action} className="request-answer-form"><input type="hidden" name="requestId" value={requestId} /><input type="hidden" name="clarificationId" value={clarificationId} /><label><span>Ваш ответ</span><textarea name="answer" required maxLength={8000} rows={4} placeholder="Напишите ответ деканату" /></label>{state.error ? <p className="request-form-error" role="alert">{state.error}</p> : null}{state.success ? <p className="request-inline-success" role="status">{state.success}</p> : null}<button className="requests-create-button" type="submit" disabled={pending}>{pending ? "Отправляем…" : "Отправить ответ"}</button></form>;
+}
+
+function RequestNotifications({ notifications }: { notifications: RequestNotificationView[] }) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  return <section className="request-notifications" id="request-notifications" aria-labelledby="request-notifications-title"><div className="request-notifications-heading"><div><span className="profile-heading-kicker">ОБНОВЛЕНИЯ</span><h2 id="request-notifications-title">Уведомления по заявкам</h2></div><span>{notifications.filter((entry) => !entry.readAt).length} новых</span></div>{notifications.length ? <ul>{notifications.slice(0, 5).map((notification) => <li key={notification.deliveryId} className={!notification.readAt ? "is-unread" : ""}><span className="request-notification-mark" aria-hidden="true">•</span><div><strong>{notification.title}</strong><p>{notification.body}</p><small>{formatRequestDateTime(notification.createdAt)}</small><Link href={`/requests#request-${notification.sourceId}`}>Открыть заявку</Link></div>{!notification.readAt ? <button type="button" disabled={pending} onClick={() => startTransition(async () => { await markRequestNotificationReadAction(notification.deliveryId); router.refresh(); })}>Прочитано</button> : null}</li>)}</ul> : <p className="request-history-empty">Уведомлений по заявкам пока нет.</p>}</section>;
+}
+
 function formatRequestDate(value: string): string {
   return new Intl.DateTimeFormat("ru-RU", { timeZone: "Europe/Moscow", day: "numeric", month: "long", year: "numeric" }).format(new Date(value));
 }
@@ -226,4 +249,8 @@ function formatRequestDateTime(value: string): string {
 
 function pluralizeRequest(count: number): string {
   return new Intl.NumberFormat("ru-RU").format(count) + " " + (count === 1 ? "заявка" : count > 1 && count < 5 ? "заявки" : "заявок");
+}
+
+function formatBytes(bytes: number): string {
+  return bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} КБ` : `${(bytes / (1024 * 1024)).toFixed(1)} МБ`;
 }

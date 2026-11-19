@@ -70,6 +70,20 @@ export type ServiceRequestCreationPlan = {
 export class ServiceRequestInputError extends Error {}
 export class OfficialCalendarUnavailableError extends Error {}
 
+const REQUEST_STATE_TRANSITIONS: Record<string, readonly string[]> = {
+  SUBMITTED: ["IN_REVIEW", "REJECTED"],
+  IN_REVIEW: ["READY_FOR_ISSUE", "COMPLETED", "REJECTED"],
+  READY_FOR_ISSUE: ["COMPLETED", "REJECTED"],
+  CLARIFICATION_REQUESTED: [],
+  COMPLETED: [],
+  REJECTED: [],
+  CANCELLED: [],
+};
+
+export function canTransitionServiceRequest(fromState: string, toState: string): boolean {
+  return REQUEST_STATE_TRANSITIONS[fromState]?.includes(toState) ?? false;
+}
+
 const categories = new Set<string>(Object.keys(REQUEST_SLA_WORKING_DAYS));
 
 export function parseNewServiceRequestInput(value: unknown): NewServiceRequestInput {
@@ -161,6 +175,84 @@ export function calculateServiceRequestSla(
   const representativeDate = new Date(`${dateKey}T12:00:00.000Z`);
   const endOfMoscowDay = new Date(getMoscowDayBounds(representativeDate).end.getTime() - 1);
   return { slaWorkingDays, deadlineAt: endOfMoscowDay, calendarIds: [...usedCalendarIds] };
+}
+
+/**
+ * Resume an SLA after clarification using full working-day units. Working days
+ * elapsed before the clarification remain consumed; the paused period is skipped.
+ * An already-expired deadline stays expired instead of being reset.
+ */
+export function calculateResumedServiceRequestDeadline(
+  submittedAt: Date,
+  pausedAt: Date,
+  resumedAt: Date,
+  category: ServiceRequestCategory,
+  originalDeadlineAt: Date | null,
+  calendars: readonly OfficialCalendarYear[],
+  previousPauses: readonly { requestedAt: Date; answeredAt: Date }[] = [],
+): Date | null {
+  if (![submittedAt, pausedAt, resumedAt].every((date) => Number.isFinite(date.getTime()))) {
+    throw new ServiceRequestInputError("Некорректное время паузы SLA.");
+  }
+  if (resumedAt < pausedAt) throw new ServiceRequestInputError("Ответ на уточнение не может предшествовать запросу.");
+  if (!originalDeadlineAt || pausedAt >= originalDeadlineAt) return originalDeadlineAt;
+
+  const calendarsByYear = new Map(calendars.map((calendar) => [calendar.year, calendar]));
+  const verifiedYears = new Set<number>();
+  const dayByDate = new Map<string, OfficialCalendarDay>();
+  let iterations = 0;
+  const readDay = (dateKey: string): OfficialCalendarDay => {
+    const year = Number(dateKey.slice(0, 4));
+    const calendar = calendarsByYear.get(year);
+    if (!verifiedYears.has(year)) {
+      assertVerifiedCalendar(calendar, year);
+      verifiedYears.add(year);
+      for (const day of calendar.days) {
+        if (dayByDate.has(day.date)) throw new OfficialCalendarUnavailableError(`Обнаружена повторная дата ${day.date} в производственном календаре.`);
+        dayByDate.set(day.date, day);
+      }
+    }
+    const day = dayByDate.get(dateKey);
+    if (!day) throw new OfficialCalendarUnavailableError(`В официальном календаре отсутствует дата ${dateKey}.`);
+    return day;
+  };
+
+  const countWorkingDaysAfter = (start: Date, end: Date): number => {
+    let cursor = moscowDateKey(start);
+    const endKey = moscowDateKey(end);
+    let count = 0;
+    let attempts = 0;
+    while (cursor < endKey) {
+      cursor = shiftDateKey(cursor, 1);
+      if (readDay(cursor).kind === "WORKING") count += 1;
+      attempts += 1;
+      if (attempts > 800) throw new OfficialCalendarUnavailableError("Не удалось восстановить оставшийся срок по официальному календарю.");
+    }
+    return count;
+  };
+
+  let elapsedWorkingDays = countWorkingDaysAfter(submittedAt, pausedAt);
+  let previouslyPausedWorkingDays = 0;
+  for (const interval of previousPauses) {
+    if (!Number.isFinite(interval.requestedAt.getTime()) || !Number.isFinite(interval.answeredAt.getTime()) || interval.answeredAt < interval.requestedAt) {
+      throw new ServiceRequestInputError("Некорректная история паузы SLA.");
+    }
+    previouslyPausedWorkingDays += countWorkingDaysAfter(interval.requestedAt, interval.answeredAt);
+  }
+  elapsedWorkingDays = Math.max(0, elapsedWorkingDays - previouslyPausedWorkingDays);
+  const remaining = Math.max(0, REQUEST_SLA_WORKING_DAYS[category] - elapsedWorkingDays);
+  if (remaining === 0) return originalDeadlineAt;
+
+  let cursor = moscowDateKey(resumedAt);
+  let left = remaining;
+  while (left > 0) {
+    cursor = shiftDateKey(cursor, 1);
+    if (readDay(cursor).kind === "WORKING") left -= 1;
+    iterations += 1;
+    if (iterations > 1200) throw new OfficialCalendarUnavailableError("Не удалось восстановить оставшийся срок по официальному календарю.");
+  }
+  const dayEnd = getMoscowDayBounds(new Date(`${cursor}T12:00:00.000Z`)).end;
+  return new Date(dayEnd.getTime() - 1);
 }
 
 export function serviceRequestOwnerScope(studentId: string) {

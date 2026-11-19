@@ -6,8 +6,7 @@ import { authenticateCredentials, type AuthenticatedAccount } from "@/lib/auth/c
 import { homePathForRole } from "@/lib/auth/role-routes";
 import { createSession, logout, setSessionCookie } from "@/lib/auth/session";
 import { isSameOriginRequest } from "@/lib/auth/csrf-core";
-
-export type LoginState = { error: string | null };
+import type { LoginState } from "@/lib/auth/login-action-state";
 
 const LOGIN_ERROR = "Не удалось войти. Проверьте логин и пароль.";
 const ORIGIN_ERROR = "Запрос отклонён. Обновите страницу и попробуйте ещё раз.";

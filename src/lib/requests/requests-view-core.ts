@@ -25,10 +25,19 @@ export type StudentRequestView = {
   category: RequestCategoryValue;
   state: RequestStateValue;
   title: string;
+  body?: string;
+  rejectionReason?: string | null;
+  groupCode?: string | null;
   submittedAt: string;
   deadlineAt: string | null;
   completedAt: string | null;
+  history?: Array<{ fromState: RequestStateValue | null; toState: RequestStateValue; reason: string | null; createdAt: string; actorName: string | null }>;
+  clarifications?: Array<{ id: string; question: string; answer: string | null; requestedAt: string; answeredAt: string | null }>;
+  documents?: Array<{ id: string; fileName: string; byteSize: string; issuedAt: string | null }>;
+  resolution?: string | null;
 };
+
+export type RequestNotificationView = { deliveryId: string; sourceId: string; title: string; body: string; createdAt: string; readAt: string | null };
 
 export type RequestFilters = {
   category: RequestCategoryValue | "ALL";

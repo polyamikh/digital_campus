@@ -84,9 +84,7 @@ export default function StudentAppShell({
           <div className="breadcrumbs"><span>Студент</span><span className="crumb-separator">/</span><strong>{sectionTitle}</strong></div>
           <div className="topbar-tools">
             <span className="demo-badge"><span />Демо-режим</span>
-            <span className="icon-button notification-button" aria-label="Уведомления, демонстрационный просмотр">
-              <Icon>♧</Icon><span className="notification-dot" />
-            </span>
+            <Link className="icon-button notification-button" href="/requests#request-notifications" aria-label="Уведомления по заявкам"><Icon>♧</Icon></Link>
             <div className="profile-menu" aria-label={`Профиль ${displayName}`}>
               <span className="avatar" aria-hidden="true">
                 {photoVersion !== null && photoVersion !== undefined

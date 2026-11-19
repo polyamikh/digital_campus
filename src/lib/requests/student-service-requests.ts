@@ -51,6 +51,15 @@ export async function getMyServiceRequest(requestId: string) {
           actor: { select: { profile: { select: { displayName: true } } } },
         },
       },
+      clarifications: {
+        orderBy: [{ requestedAt: "asc" }, { id: "asc" }],
+        select: { id: true, question: true, answer: true, requestedAt: true, answeredAt: true },
+      },
+      documents: {
+        where: { revokedAt: null },
+        orderBy: [{ issuedAt: "desc" }, { id: "desc" }],
+        select: { id: true, fileName: true, mimeType: true, byteSize: true, issuedAt: true },
+      },
     },
   });
 }

@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { loginAction, type LoginState } from "@/app/actions/auth";
+import { loginAction } from "@/app/actions/auth";
+import type { LoginState } from "@/lib/auth/login-action-state";
 
 const initialState: LoginState = { error: null };
 const cabinets = [
