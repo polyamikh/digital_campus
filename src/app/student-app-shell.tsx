@@ -12,7 +12,7 @@ const navigation = [
   { label: "Заявки и справки", icon: "▤", href: "/requests", section: "requests", available: true },
   { label: "Уведомления", icon: "♧", href: "/notifications", section: "notifications", available: true },
   { label: "Календарь задач", icon: "▣", href: "/tasks", section: "tasks", available: true },
-  { label: "Тестирование", icon: "✓", section: "testing" },
+  { label: "Тестирование", icon: "✓", href: "/testing", section: "testing", available: true },
   { label: "Материалы", icon: "▱", section: "materials" },
   { label: "Домашнее задание", icon: "▧", section: "homework" },
   { label: "Чаты", icon: "▰", section: "chats" },
@@ -40,13 +40,13 @@ export default async function StudentAppShell({
   displayName: string;
   groupCode: string | null;
   photoVersion?: number | null;
-  activeSection: "home" | "profile" | "schedule" | "grades" | "requests" | "notifications" | "tasks";
+  activeSection: "home" | "profile" | "schedule" | "grades" | "requests" | "notifications" | "tasks" | "testing";
   unreadNotificationCount?: number;
   children: ReactNode;
 }) {
   const unreadCount = unreadNotificationCount ?? await getCurrentStudentUnreadNotificationCount().catch(() => 0);
   const initials = initialsFor(displayName);
-  const sectionTitle = activeSection === "profile" ? "Мой профиль" : activeSection === "schedule" ? "Расписание" : activeSection === "grades" ? "Успеваемость" : activeSection === "requests" ? "Заявки и справки" : activeSection === "notifications" ? "Уведомления" : activeSection === "tasks" ? "Календарь задач" : "Главная";
+  const sectionTitle = activeSection === "profile" ? "Мой профиль" : activeSection === "schedule" ? "Расписание" : activeSection === "grades" ? "Успеваемость" : activeSection === "requests" ? "Заявки и справки" : activeSection === "notifications" ? "Уведомления" : activeSection === "tasks" ? "Календарь задач" : activeSection === "testing" ? "Тестирование" : "Главная";
 
   return (
     <div className="app-shell">

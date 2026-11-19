@@ -28,6 +28,7 @@ async function AuthenticatedTeacherHome() {
         <span className="role-placeholder-kicker">КАБИНЕТ TEACHER</span>
         <h1 id="teacher-title">Кабинет<br /><em>преподавателя</em></h1>
         <p>Раздел в разработке</p>
+        <Link className="teacher-testing-link" href="/teacher/testing">Открыть раздел «Тестирование» <span aria-hidden="true">→</span></Link>
       </section>
     </main>
   );

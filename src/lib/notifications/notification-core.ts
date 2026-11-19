@@ -6,7 +6,7 @@ export const NOTIFICATION_CATEGORY_META: Record<NotificationCategory, { label: s
   [NotificationCategory.COURSE_ANNOUNCEMENT]: { label: "Объявления курсов", description: "Обновления учебных курсов.", href: null },
   [NotificationCategory.SCHEDULE]: { label: "Расписание", description: "Изменения и события расписания.", href: "/schedule" },
   [NotificationCategory.HOMEWORK]: { label: "Домашние задания", description: "Новые задания и сроки.", href: null },
-  [NotificationCategory.TEST]: { label: "Тестирование", description: "Тесты и результаты.", href: null },
+  [NotificationCategory.TEST]: { label: "Тестирование", description: "Тесты и результаты.", href: "/testing" },
   [NotificationCategory.REQUEST]: { label: "Заявки и справки", description: "Статусы, уточнения и документы по заявкам.", href: "/requests" },
   [NotificationCategory.TASK]: { label: "Задачи", description: "Личные и назначенные задачи.", href: null },
   [NotificationCategory.CHAT]: { label: "Сообщения", description: "Новые сообщения в чатах.", href: null },

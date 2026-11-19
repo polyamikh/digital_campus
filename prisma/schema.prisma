@@ -722,6 +722,7 @@ model Test {
   authorId    String   @db.Uuid
   assessmentId String? @unique @db.Uuid
   title       String   @db.VarChar(240)
+  externalUrl String?  @db.VarChar(2000)
   opensAt     DateTime? @db.Timestamptz(6)
   closesAt    DateTime? @db.Timestamptz(6)
   attemptLimit Int?

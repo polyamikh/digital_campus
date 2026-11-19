@@ -13,7 +13,7 @@ test("notification categories use the existing Prisma taxonomy", () => {
 test("notification links only target implemented sections", () => {
   assert.equal(notificationTarget(NotificationCategory.REQUEST, "request id"), "/requests#request-request%20id");
   assert.equal(notificationTarget(NotificationCategory.SCHEDULE, "lesson-id"), "/schedule");
-  assert.equal(notificationTarget(NotificationCategory.TEST, "test-id"), null);
+  assert.equal(notificationTarget(NotificationCategory.TEST, "test-id"), "/testing");
 });
 
 test("notification recipient scope is bound to the authenticated recipient and dates use Moscow time", () => {

@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { activeMembershipWhere, studentLessonWhere } from "@/lib/schedule/schedule-query";
 import { getMoscowDayBounds, moscowDateKey } from "@/lib/schedule/moscow-time";
 import { TaskInputError, parseTaskEventTimes, parseMoscowDateTime, personalTaskOwnerWhere, shiftTaskDate, taskMonthGrid, taskViewDateKeys, validTaskDateKey, validTaskMonthKey, type TaskCalendarEvent, type TaskCalendarMode, type TaskCategoryValue, type TaskPriorityValue } from "./tasks-core";
+import { studentTestScope } from "@/lib/testing/testing-core";
 
 export class TaskConflictError extends Error {}
 
@@ -157,8 +158,8 @@ export async function getCurrentStudentTaskCalendar(month: string, now = new Dat
       }),
       prisma.test.findMany({
         where: {
-          course: { groups: { some: { groupId } } },
-          state: "PUBLISHED", publishedAt: { not: null }, closesAt: { gte: queryStart, lt: queryEnd },
+          ...studentTestScope(groupId),
+          closesAt: { gte: queryStart, lt: queryEnd },
         },
         orderBy: [{ closesAt: "asc" }, { id: "asc" }],
         select: { id: true, title: true, closesAt: true },
