@@ -122,8 +122,14 @@ async function notifyRecipients(
     update: {},
     select: { id: true },
   });
+  const preferences = await tx.notificationPreference.findMany({
+    where: { userId: { in: [...recipientIds] }, category: NotificationCategory.REQUEST, muted: true },
+    select: { userId: true },
+  });
+  const mutedRecipients = new Set(preferences.map(({ userId }) => userId));
+  const mutedAt = new Date();
   await tx.notificationDelivery.createMany({
-    data: recipientIds.map((recipientId) => ({ notificationId: notification.id, recipientId, channel: NotificationChannel.IN_APP })),
+    data: recipientIds.map((recipientId) => ({ notificationId: notification.id, recipientId, channel: NotificationChannel.IN_APP, mutedAt: mutedRecipients.has(recipientId) ? mutedAt : null })),
     skipDuplicates: true,
   });
 }

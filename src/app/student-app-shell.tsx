@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import LogoutButton from "./logout-button";
+import { getCurrentStudentUnreadNotificationCount } from "@/lib/notifications/student-notifications";
 
 const navigation = [
   { label: "Главная", icon: "⌂", href: "/", section: "home", available: true },
@@ -9,7 +10,7 @@ const navigation = [
   { label: "Расписание", icon: "▦", href: "/schedule", section: "schedule", available: true },
   { label: "Успеваемость", icon: "▥", href: "/grades", section: "grades", available: true },
   { label: "Заявки и справки", icon: "▤", href: "/requests", section: "requests", available: true },
-  { label: "Уведомления", icon: "♧", section: "notifications" },
+  { label: "Уведомления", icon: "♧", href: "/notifications", section: "notifications", available: true },
   { label: "Календарь задач", icon: "▣", section: "tasks" },
   { label: "Тестирование", icon: "✓", section: "testing" },
   { label: "Материалы", icon: "▱", section: "materials" },
@@ -28,21 +29,24 @@ function initialsFor(name: string): string {
   return name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toLocaleUpperCase("ru-RU");
 }
 
-export default function StudentAppShell({
+export default async function StudentAppShell({
   displayName,
   groupCode,
   photoVersion,
   activeSection,
+  unreadNotificationCount,
   children,
 }: {
   displayName: string;
   groupCode: string | null;
   photoVersion?: number | null;
-  activeSection: "home" | "profile" | "schedule" | "grades" | "requests";
+  activeSection: "home" | "profile" | "schedule" | "grades" | "requests" | "notifications";
+  unreadNotificationCount?: number;
   children: ReactNode;
 }) {
+  const unreadCount = unreadNotificationCount ?? await getCurrentStudentUnreadNotificationCount().catch(() => 0);
   const initials = initialsFor(displayName);
-  const sectionTitle = activeSection === "profile" ? "Мой профиль" : activeSection === "schedule" ? "Расписание" : activeSection === "grades" ? "Успеваемость" : activeSection === "requests" ? "Заявки и справки" : "Главная";
+  const sectionTitle = activeSection === "profile" ? "Мой профиль" : activeSection === "schedule" ? "Расписание" : activeSection === "grades" ? "Успеваемость" : activeSection === "requests" ? "Заявки и справки" : activeSection === "notifications" ? "Уведомления" : "Главная";
 
   return (
     <div className="app-shell">
@@ -67,7 +71,7 @@ export default function StudentAppShell({
                 data-mobile-visible="true"
                 key={item.section}
               >
-                <Icon>{item.icon}</Icon><span className="nav-label">{item.label}</span>
+                <Icon>{item.icon}</Icon><span className="nav-label">{item.label}</span>{item.section === "notifications" && unreadCount > 0 ? <span className="notification-count-badge" aria-label={`${unreadCount} непрочитанных`}>{unreadCount > 99 ? "99+" : unreadCount}</span> : null}
               </Link>
             ) : (
               <div className="nav-item nav-disabled" aria-disabled="true" key={item.section}>
@@ -84,7 +88,7 @@ export default function StudentAppShell({
           <div className="breadcrumbs"><span>Студент</span><span className="crumb-separator">/</span><strong>{sectionTitle}</strong></div>
           <div className="topbar-tools">
             <span className="demo-badge"><span />Демо-режим</span>
-            <Link className="icon-button notification-button" href="/requests#request-notifications" aria-label="Уведомления по заявкам"><Icon>♧</Icon></Link>
+            <Link className="icon-button notification-button" href="/notifications" aria-label={unreadCount ? `Уведомления: ${unreadCount} непрочитанных` : "Уведомления"}><Icon>♧</Icon>{unreadCount > 0 ? <span className="notification-dot" /> : null}</Link>
             <div className="profile-menu" aria-label={`Профиль ${displayName}`}>
               <span className="avatar" aria-hidden="true">
                 {photoVersion !== null && photoVersion !== undefined
