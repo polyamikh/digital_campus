@@ -161,6 +161,18 @@ enum PersonalTaskState {
   CANCELLED
 }
 
+enum PersonalTaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum PersonalTaskCategory {
+  STUDY
+  WORK
+  PERSONAL
+}
+
 enum CalendarEventKind {
   LESSON
   EXAM
@@ -1261,6 +1273,10 @@ model PersonalTask {
   title       String   @db.VarChar(240)
   details     String?  @db.Text
   dueAt       DateTime? @db.Timestamptz(6)
+  endsAt      DateTime? @db.Timestamptz(6)
+  hasDueTime  Boolean  @default(false)
+  priority    PersonalTaskPriority @default(MEDIUM)
+  category    PersonalTaskCategory @default(PERSONAL)
   state       PersonalTaskState @default(OPEN)
   createdAt   DateTime @default(now()) @db.Timestamptz(6)
   updatedAt   DateTime @updatedAt @db.Timestamptz(6)
