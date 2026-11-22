@@ -66,7 +66,7 @@ export default async function StudentAppShell({
   const initials = initialsFor(displayName);
   const sectionTitle = navigation.find((item) => item.section === activeSection)?.label ?? "Главная";
 
-  return <div className="app-shell student-app-shell">
+  return <div className={`app-shell student-app-shell${activeSection === "home" ? "" : " student-app-shell--interior"}`}>
     <a className="skip-link" href="#main-content">Перейти к содержимому</a>
     <aside className="sidebar" aria-label="Студенческая навигация">
       <Link className="brand" href="/" aria-label="Digital Campus — главная">
