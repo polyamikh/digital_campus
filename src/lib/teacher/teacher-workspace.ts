@@ -6,7 +6,7 @@ import { requireRole } from "@/lib/auth/session";
 import { activeMembershipWhere } from "@/lib/schedule/schedule-query";
 import { getMoscowWeekBounds, moscowDateKey } from "@/lib/schedule/moscow-time";
 import { prisma } from "@/lib/prisma";
-import { parseTaskEventTimes, taskMonthUtcBounds, validTaskMonthKey, validTaskDateKey } from "@/lib/tasks/tasks-core";
+import { parseTaskEventTimes, taskMonthGrid, taskViewDateKeys, validTaskMonthKey, validTaskDateKey, type TaskCalendarMode } from "@/lib/tasks/tasks-core";
 import { parseTeacherGradeDrafts, validateAssessmentStructureInput } from "./teacher-grade-core";
 import { serializeTeacherGradebook } from "./teacher-grade-serialization";
 import { ACADEMIC_SEMESTERS_2026_2027, getDefaultAcademicSemester, type AcademicSemester } from "@/lib/academic-calendar/academic-year-2026-2027";
@@ -36,23 +36,24 @@ export async function getTeacherProfile() {
   };
 }
 
-export async function getTeacherHome(now = new Date()) {
+export async function getTeacherHome(now = new Date(), scheduleWeek?: string) {
   const teacher = await requireRole(Role.TEACHER);
   const [profile, assignments] = await Promise.all([
     prisma.userProfile.findUnique({ where: { userId: teacher.id }, select: { displayName: true } }),
     assignmentsFor(teacher.id, now),
   ]);
   const week = getMoscowWeekBounds(now);
+  const widgetWeek = scheduleWeek && validTaskDateKey(scheduleWeek) ? getMoscowWeekBounds(new Date(scheduleWeek + "T12:00:00.000Z")) : week;
   const pairs = assignments.map(({ courseId, groupId }) => ({ courseId, groupId }));
   const pairScope = pairs.length ? { OR: pairs } : { id: { in: [] as string[] } };
   const [lessons, weeklyLessonCount, pendingReviews, upcomingWork, recentNotifications] = await Promise.all([
-    prisma.lesson.findMany({ where: { OR: [{ teacherId: teacher.id }, { substituteId: teacher.id }, { examinerId: teacher.id }], state: "SCHEDULED", startsAt: { gte: week.start, lt: week.end } }, orderBy: { startsAt: "asc" }, take: 12, select: { id: true, title: true, kind: true, startsAt: true, endsAt: true, room: { select: { code: true } }, group: { select: { code: true } }, course: { select: { subject: { select: { name: true } } } } } }),
+    prisma.lesson.findMany({ where: { OR: [{ teacherId: teacher.id }, { substituteId: teacher.id }, { examinerId: teacher.id }], state: "SCHEDULED", startsAt: { gte: widgetWeek.start, lt: widgetWeek.end } }, orderBy: { startsAt: "asc" }, take: 100, select: { id: true, title: true, kind: true, format: true, startsAt: true, endsAt: true, room: { select: { code: true } }, group: { select: { code: true } }, course: { select: { subject: { select: { name: true } } } } } }),
     prisma.lesson.count({ where: { OR: [{ teacherId: teacher.id }, { substituteId: teacher.id }, { examinerId: teacher.id }], state: "SCHEDULED", startsAt: { gte: week.start, lt: week.end } } }),
     prisma.submission.count({ where: { state: "UNDER_REVIEW", homework: { authorId: teacher.id, ...pairScope } } }),
     prisma.homework.findMany({ where: { authorId: teacher.id, state: "PUBLISHED", deadline: { gte: now }, ...pairScope }, orderBy: { deadline: "asc" }, take: 5, select: { id: true, title: true, deadline: true, group: { select: { code: true } }, course: { select: { subject: { select: { name: true } } } } } }),
     prisma.notificationDelivery.findMany({ where: { recipientId: teacher.id, readAt: null, mutedAt: null }, orderBy: { createdAt: "desc" }, take: 3, select: { id: true, createdAt: true, notification: { select: { category: true, title: true } } } }),
   ]);
-  return { displayName: profile?.displayName ?? teacher.login, assignmentCount: assignments.length, lessons, weeklyLessonCount, pendingReviews, upcomingWork, recentNotifications };
+  return { displayName: profile?.displayName ?? teacher.login, assignmentCount: assignments.length, lessons, widgetWeekStart: moscowDateKey(widgetWeek.start), today: moscowDateKey(now), weeklyLessonCount, pendingReviews, upcomingWork, recentNotifications };
 }
 
 export async function getTeacherSchedule(dateValue?: string) {
@@ -76,19 +77,29 @@ export async function getTeacherSchedule(dateValue?: string) {
   return { teacherId: teacher.id, dateKey, weekStart: bounds.start, weekEnd: bounds.end, lessons, requestableLessons, requests, substitutes, officeHours: typeof profileSettings.officeHours === "string" ? profileSettings.officeHours : null };
 }
 
-export async function getTeacherCalendar(monthValue?: string) {
+export async function getTeacherCalendar(monthValue?: string, modeValue?: TaskCalendarMode, dayValue?: string) {
   const teacher = await requireRole(Role.TEACHER); const now = new Date();
   const month = monthValue && validTaskMonthKey(monthValue) ? monthValue : moscowDateKey(now).slice(0, 7);
-  const monthBounds = taskMonthUtcBounds(month); const bounds = { start: new Date(monthBounds.start.getTime() - 7 * 86400000), end: new Date(monthBounds.end.getTime() + 7 * 86400000) }; const assignments = await assignmentsFor(teacher.id, now);
+  const mode: TaskCalendarMode = modeValue === "week" || modeValue === "day" || modeValue === "list" ? modeValue : "month";
+  const candidateDay = dayValue && validTaskDateKey(dayValue) ? dayValue : null;
+  const monthGrid = taskMonthGrid(month);
+  const selectedDate = candidateDay && (mode === "week" || mode === "day" || (mode === "list" ? candidateDay.startsWith(month) : monthGrid.includes(candidateDay))) ? candidateDay : month !== moscowDateKey(now).slice(0, 7) || !monthGrid.includes(moscowDateKey(now)) ? month + "-01" : moscowDateKey(now);
+  const dateKeys = taskViewDateKeys(mode, month, selectedDate);
+  const firstBounds = getMoscowDayBounds(new Date(dateKeys[0]! + "T12:00:00.000Z"));
+  const lastBounds = getMoscowDayBounds(new Date(dateKeys[dateKeys.length - 1]! + "T12:00:00.000Z"));
+  const bounds = { start: firstBounds.start, end: lastBounds.end };
+  const assignments = await assignmentsFor(teacher.id, now);
   const pairs = assignments.map(({ courseId, groupId }) => ({ courseId, groupId }));
   const pairScope = pairs.length ? { OR: pairs } : { id: { in: [] as string[] } };
-  const [lessons, personalTasks, submissions, homeworkDeadlines] = await Promise.all([
-    prisma.lesson.findMany({ where: { OR: [{ teacherId: teacher.id }, { substituteId: teacher.id }, { examinerId: teacher.id }], startsAt: { gte: bounds.start, lt: bounds.end }, state: { not: "CANCELLED" } }, orderBy: { startsAt: "asc" }, select: { id: true, title: true, kind: true, startsAt: true, endsAt: true, teacherId: true, examinerId: true, substituteId: true, room: { select: { code: true } }, group: { select: { code: true } }, course: { select: { subject: { select: { name: true } } } } } }),
-    prisma.personalTask.findMany({ where: { ownerId: teacher.id, dueAt: { gte: bounds.start, lt: bounds.end }, state: { not: "CANCELLED" } }, orderBy: { dueAt: "asc" }, select: { id: true, title: true, details: true, dueAt: true, endsAt: true, hasDueTime: true, category: true, priority: true, state: true, version: true, reminders: { where: { sentAt: null }, orderBy: { scheduledAt: "asc" }, take: 1, select: { scheduledAt: true } } } }),
+  const [lessons, personalTasks, submissions, homeworkDeadlines, tests] = await Promise.all([
+    prisma.lesson.findMany({ where: { OR: [{ teacherId: teacher.id }, { substituteId: teacher.id }, { examinerId: teacher.id }], startsAt: { gte: bounds.start, lt: bounds.end }, state: { not: "CANCELLED" } }, orderBy: { startsAt: "asc" }, select: { id: true, title: true, kind: true, format: true, startsAt: true, endsAt: true, teacherId: true, examinerId: true, substituteId: true, room: { select: { code: true } }, group: { select: { code: true } }, course: { select: { subject: { select: { name: true } } } } } }),
+    prisma.personalTask.findMany({ where: { ownerId: teacher.id, OR: [{ dueAt: null }, { dueAt: { gte: bounds.start, lt: bounds.end } }], state: { not: "CANCELLED" } }, orderBy: [{ dueAt: "asc" }, { createdAt: "desc" }], select: { id: true, title: true, details: true, dueAt: true, endsAt: true, hasDueTime: true, category: true, priority: true, state: true, version: true, reminders: { where: { sentAt: null }, orderBy: { scheduledAt: "asc" }, take: 1, select: { scheduledAt: true } } } }),
     prisma.submission.findMany({ where: { state: "UNDER_REVIEW", homework: { authorId: teacher.id, ...pairScope }, submittedAt: { gte: bounds.start, lt: bounds.end } }, orderBy: { submittedAt: "asc" }, take: 100, select: { id: true, submittedAt: true, homework: { select: { id: true, title: true, group: { select: { code: true } }, course: { select: { subject: { select: { name: true } } } } } } } }),
     prisma.homework.findMany({ where: { authorId: teacher.id, state: "PUBLISHED", deadline: { gte: bounds.start, lt: bounds.end }, ...pairScope }, orderBy: { deadline: "asc" }, take: 100, select: { id: true, title: true, deadline: true, group: { select: { code: true } }, course: { select: { subject: { select: { name: true } } } } } }),
+    prisma.test.findMany({ where: { authorId: teacher.id, courseId: { in: [...new Set(assignments.map((item) => item.courseId))] }, state: "PUBLISHED", closesAt: { gte: bounds.start, lt: bounds.end } }, orderBy: { closesAt: "asc" }, take: 100, select: { id: true, title: true, closesAt: true, course: { select: { subject: { select: { name: true } } } } } }),
   ]);
-  return { month, selectedDate: moscowDateKey(now), lessons, personalTasks, submissions, homeworkDeadlines };
+  const tasksWithoutDate = personalTasks.filter((task) => !task.dueAt);
+  return { month, mode, selectedDate, today: moscowDateKey(now), lessons, personalTasks: personalTasks.filter((task) => task.dueAt), tasksWithoutDate, submissions, homeworkDeadlines, tests };
 }
 
 export async function getTeacherCalendarExport(semesterValue?: string) {

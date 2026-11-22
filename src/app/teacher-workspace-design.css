@@ -536,6 +536,150 @@ html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-submission-di
 html[data-campus-theme="light"] .teacher-app-shell .coursework-submission-disclosure > summary::after,
 html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-card a, .coursework-resource, .teacher-chat-list a, .teacher-assistant-history) { color: #145a9e; }
 
+/* Teacher Outlook calendar reuses the student calendar structure and tokens. */
+.teacher-app-shell .teacher-tasks-page .tasks-mode-switch a { text-decoration: none; }
+.teacher-app-shell .teacher-tasks-page .tasks-mode-switch a.is-active { color: var(--role-pink); }
+.teacher-app-shell .teacher-calendar-legend-note { margin: 0; color: var(--role-muted); font-size: 10px; }
+.teacher-app-shell .teacher-tasks-page .tasks-category-filters button[aria-pressed="true"] { color: var(--role-ink); }
+.teacher-app-shell .teacher-tasks-page .tasks-month-cell-add { z-index: 1; }
+.teacher-app-shell .teacher-tasks-page .tasks-event-chip { cursor: pointer; }
+.teacher-app-shell .teacher-tasks-page .tasks-event-chip.category-work { --task-category-color: var(--role-blue); }
+.teacher-app-shell .teacher-home-week-nav { display: inline-flex; gap: 4px; }
+.teacher-app-shell .teacher-home-week-nav button { width: 24px; height: 24px; border: 1px solid var(--role-line); border-radius: 6px; background: var(--role-raised); color: var(--role-ink); cursor: pointer; line-height: 1; }
+.teacher-app-shell .teacher-home-day-heading { justify-content: flex-end; margin-top: 5px; }
+.teacher-app-shell .teacher-home-lesson-detail { min-width: 0; padding: 0; border: 0; background: transparent; color: inherit; text-align: left; cursor: pointer; }
+.teacher-app-shell .teacher-home-lesson-detail h3 { margin: 2px 0; color: var(--role-ink); font-size: 12px; }
+.teacher-app-shell .teacher-home-lesson-detail p { margin: 0; color: var(--role-muted); font-size: 9px; overflow-wrap: anywhere; }
+.teacher-app-shell .teacher-home-lesson-dialog dl { display: grid; gap: 9px; margin: 16px 0; }
+.teacher-app-shell .teacher-home-lesson-dialog dl > div { display: grid; grid-template-columns: minmax(90px, .45fr) minmax(0, 1fr); gap: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--role-line); }
+.teacher-app-shell .teacher-home-lesson-dialog dt { color: var(--role-muted); }
+.teacher-app-shell .teacher-home-lesson-dialog dd { margin: 0; color: var(--role-ink); }
+
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page { color: #17182c; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page :is(.tasks-calendar-workspace, .tasks-selected-day, .tasks-editor) { border-color: #e2deec; background: #fff; background-image: none; color: #17182c; box-shadow: 0 5px 18px rgb(31 25 61 / 6%); }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page :is(.tasks-mode-switch, .tasks-filter-row) { border-color: #ddd8e9; background: #f7f5fb; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page .tasks-mode-switch a { color: #45465b; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page .tasks-mode-switch a.is-active { border: 1px solid #e6a5ca; background: #fce8f3; color: #95145c; box-shadow: none; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page .tasks-calendar-toolbar { border-color: #e2deec; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page .tasks-calendar-navigation > button { border-color: #d8d2e3; background: #fff; color: #37384d; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page .tasks-calendar-navigation > button:hover { border-color: #d64a9a; background: #fff5fa; color: #97165f; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page .tasks-calendar-navigation .tasks-today-button { border-color: #e5a2c7; background: #fce8f3; color: #8f1558; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page :is(.tasks-calendar-navigation h2, .tasks-selected-day h2, .tasks-list-date h3) { color: #17182c; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page .tasks-category-filters button { border-color: #d9d5e2; background: #fff; color: #37384d; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page .tasks-category-filters button.is-active { border-color: color-mix(in srgb, var(--task-category-color) 55%, #d9d5e2); background: color-mix(in srgb, var(--task-category-color) 13%, #fff); color: #25263a; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page :is(.tasks-month-cell, .tasks-time-day) { border-color: #e8e4ef; background: #fff; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page .tasks-time-track { border-color: #e8e4ef; background: repeating-linear-gradient(to bottom, transparent 0, transparent 47px, rgb(91 87 116 / 10%) 47px, rgb(91 87 116 / 10%) 48px), #fff; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page .tasks-month-cell.is-outside { background: #f4f2f8; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page .tasks-month-cell.is-selected { box-shadow: inset 0 0 0 1px #bc4c8e; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page :is(.tasks-month-cell-date, .tasks-time-day-head button, .tasks-time-day-head strong) { color: #24253a; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page .tasks-month-cell.is-outside .tasks-month-cell-date { color: #686a7d; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page :is(.tasks-month-cell.is-today .tasks-month-cell-date, .tasks-time-day.is-today .tasks-time-day-head strong) { background: #df1686; color: #fff; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page :is(.tasks-event-chip, .tasks-timed-event, .tasks-event-card) { border-color: color-mix(in srgb, var(--task-category-color, #276bd1) 42%, #d8d2e3); background: color-mix(in srgb, var(--task-category-color, #276bd1) 12%, #fff); color: #202136; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page :is(.tasks-event-chip span, .tasks-event-chip strong, .tasks-event-card-time, .tasks-event-title-row > strong, .tasks-event-card-content p, .tasks-event-card-content small) { color: #27283d; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page :is(.tasks-event-actions button, .tasks-secondary-button, .tasks-empty button) { border-color: #d7d2e1; background: #fff; color: #34354a; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page .tasks-primary-button { border-color: #c11678; background: #d71983; color: #fff; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page .tasks-export-button { border-color: #d6cbe6; background: #fff; color: #34354a; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page :is(.tasks-filters select, .tasks-editor input, .tasks-editor select, .tasks-editor textarea) { border-color: #d8d2e3; background: #fff; color: #17182c; color-scheme: light; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page :is(.tasks-filters select, .tasks-editor input, .tasks-editor select, .tasks-editor textarea):focus { border-color: #b01469; box-shadow: 0 0 0 2px rgb(176 20 105 / 12%); }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page :is(.tasks-editor-head h2, .tasks-event-card strong) { color: #17182c; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page :is(.tasks-filters label, .tasks-calendar-legend, .tasks-event-card-content small, .tasks-event-card-content p, .tasks-empty-inline, .tasks-empty p, .tasks-time-empty, .tasks-time-gutter > span, .tasks-all-day-lane > span, .tasks-weekday, .teacher-calendar-legend-note, .tasks-editor p, .tasks-editor label) { color: #4f5064; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page .tasks-today-button { color: #8f1558; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page .tasks-notice { border-color: #ddd8e9; background: #f7f5fb; color: #34354a; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-tasks-page .tasks-editor-head button { border-color: #d8d2e3; background: #f7f5fb; color: #34354a; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-home-week-nav button { border-color: #d8d2e3; background: #fff; color: #37384d; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-home-lesson-detail h3 { color: #17182c; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-home-lesson-detail p { color: #4f5064; }
+html[data-campus-theme="light"] .teacher-app-shell :is(.teacher-data-card, .teacher-filter-row, .teacher-task-form, .teacher-gradebook, .teacher-chat-thread, .teacher-assistant-thread) :is(input, select, textarea) { border-color: #d8d2e3; background-color: #fff; color: #17182c; color-scheme: light; }
+html[data-campus-theme="light"] .teacher-app-shell :is(.teacher-data-card, .teacher-profile-card, .teacher-gradebook, .teacher-chat-layout, .teacher-assistant-layout) :is(h1, h2, h3, strong, th, td, label) { color: #17182c; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-grade-table thead th { background: #f4f2f8; color: #45465b; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-grade-table :is(th, td) { border-color: #e2deec; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-data-card :is(p, small, dt, dd, label) { color: #4f5064; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-notification-list > li { background: #fff; }
+
+/* Targeted light surfaces for teacher schedule, homework, testing and materials. */
+html[data-campus-theme="light"] .teacher-app-shell .home-schedule .home-calendar {
+  min-height: 0;
+  margin: 8px -2px 9px;
+  padding: 0 0 8px;
+  border: 0;
+  border-bottom: 1px solid var(--role-line);
+  border-radius: 0;
+  background: transparent;
+  background-image: none;
+  box-shadow: none;
+}
+html[data-campus-theme="light"] .teacher-app-shell .home-calendar-heading h3,
+html[data-campus-theme="light"] .teacher-app-shell .home-calendar .calendar-day strong { color: var(--role-ink); }
+html[data-campus-theme="light"] .teacher-app-shell .home-calendar-heading > a,
+html[data-campus-theme="light"] .teacher-app-shell .home-calendar .calendar-day > span { color: var(--role-muted); }
+html[data-campus-theme="light"] .teacher-app-shell .home-calendar .calendar-day { border-color: var(--role-line); background: #fff; color: var(--role-ink); }
+html[data-campus-theme="light"] .teacher-app-shell .home-calendar .calendar-day.is-selected:not(.is-today) { border-color: var(--role-blue); background: color-mix(in srgb, var(--role-blue) 8%, #fff); }
+html[data-campus-theme="light"] .teacher-app-shell .home-calendar .calendar-day.is-today { border-color: var(--role-pink); background: var(--role-pink); color: #fff; }
+html[data-campus-theme="light"] .teacher-app-shell .home-calendar .calendar-day.is-today > :is(span, strong) { color: #fff; }
+html[data-campus-theme="light"] .teacher-app-shell .home-calendar .calendar-count { color: var(--role-muted); }
+html[data-campus-theme="light"] .teacher-app-shell .home-calendar .calendar-day.is-today .calendar-count { color: #fff; }
+
+html[data-campus-theme="light"] .teacher-app-shell .schedule-page-heading {
+  border-color: transparent;
+  background: transparent;
+  background-image: none;
+  box-shadow: none;
+}
+html[data-campus-theme="light"] .teacher-app-shell .schedule-page-heading::after { display: none; }
+html[data-campus-theme="light"] .teacher-app-shell .schedule-page-heading .profile-heading-kicker { color: #9c145f; }
+html[data-campus-theme="light"] .teacher-app-shell .schedule-page-heading :is(h1, p) { color: var(--role-ink); }
+html[data-campus-theme="light"] .teacher-app-shell .schedule-page-heading p { color: var(--role-muted); }
+
+html[data-campus-theme="light"] .teacher-app-shell .coursework-teacher-page,
+html[data-campus-theme="light"] .teacher-app-shell .testing-teacher-page {
+  background: var(--role-bg);
+  background-image: none;
+  color: var(--role-ink);
+}
+html[data-campus-theme="light"] .teacher-app-shell .coursework-heading { background: transparent; }
+html[data-campus-theme="light"] .teacher-app-shell .coursework-heading > span { color: #9c145f; }
+html[data-campus-theme="light"] .teacher-app-shell .coursework-heading :is(h1, p) { color: var(--role-ink); }
+html[data-campus-theme="light"] .teacher-app-shell .coursework-heading p { color: var(--role-muted); }
+html[data-campus-theme="light"] .teacher-app-shell .coursework-back { color: #7541a8; }
+
+html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-detail-panel, .coursework-card, .coursework-teacher-assignment, .coursework-submission, .coursework-answer-preview, .coursework-edit-form, .coursework-folder-row, .testing-teacher-panel, .testing-teacher-test, .testing-edit-form, .testing-teacher-attempt) {
+  border-color: #e2deec;
+  background: #fff;
+  background-image: none;
+  color: #17182c;
+  box-shadow: 0 4px 14px rgb(31 25 61 / 5%);
+}
+html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-group > h2, .coursework-detail-panel h2, .coursework-detail-panel h3, .coursework-card h2, .coursework-card h3, .coursework-teacher-assignment h3, .coursework-folder-row strong, .testing-teacher-wrap h1, .testing-teacher-panel h2, .testing-teacher-test-heading h3, .testing-teacher-test-heading strong, .testing-teacher-attempt strong) { color: #17182c; }
+html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-card > p, .coursework-detail-panel > p, .coursework-meta, .coursework-card-heading, .coursework-card-heading small, .coursework-detail-panel small, .coursework-answer-form > small, .coursework-form-note, .coursework-folder-row, .coursework-teacher-assignment > p, .coursework-stat-row, .coursework-list-heading label, .testing-teacher-intro, .testing-teacher-panel > p, .testing-teacher-test-heading span, .testing-teacher-test > p, .testing-teacher-attempt span, .testing-result-form small) { color: #4f5064; }
+html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-teacher-content, .testing-teacher-content) :is(label, legend) { color: #3f4054; }
+html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-answer-form, .coursework-folder-form, .coursework-list-heading, .testing-teacher-content, .testing-edit-form, .testing-result-form) :is(input:not([type="checkbox"]):not([type="file"]), select, textarea) {
+  border-color: #d8d2e3;
+  background: #fff;
+  color: #17182c;
+  color-scheme: light;
+}
+html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-answer-form, .coursework-folder-form, .testing-teacher-content, .testing-edit-form, .testing-result-form) :is(input, select, textarea)::placeholder { color: #65667a; opacity: 1; }
+html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-answer-form, .coursework-folder-form, .testing-teacher-content, .testing-edit-form, .testing-result-form) :is(input, select, textarea, button):focus-visible { outline-color: #b01469; }
+html[data-campus-theme="light"] .teacher-app-shell .coursework-answer-form fieldset { border-color: #d8d2e3; }
+html[data-campus-theme="light"] .teacher-app-shell .coursework-check { color: #3f4054 !important; }
+html[data-campus-theme="light"] .teacher-app-shell .coursework-folder-form,
+html[data-campus-theme="light"] .teacher-app-shell .coursework-folder-row,
+html[data-campus-theme="light"] .teacher-app-shell .coursework-submission-disclosure,
+html[data-campus-theme="light"] .teacher-app-shell .testing-result-form { border-color: #e2deec; }
+html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-primary, .testing-start) { border-color: #c11678; background: #d71983; background-image: none; color: #fff; }
+html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-secondary, .testing-secondary-button) { border-color: #d8d2e3; background: #fff; background-image: none; color: #56349b; }
+html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-danger, .testing-danger-button) { border-color: #e0a6bc; background: #fff1f6; background-image: none; color: #8e174f; }
+html[data-campus-theme="light"] .teacher-app-shell .coursework-format-switch button.is-active { border-color: #e6a5ca; background: #fce8f3; color: #95145c; }
+html[data-campus-theme="light"] .teacher-app-shell .coursework-message,
+html[data-campus-theme="light"] .teacher-app-shell .testing-teacher-message { border-color: #c6e4eb; background: #f2fbfd; color: #174c5c; }
+html[data-campus-theme="light"] .teacher-app-shell .coursework-status { border-color: #d8d2e3; background: #f7f5fb; color: #34354a; }
+html[data-campus-theme="light"] .teacher-app-shell .coursework-type { color: #7541a8; }
+html[data-campus-theme="light"] .teacher-app-shell .coursework-resource,
+html[data-campus-theme="light"] .teacher-app-shell .testing-teacher-test > p a { border-color: #d6cbe6; color: #145a9e; }
+html[data-campus-theme="light"] .teacher-app-shell .coursework-resource small { color: #4f5064; }
+html[data-campus-theme="light"] .teacher-app-shell .testing-teacher-error { color: #8e174f; }
+html[data-campus-theme="light"] .teacher-app-shell .testing-teacher-test-heading strong { border-radius: 999px; padding: 4px 7px; background: #fce8f3; color: #95145c; }
+
 @media (max-width: 980px) {
   .teacher-app-shell .teacher-home-grid { grid-template-columns: minmax(0, 1fr) minmax(230px, .78fr); }
   .teacher-app-shell .teacher-week-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }

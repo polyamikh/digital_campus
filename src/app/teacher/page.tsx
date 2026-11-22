@@ -3,13 +3,15 @@ import Link from "next/link";
 import TeacherAppShell from "./teacher-app-shell";
 import AuthRouteFallback from "@/app/auth-route-fallback";
 import { getTeacherHome } from "@/lib/teacher/teacher-workspace";
-import { requireTeacherPage, teacherDateTime, teacherTime } from "./teacher-route";
+import { requireTeacherPage, teacherDateTime } from "./teacher-route";
+import TeacherHomeSchedule from "./teacher-home-schedule";
 
-export default function TeacherHomePage() { return <Suspense fallback={<AuthRouteFallback message="Загружаем кабинет преподавателя…" />}><Content /></Suspense>; }
+export default function TeacherHomePage({ searchParams }: { searchParams: Promise<{ week?: string }> }) { return <Suspense fallback={<AuthRouteFallback message="Загружаем кабинет преподавателя…" />}><Content searchParams={searchParams} /></Suspense>; }
 
-async function Content() {
+async function Content({ searchParams }: { searchParams: Promise<{ week?: string }> }) {
   await requireTeacherPage();
-  const data = await getTeacherHome();
+  const params = await searchParams;
+  const data = await getTeacherHome(new Date(), params.week);
   const firstName = data.displayName.trim().split(/\s+/)[0] || "Преподаватель";
   const unread = data.recentNotifications;
   const weekLessons = data.weeklyLessonCount;
@@ -20,7 +22,7 @@ async function Content() {
         <div className="home-summary-strip" aria-label="Краткая сводка"><div><span>ДИСЦИПЛИНЫ И ГРУППЫ</span><strong>{data.assignmentCount}</strong></div><div><span>РАБОТЫ НА ПРОВЕРКЕ</span><strong>{data.pendingReviews}</strong></div><div><span>ЗАНЯТИЯ НА НЕДЕЛЕ</span><strong>{weekLessons}</strong></div></div>
       </div>
       <section className="home-panel home-deadlines"><div className="home-section-title"><h2>Ближайшие сроки</h2><Link href="/teacher/calendar">Календарь ↗</Link></div>{data.upcomingWork.length ? <ul className="home-deadline-list">{data.upcomingWork.map((item) => <li key={item.id}><time>{item.deadline ? teacherDateTime(item.deadline) : "Без срока"}</time><Link href="/teacher/homework"><strong>{item.title}</strong><small>{item.course.subject.name} · {item.group?.code ?? "Группа не указана"}</small></Link></li>)}</ul> : <p className="home-empty">Ближайших сроков пока нет.</p>}</section>
-      <section className="home-panel home-schedule"><div className="home-panel-heading"><div><span className="home-eyebrow">УЧЕБНАЯ НЕДЕЛЯ</span><h2>Расписание</h2></div><Link href="/teacher/schedule">Всё расписание ↗</Link></div>{data.lessons.length ? <ol className="home-lesson-list">{data.lessons.slice(0, 4).map((lesson) => <li className="home-lesson" key={lesson.id}><time><strong>{teacherTime(lesson.startsAt)}</strong><span>{teacherTime(lesson.endsAt)}</span></time><span className="home-lesson-line" aria-hidden="true"/><div><span className="lesson-kind">{lesson.kind === "EXAM" ? "Экзамен" : "Занятие"}</span><h3>{lesson.course.subject.name}</h3><p>{lesson.group?.code ?? "Группа не указана"} · {lesson.room?.code ?? "Аудитория не указана"}</p></div></li>)}</ol> : <p className="home-empty">На этой неделе занятий нет.</p>}</section>
+      <section className="home-panel home-schedule"><TeacherHomeSchedule key={data.widgetWeekStart} lessons={data.lessons} weekStart={data.widgetWeekStart} today={data.today}/></section>
       <section className="home-panel home-tasks"><div className="home-section-title"><h2>Задачи</h2><Link href="/teacher/homework">Очередь ↗</Link></div><p className="home-panel-caption">Проверка и публикация результатов</p><div className="home-performance-score"><strong>{data.pendingReviews}</strong><span>работ ожидают проверки</span></div><Link href="/teacher/homework">Открыть домашние задания ↗</Link></section>
       <section className="home-panel home-events"><div className="home-section-title"><h2>События</h2><Link href="/teacher/notifications">Уведомления ↗</Link></div>{unread.length ? <ul className="home-notice-list">{unread.map((item) => <li className="is-unread" key={item.id}><span aria-hidden="true"/><div><strong>{item.notification.title}</strong><small>{item.notification.category.replaceAll("_", " ")} · {teacherDateTime(item.createdAt)}</small></div></li>)}</ul> : <p className="home-empty">Непрочитанных уведомлений нет.</p>}</section>
       <section className="home-panel home-performance"><div className="home-section-title"><h2>Журнал оценок</h2><Link href="/teacher/grades">Открыть ↗</Link></div><div className="home-performance-score"><strong>{data.pendingReviews}</strong><span>работ ожидают проверки</span></div><p className="home-panel-caption">Оценки публикуются после проверки.</p></section>
