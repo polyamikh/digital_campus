@@ -204,7 +204,7 @@ export async function getMyRequestWorkspace(studentId: string) {
 
 export async function listRequestNotificationsForUser(userId: string): Promise<RequestNotificationRecord[]> {
   return prisma.notificationDelivery.findMany({
-    where: { recipientId: userId, notification: { category: NotificationCategory.REQUEST } },
+    where: { recipientId: userId, notification: { category: NotificationCategory.REQUEST, sourceType: "SERVICE_REQUEST" } },
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     take: 30,
     select: {
@@ -227,7 +227,7 @@ export async function listRequestNotificationsForUser(userId: string): Promise<R
 export async function markRequestNotificationRead(deliveryId: string) {
   const user = await requireRole(Role.STUDENT, Role.DEAN);
   return prisma.notificationDelivery.updateMany({
-    where: { id: deliveryId, recipientId: user.id, readAt: null, notification: { category: NotificationCategory.REQUEST } },
+    where: { id: deliveryId, recipientId: user.id, readAt: null, notification: { category: NotificationCategory.REQUEST, sourceType: "SERVICE_REQUEST" } },
     data: { readAt: new Date() },
   });
 }

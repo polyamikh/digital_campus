@@ -1,287 +1,101 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { moscowDateKey } from "@/lib/schedule/moscow-time";
+import { useMemo, useState } from "react";
+import Link from "next/link";
 import { lessonCountsByMoscowDate, lessonsOnMoscowDate } from "@/lib/schedule/schedule-view";
 import type { StudentHomeSchedule } from "@/lib/schedule/student-home-schedule";
 
 const weekdays = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"];
+type ScheduleData = Omit<StudentHomeSchedule, "groupCode">;
+type DashboardData = {
+  todayTasks: Array<{ id: string; title: string; category: string; state: string; time: string | null }>;
+  deadlines: Array<{ id: string; title: string; course: string; dueAt: string; href: string; kind: string }>;
+  grades: { semester: string | null; courseCount: number; accumulated: number; available: number; unresolvedWorks: number } | null;
+  events: Array<{ id: string; title: string; startsAt: string; location: string | null }>;
+  opportunities: Array<{ id: string; title: string; organization: string; category: string }>;
+  notifications: Array<{ id: string; title: string; category: string; createdAt: string; read: boolean }>;
+  unavailable: { tasks: boolean; grades: boolean; deadlines: boolean; career: boolean; notifications: boolean };
+};
 
-const demoNotifications = [
-  { title: "Обновление учебных материалов", detail: "Digital Marketing", tone: "cyan" },
-  { title: "Напоминание о дедлайне", detail: "Анализ кампании · 18:00", tone: "pink" },
-];
+function formatDay(dateKey: string, options: Intl.DateTimeFormatOptions = { day: "numeric", month: "long" }) {
+  return new Intl.DateTimeFormat("ru-RU", { ...options, timeZone: "UTC" }).format(new Date(`${dateKey}T12:00:00.000Z`));
+}
 
-function getMoscowCalendarWeek(now: Date) {
-  const [year, month, day] = moscowDateKey(now).split("-").map(Number);
-  const todayUtc = new Date(Date.UTC(year, month - 1, day));
-  const mondayOffset = (todayUtc.getUTCDay() + 6) % 7;
-  const monday = Date.UTC(year, month - 1, day - mondayOffset);
-  const dateFormatter = new Intl.DateTimeFormat("ru-RU", {
-    timeZone: "UTC",
-    day: "numeric",
+function moscowWeek(dateKey: string) {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  const mondayOffset = (date.getUTCDay() + 6) % 7;
+  date.setUTCDate(date.getUTCDate() - mondayOffset);
+  return weekdays.map((weekday, index) => {
+    const value = new Date(date);
+    value.setUTCDate(value.getUTCDate() + index);
+    return { weekday, date: value.getUTCDate(), dateKey: value.toISOString().slice(0, 10) };
   });
-
-  return {
-    days: weekdays.map((weekday, index) => {
-      const date = new Date(monday + index * 86_400_000);
-      return {
-        weekday,
-        date: Number(dateFormatter.format(date)),
-        dateKey: `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}-${String(date.getUTCDate()).padStart(2, "0")}`,
-        isToday: index === mondayOffset,
-      };
-    }),
-  };
 }
 
-function calendarDateAccessibleLabel(dateKey: string): string {
-  if (!dateKey) return "Дата загружается";
-  return new Intl.DateTimeFormat("ru-RU", {
-    timeZone: "UTC",
-    day: "numeric",
-    month: "long",
-  }).format(new Date(`${dateKey}T12:00:00.000Z`));
+function dateTime(value: string) {
+  return new Intl.DateTimeFormat("ru-RU", { timeZone: "Europe/Moscow", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(value));
 }
 
-function SectionTitle({
-  eyebrow,
-  title,
-  marker,
-  id,
-}: {
-  eyebrow: string;
-  title: string;
-  marker?: string;
-  id?: string;
-}) {
-  return (
-    <div className="home-section-title">
-      <div>
-        <span className="home-eyebrow">{eyebrow}</span>
-        <h2 id={id}>{title}</h2>
-      </div>
-      {marker ? <span className="home-section-marker">{marker}</span> : null}
+function SectionHeading({ title, href, link = "Открыть" }: { title: string; href?: string; link?: string }) {
+  return <div className="home-section-title"><h2>{title}</h2>{href ? <Link href={href}>{link}<span aria-hidden="true"> ↗</span></Link> : null}</div>;
+}
+
+function CalendarStrip({ schedule, selectedDate, selectDate }: { schedule: ScheduleData; selectedDate: string; selectDate: (value: string) => void }) {
+  const days = useMemo(() => moscowWeek(schedule.todayDate), [schedule.todayDate]);
+  const counts = lessonCountsByMoscowDate(schedule.lessons);
+  return <section className="home-calendar" aria-label="Календарь учебной недели">
+    <div className="home-calendar-heading"><div><span className="home-eyebrow">НЕДЕЛЯ</span><h3>{formatDay(schedule.todayDate, { month: "long", year: "numeric" })}</h3></div><Link href={`/schedule?week=${schedule.todayDate}&day=${selectedDate}`}>Все расписание <span aria-hidden="true">↗</span></Link></div>
+    <div className="calendar-week" aria-label="Даты недели">
+      {days.map((item) => <button className={`calendar-day${item.dateKey === schedule.todayDate ? " is-today" : ""}${item.dateKey === selectedDate ? " is-selected" : ""}`} type="button" key={item.dateKey} aria-pressed={item.dateKey === selectedDate} aria-current={item.dateKey === schedule.todayDate ? "date" : undefined} aria-label={`${item.weekday}, ${formatDay(item.dateKey)}${counts.get(item.dateKey) ? `, занятий: ${counts.get(item.dateKey)}` : ", занятий нет"}`} onClick={() => selectDate(item.dateKey)}>
+        <span>{item.weekday}</span><strong>{item.date}</strong><i className="calendar-count">{counts.get(item.dateKey) ? counts.get(item.dateKey) : ""}</i>
+      </button>)}
     </div>
-  );
+  </section>;
 }
 
-function CalendarWidget({
-  lessons,
-  selectedDate,
-  onSelectDate,
-}: {
-  lessons: StudentHomeSchedule["lessons"];
-  selectedDate: string;
-  onSelectDate: (date: string) => void;
-}) {
-  const [now, setNow] = useState<Date | null>(null);
-
-  useEffect(() => {
-    const updateMoscowTime = () => setNow(new Date());
-    updateMoscowTime();
-    const interval = window.setInterval(updateMoscowTime, 60_000);
-    return () => window.clearInterval(interval);
-  }, []);
-
-  const calendar = now ? getMoscowCalendarWeek(now) : null;
-  const lessonCounts = lessonCountsByMoscowDate(lessons);
-  const selected = new Date(`${selectedDate}T12:00:00.000Z`);
-  const selectedLabel = new Intl.DateTimeFormat("ru-RU", {
-    timeZone: "UTC",
-    month: "long",
-  }).format(selected);
-
-  return (
-    <section className="home-calendar" aria-labelledby="calendar-title">
-      <div className="calendar-heading">
-        <div>
-          <span className="home-eyebrow">ТВОЯ НЕДЕЛЯ</span>
-          <h2 id="calendar-title">Календарь</h2>
-        </div>
-        <span className="calendar-orbit" aria-hidden="true">✳</span>
-      </div>
-      <div className="calendar-date" aria-live="polite">
-        {selectedDate ? (
-          <>
-            <strong>{selected.getUTCDate()}</strong>
-            <span>{selectedLabel}</span>
-          </>
-        ) : (
-          <span className="calendar-loading">Загружаем дату…</span>
-        )}
-      </div>
-      <div className="calendar-week" aria-label="Дни недели">
-        {(calendar?.days ?? weekdays.map((weekday) => ({ weekday, date: null, dateKey: "", isToday: false }))).map((item) => (
-          <button
-            className={`calendar-day${item.isToday ? " is-today" : ""}${item.dateKey === selectedDate ? " is-selected" : ""}${(lessonCounts.get(item.dateKey) ?? 0) > 0 ? " has-events" : ""}`}
-            type="button"
-            aria-current={item.isToday ? "date" : undefined}
-            aria-pressed={item.dateKey === selectedDate}
-            aria-label={`${item.weekday}, ${calendarDateAccessibleLabel(item.dateKey)}${item.isToday ? ", сегодня" : ""}${(lessonCounts.get(item.dateKey) ?? 0) ? `, занятий: ${lessonCounts.get(item.dateKey)}` : ", занятий нет"}`}
-            disabled={!item.dateKey}
-            onClick={() => onSelectDate(item.dateKey)}
-            key={item.weekday}
-          >
-            <span>{item.weekday}</span>
-            <strong>{item.date ?? "—"}</strong>
-            <span className="calendar-event-markers" aria-hidden="true">
-              {Array.from({ length: Math.min(lessonCounts.get(item.dateKey) ?? 0, 3) }, (_, index) => (
-                <i className={`event-marker-${index % 3}`} key={`${item.dateKey}-${index}`} />
-              ))}
-            </span>
-          </button>
-        ))}
-      </div>
-    </section>
-  );
+function SchedulePanel({ schedule, selectedDate, selectDate }: { schedule: ScheduleData; selectedDate: string; selectDate: (value: string) => void }) {
+  const lessons = lessonsOnMoscowDate(schedule.lessons, selectedDate);
+  const dateTitle = selectedDate === schedule.todayDate ? "Сегодня" : new Intl.DateTimeFormat("ru-RU", { weekday: "long", timeZone: "UTC" }).format(new Date(`${selectedDate}T12:00:00.000Z`));
+  return <section className="home-panel home-schedule" aria-labelledby="home-schedule-title">
+    <div className="home-panel-heading"><div><span className="home-eyebrow">УЧЕБНЫЙ ДЕНЬ</span><h2 id="home-schedule-title">Расписание</h2></div><span className="home-date-label">{dateTitle}, {formatDay(selectedDate)}</span></div>
+    <CalendarStrip schedule={schedule} selectedDate={selectedDate} selectDate={selectDate} />
+    {schedule.timeWindowViolationCount > 0 ? <p className="schedule-data-warning" role="status">Есть занятия вне утверждённых временных интервалов: {schedule.timeWindowViolationCount}. Данные не менялись.</p> : null}
+    {schedule.membershipProblem ? <p className="home-empty">{schedule.membershipProblem === "missing" ? "Не найдено активное членство в учебной группе." : "Не удалось однозначно определить вашу учебную группу."}</p> : lessons.length ? <ol className="home-lesson-list">{lessons.map((lesson) => <li className={`home-lesson${lesson.type === "Экзамен" ? " lesson-exam" : ""}`} key={lesson.id}><time><strong>{lesson.startTime}</strong><span>{lesson.endTime}</span></time><span className="home-lesson-line" aria-hidden="true"/><div><span className="lesson-kind">{lesson.type}</span><h3>{lesson.discipline}</h3><p>{lesson.teacherOrExaminer ? `${lesson.type === "Экзамен" ? "Экзаменатор" : "Преподаватель"}: ${lesson.teacherOrExaminer}` : ""}{lesson.room ? `${lesson.teacherOrExaminer ? " · " : ""}Ауд. ${lesson.room}` : ""}</p></div></li>)}</ol> : <p className="home-empty">На выбранную дату занятий нет.</p>}
+  </section>;
 }
 
-function ScheduleWidget({
-  schedule,
-  selectedDate,
-}: {
-  schedule: Omit<StudentHomeSchedule, "groupCode">;
-  selectedDate: string;
-}) {
-  const selectedLessons = lessonsOnMoscowDate(schedule.lessons, selectedDate);
-  const selectedDateValue = new Date(`${selectedDate}T12:00:00.000Z`);
-  const selectedDateLabel = new Intl.DateTimeFormat("ru-RU", {
-    timeZone: "UTC",
-    day: "numeric",
-    month: "long",
-  }).format(selectedDateValue);
-  const selectedWeekday = new Intl.DateTimeFormat("ru-RU", {
-    timeZone: "UTC",
-    weekday: "long",
-  }).format(selectedDateValue);
-  const datePrefix = selectedDate === schedule.todayDate
-    ? "Сегодня"
-    : `${selectedWeekday.charAt(0).toLocaleUpperCase("ru-RU")}${selectedWeekday.slice(1)}`;
-
-  return (
-    <section className="home-schedule" aria-labelledby="schedule-title">
-      <SectionTitle eyebrow="УЧЕБНЫЙ ДЕНЬ" title="Расписание" marker="АКТУАЛЬНОЕ" id="schedule-title" />
-      <div className="schedule-date-line" aria-live="polite" aria-atomic="true"><span className="schedule-today-dot" />{datePrefix}, {selectedDateLabel}</div>
-      {schedule.timeWindowViolationCount > 0 ? (
-        <p className="schedule-data-warning" role="status">В расписании обнаружено записей вне утверждённых временных интервалов: {schedule.timeWindowViolationCount}. Данные показаны без изменений.</p>
-      ) : null}
-      <div className="home-lesson-list">
-        {selectedLessons.map((lesson, index) => {
-          const isExam = lesson.type === "Экзамен";
-          const color = isExam ? "pink" : index % 2 === 0 ? "cyan" : "violet";
-          const staffLabel = isExam ? "Экзаменатор" : "Преподаватель";
-          const details = [lesson.teacherOrExaminer ? `${staffLabel}: ${lesson.teacherOrExaminer}` : null, lesson.room ? `Ауд. ${lesson.room}` : null].filter(Boolean);
-          return (
-          <article className={`home-lesson lesson-${color}`} key={lesson.id}>
-            <div className="home-lesson-time"><strong>{lesson.startTime}</strong><span>{lesson.endTime}</span></div>
-            <span className="home-lesson-rail" aria-hidden="true" />
-            <div className="home-lesson-details">
-              <span className="lesson-kind">{lesson.type.toLocaleUpperCase("ru-RU")}</span>
-              <h3>{lesson.discipline}</h3>
-              {details.length ? <p>{details.map((detail, detailIndex) => <span className="lesson-detail" key={detail}>{detail}{detailIndex < details.length - 1 ? " ·" : ""}</span>)}</p> : null}
-            </div>
-            <span className="lesson-corner" aria-hidden="true" />
-          </article>
-          );
-        })}
-        {schedule.membershipProblem ? (
-          <p className="schedule-empty" role="status">{schedule.membershipProblem === "missing" ? "Не найдено активное учебное членство. Обратись в деканат, если это ошибка." : "Не удалось однозначно определить активную учебную группу. Данные расписания временно не показаны."}</p>
-        ) : selectedLessons.length === 0 ? (
-          <p className="schedule-empty">На выбранную дату занятий нет.</p>
-        ) : null}
-      </div>
-    </section>
-  );
-}
-
-function CampusAiWidget() {
-  return (
-    <section className="campus-ai" aria-labelledby="campus-ai-title">
-      <div className="ai-art" aria-hidden="true">
-        <span className="ai-orbit ai-orbit-one" />
-        <span className="ai-orbit ai-orbit-two" />
-        <span className="ai-core">✳</span>
-        <span className="ai-pixel ai-pixel-one" />
-        <span className="ai-pixel ai-pixel-two" />
-        <span className="ai-pixel ai-pixel-three" />
-      </div>
-      <div className="ai-copy">
-        <span className="home-eyebrow">ТВОЙ УЧЕБНЫЙ НАВИГАТОР</span>
-        <h2 id="campus-ai-title">Campus <em>AI</em></h2>
-        <p>Помощь с учёбой и планированием — в разработке.</p>
-        <button className="ai-button" type="button" disabled aria-disabled="true">
-          <span>В разработке</span><span aria-hidden="true">↗</span>
-        </button>
-      </div>
-      <span className="ai-card-index" aria-hidden="true">CAMPUS / 01</span>
-    </section>
-  );
-}
-
-function PerformanceWidget() {
-  return (
-    <article className="mini-widget performance-widget">
-      <div className="mini-widget-heading"><span className="mini-icon">↗</span><span className="home-eyebrow">УСПЕВАЕМОСТЬ</span><span className="mini-demo">ДЕМО</span></div>
-      <div className="performance-content"><strong>87<small>/100</small></strong><span className="performance-ring" aria-hidden="true"><i /></span></div>
-      <div className="sparkline" aria-hidden="true"><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /></div>
-      <p className="mini-caption">Иллюстративный показатель</p>
-    </article>
-  );
-}
-
-function DeadlinesWidget() {
-  return (
-    <article className="mini-widget deadlines-widget">
-      <div className="mini-widget-heading"><span className="mini-icon">◷</span><span className="home-eyebrow">ДЕДЛАЙНЫ</span><span className="mini-demo">ДЕМО</span></div>
-      <div className="deadline-number"><strong>3</strong><span>ближайшие<br />задачи</span></div>
-      <div className="deadline-track" role="img" aria-label="Три ближайшие задачи в демонстрационном примере"><i /><i /><i /></div>
-      <p className="mini-caption">Одна отметка — одна задача</p>
-    </article>
-  );
-}
-
-function NotificationsWidget() {
-  return (
-    <article className="mini-widget notifications-widget">
-      <div className="mini-widget-heading"><span className="mini-icon">♧</span><span className="home-eyebrow">УВЕДОМЛЕНИЯ</span><span className="mini-demo">ДЕМО</span></div>
-      <div className="notification-body">
-        <div className="notification-number"><strong>2</strong><span>новых<br />события</span></div>
-        <ul className="notification-preview-list" aria-label="Примеры последних уведомлений">
-          {demoNotifications.map((notification) => (
-            <li className={`notification-preview preview-${notification.tone}`} key={notification.title}>
-              <span className="preview-dot" aria-hidden="true" />
-              <span><strong>{notification.title}</strong><small>{notification.detail}</small></span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </article>
-  );
-}
-
-export default function StudentHomeContent({ schedule }: { schedule: Omit<StudentHomeSchedule, "groupCode"> }) {
+export default function StudentHomeContent({ schedule, dashboard, firstName }: { schedule: ScheduleData; dashboard: DashboardData; firstName: string }) {
   const [selectedDate, setSelectedDate] = useState(schedule.todayDate);
-
-  return (
-    <>
-      <div className="demo-status-line" role="note">
-        <span className="demo-status-mark" />
-        <span><strong>Демо-режим</strong><i />Расписание загружается из базы платформы и может содержать демонстрационные данные; остальные виджеты ниже — демонстрационные примеры.</span>
-      </div>
-
-      <div className="student-home-grid">
-        <CalendarWidget lessons={schedule.lessons} selectedDate={selectedDate} onSelectDate={setSelectedDate} />
-        <ScheduleWidget schedule={schedule} selectedDate={selectedDate} />
-        <CampusAiWidget />
-        <section className="mini-widgets" aria-label="Краткий обзор">
-          <PerformanceWidget />
-          <DeadlinesWidget />
-          <NotificationsWidget />
+  const average = dashboard.grades && dashboard.grades.available > 0 ? dashboard.grades.accumulated / dashboard.grades.available * 100 : null;
+  return <>
+    <div className="student-home-grid">
+      <div className="home-welcome-stack">
+        <section className="hero home-welcome" aria-labelledby="welcome-title">
+          <div className="home-welcome-main">
+            <div><span className="home-eyebrow">СТУДЕНЧЕСКИЙ КАБИНЕТ</span><h1 className="hero-title" id="welcome-title"><span>Привет,</span><span>{firstName}!</span></h1></div>
+            <span className="hero-divider" aria-hidden="true" />
+            <p className="hero-copy">Твой учебный день,<br />задачи и возможности —<br />в одном пространстве.</p>
+          </div>
         </section>
+        <div className="home-summary-strip" aria-label="Краткая сводка">
+          <div><span>СЕГОДНЯ</span><strong>{formatDay(schedule.todayDate, { weekday: "short", day: "numeric", month: "long" })}</strong></div>
+          <div><span>ТЕКУЩИЙ СЕМЕСТР</span><strong>{dashboard.grades?.semester ?? "Данные недоступны"}</strong></div>
+          <div><span>НАКОПЛЕНО</span><strong>{dashboard.grades?.available ? `${dashboard.grades.accumulated.toFixed(1).replace(".", ",")} / ${dashboard.grades.available.toFixed(1).replace(".", ",")}` : dashboard.unavailable.grades ? "Данные недоступны" : "Оценок пока нет"}</strong><small>{average === null ? "" : `Предварительно ${average.toFixed(2).replace(".", ",")}%`}</small></div>
+        </div>
       </div>
 
-      <footer className="page-footer"><span>DIGITAL CAMPUS <i>·</i> ELECTRIC BLUE CITY</span><span>ДЕМОНСТРАЦИОННЫЙ ВИЗУАЛЬНЫЙ ЭТАП</span></footer>
-    </>
-  );
+      <section className="home-panel home-deadlines"><SectionHeading title="Ближайшие дедлайны" href="/homework"/>{dashboard.unavailable.deadlines ? <p className="home-empty">Не удалось загрузить сроки.</p> : dashboard.deadlines.length ? <ul className="home-deadline-list">{dashboard.deadlines.map((item) => <li key={item.id}><time>{dateTime(item.dueAt)}</time><Link href={item.href}><strong>{item.title}</strong><small>{item.course} · {item.kind}</small></Link></li>)}</ul> : <p className="home-empty">Ближайших дедлайнов пока нет.</p>}</section>
+
+      <SchedulePanel schedule={schedule} selectedDate={selectedDate} selectDate={setSelectedDate}/>
+      <section className="home-panel home-tasks"><SectionHeading title="Задачи на сегодня" href="/tasks"/><p className="home-panel-caption">Личные планы из вашего календаря</p>{dashboard.unavailable.tasks ? <p className="home-empty">Не удалось загрузить задачи.</p> : dashboard.todayTasks.length ? <ul className="home-compact-list">{dashboard.todayTasks.map((task) => <li key={task.id}><span className={`task-state-mark${task.state === "COMPLETED" ? " is-done" : ""}`} aria-hidden="true">{task.state === "COMPLETED" ? "✓" : ""}</span><span><strong>{task.title}</strong><small>{task.time ?? "Весь день"} · {task.category === "STUDY" ? "Учёба" : task.category === "WORK" ? "Работа" : "Личное"}</small></span></li>)}</ul> : <p className="home-empty">На сегодня личных задач нет.</p>}</section>
+      <section className="home-panel home-events"><SectionHeading title="События кампуса" href="/career" link="Мероприятия"/>{dashboard.unavailable.career ? <p className="home-empty">Не удалось загрузить события.</p> : dashboard.events.length ? <ul className="home-event-list">{dashboard.events.map((event) => <li key={event.id}><time>{dateTime(event.startsAt)}</time><strong>{event.title}</strong><small>{event.location || "Место уточняется"}</small></li>)}</ul> : <p className="home-empty">Предстоящих мероприятий пока нет.</p>}</section>
+
+      <section className="home-panel home-performance"><SectionHeading title="Успеваемость" href="/grades"/><div className="home-performance-score">{dashboard.unavailable.grades ? <strong>Нет данных</strong> : average === null ? <strong>Оценок пока нет</strong> : <><strong>{average.toFixed(2).replace(".", ",")}%</strong><span>предварительно по опубликованным компонентам</span></>}</div><div className="home-performance-meta"><span>{dashboard.grades?.courseCount ?? 0} дисциплин</span><span>{dashboard.grades?.unresolvedWorks ?? 0} работ ожидают публикации</span></div></section>
+      <section className="home-panel home-career"><SectionHeading title="Карьерные возможности" href="/career"/>{dashboard.unavailable.career ? <p className="home-empty">Не удалось загрузить карьерные возможности.</p> : dashboard.opportunities.length ? <ul className="home-opportunities">{dashboard.opportunities.map((item) => <li key={item.id}><span className="home-opportunity-mark" aria-hidden="true">↗</span><span><strong>{item.title}</strong><small>{item.organization} · {item.category}</small></span><Link href={`/career/${item.id}`} aria-label={`Открыть: ${item.title}`}>↗</Link></li>)}</ul> : <p className="home-empty">Опубликованных возможностей пока нет.</p>}</section>
+      <section className="home-ai-panel"><div className="home-ai-art" aria-hidden="true"><span/><span/><span/></div><span className="home-eyebrow">CAMPUS AI</span><h2>Помощь в учёбе и делах</h2><p>Детерминированные подсказки и навигация по данным, доступным платформе.</p><Link href="/assistant">Открыть помощника <span aria-hidden="true">↗</span></Link></section>
+      <section className="home-panel home-notices"><SectionHeading title="Уведомления" href="/notifications"/>{dashboard.unavailable.notifications ? <p className="home-empty">Не удалось загрузить уведомления.</p> : dashboard.notifications.length ? <ul className="home-notice-list">{dashboard.notifications.map((notice) => <li key={notice.id} className={notice.read ? "" : "is-unread"}><span aria-hidden="true"/><div><strong>{notice.title}</strong><small>{notice.category.replaceAll("_", " ")} · {dateTime(notice.createdAt)}</small></div></li>)}</ul> : <p className="home-empty">Новых уведомлений нет.</p>}</section>
+    </div>
+    <footer className="page-footer"><span>DIGITAL CAMPUS · МГИМО</span><span>Демонстрационный концепт</span></footer>
+  </>;
 }

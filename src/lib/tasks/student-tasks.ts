@@ -151,6 +151,7 @@ export async function getCurrentStudentTaskCalendar(month: string, now = new Dat
       prisma.homework.findMany({
         where: {
           course: { groups: { some: { groupId } } },
+          OR: [{ groupId }, { groupId: null }],
           state: "PUBLISHED", publishedAt: { not: null }, deadline: { gte: queryStart, lt: queryEnd },
         },
         orderBy: [{ deadline: "asc" }, { id: "asc" }],
@@ -181,7 +182,7 @@ export async function getCurrentStudentTaskCalendar(month: string, now = new Dat
       events.push({
         id: "homework:" + homework.id, sourceId: homework.id, sourceType: "HOMEWORK", category: "STUDY", title: homework.title,
         description: "Учебный дедлайн · домашнее задание", startsAt: homework.deadline, endsAt: null, allDay: false,
-        priority: null, state: "PUBLISHED", sourceLabel: "Домашнее задание", href: null, reminderAt: null,
+        priority: null, state: "PUBLISHED", sourceLabel: "Домашнее задание", href: `/homework/${encodeURIComponent(homework.id)}`, reminderAt: null,
       });
     }
     for (const test of tests) {

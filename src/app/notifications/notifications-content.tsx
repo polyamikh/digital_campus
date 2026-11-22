@@ -15,6 +15,7 @@ type NotificationItem = {
   createdAt: string;
   readAt: string | null;
   sourceId: string;
+  sourceType: string;
 };
 
 type Preferences = Partial<Record<NotificationCategory, boolean>>;
@@ -75,7 +76,7 @@ export default function NotificationsContent({ notifications, preferences, unrea
 }
 
 function NotificationCard({ notification, pending, onRead }: { notification: NotificationItem; pending: boolean; onRead: () => void }) {
-  const target = notificationTarget(notification.category, notification.sourceId);
+  const target = notificationTarget(notification.category, notification.sourceId, notification.sourceType);
   const isUnread = notification.readAt === null;
   return (
     <li className={`notification-card${isUnread ? " is-unread" : ""}${notification.critical ? " is-critical" : ""}`}>

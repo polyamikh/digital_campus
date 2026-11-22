@@ -23,6 +23,7 @@ export type StudentNotificationRecord = {
   createdAt: Date;
   readAt: Date | null;
   sourceId: string;
+  sourceType: string;
 };
 
 export async function getCurrentStudentNotificationCenter() {
@@ -36,7 +37,7 @@ export async function getCurrentStudentNotificationCenter() {
         id: true,
         createdAt: true,
         readAt: true,
-        notification: { select: { category: true, critical: true, title: true, body: true, sourceId: true } },
+        notification: { select: { category: true, critical: true, title: true, body: true, sourceId: true, sourceType: true } },
       },
     }),
     prisma.notificationPreference.findMany({ where: { userId: user.id }, select: { category: true, muted: true } }),
@@ -53,6 +54,7 @@ export async function getCurrentStudentNotificationCenter() {
       createdAt: delivery.createdAt,
       readAt: delivery.readAt,
       sourceId: delivery.notification.sourceId,
+      sourceType: delivery.notification.sourceType,
     })),
     preferences: Object.fromEntries(preferences.map(({ category, muted }) => [category, !muted])) as Partial<Record<NotificationCategory, boolean>>,
     unreadCount,

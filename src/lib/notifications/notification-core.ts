@@ -27,8 +27,14 @@ export function notificationRecipientScope(recipientId: string) {
   return { recipientId } as const;
 }
 
-export function notificationTarget(category: NotificationCategory, sourceId: string): string | null {
+export function notificationTarget(category: NotificationCategory, sourceId: string, sourceType?: string): string | null {
+  if (sourceType === "GRADE") return "/grades";
+  if (sourceType === "OFFICIAL_ANNOUNCEMENT") return `/official-announcements/${encodeURIComponent(sourceId)}`;
+  if (sourceType === "COURSE_ANNOUNCEMENT") return `/announcements/${encodeURIComponent(sourceId)}`;
+  if (category === NotificationCategory.REQUEST && sourceType === "PASS_REQUEST") return `/pass#pass-request-${encodeURIComponent(sourceId)}`;
   if (category === NotificationCategory.REQUEST) return `/requests#request-${encodeURIComponent(sourceId)}`;
+  if (category === NotificationCategory.HOMEWORK) return `/homework/${encodeURIComponent(sourceId)}`;
+  if (category === NotificationCategory.COURSE_ANNOUNCEMENT) return "/materials";
   if (category === NotificationCategory.SCHEDULE) return "/schedule";
   return NOTIFICATION_CATEGORY_META[category].href;
 }

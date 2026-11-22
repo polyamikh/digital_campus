@@ -188,6 +188,47 @@ enum AIMessageRole {
   TOOL
 }
 
+enum AIConversationMode {
+  STUDY_PLANNER
+  CAREER_ASSISTANT
+}
+
+enum ChatKind {
+  COURSE
+  GROUP
+  DIRECT
+}
+
+enum CareerOpportunityKind {
+  INTERNSHIP
+  JOB
+  PROJECT
+}
+
+enum CareerApplicationState {
+  SUBMITTED
+  IN_REVIEW
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum CareerEntryKind {
+  EXPERIENCE
+  PROJECT
+}
+
+enum CareerEventState {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+}
+
+enum CareerRegistrationState {
+  ACTIVE
+  CANCELLED
+}
+
 enum AIDraftKind {
   STUDY_PLAN
   MATERIAL
@@ -263,17 +304,27 @@ model User {
   authoredHomework Homework[] @relation("HomeworkAuthor")
   authoredTests   Test[] @relation("TestAuthor")
   authoredMaterials Material[] @relation("MaterialAuthor")
+  authoredMaterialFolders MaterialFolder[] @relation("MaterialFolderAuthor")
+  reviewedSubmissions SubmissionReview[] @relation("SubmissionReviewer")
   serviceRequests ServiceRequest[] @relation("RequestStudent")
   assignedRequests ServiceRequest[] @relation("RequestAssignee")
   requestHistory  RequestStatusHistory[]
   clarifications  RequestClarification[]
   passRequests    PassRequest[]
+  processedPassRequests PassRequest[] @relation("PassRequestProcessor")
+  passRequestHistory PassRequestHistory[]
+  careerApplicationHistory CareerApplicationHistory[]
   temporaryPasses TemporaryDemoPass[]
   authoredAnnouncements OfficialAnnouncement[] @relation("OfficialAuthor")
   authoredCourseAnnouncements CourseAnnouncement[]
   acknowledgements Acknowledgement[]
   chatMemberships ChatMember[]
   messages        Message[]
+  pinnedMessages  Message[] @relation("MessagePinnedBy")
+  messageReactions MessageReaction[]
+  careerApplications CareerApplication[]
+  careerResume CareerResume?
+  careerEventRegistrations CareerEventRegistration[]
   notifications   NotificationDelivery[]
   notificationPreferences NotificationPreference[]
   personalTasks   PersonalTask[]
@@ -379,6 +430,11 @@ model Group {
   lessons           Lesson[]
   assessments       Assessment[]
   requests          GroupAnnouncementAudience[]
+  materialAudiences MaterialAudience[]
+  homeworks         Homework[]
+  materialFolders   MaterialFolder[]
+  chats             Chat[]
+  courseAnnouncements CourseAnnouncement[]
 
   @@index([academicProgramId])
 }
@@ -437,6 +493,7 @@ model Course {
   homework    Homework[]
   tests       Test[]
   materials   Material[]
+  materialFolders MaterialFolder[]
   chats       Chat[]
   announcements CourseAnnouncement[]
 
@@ -453,6 +510,8 @@ model CourseGroup {
   semesterNumber Int?
   course         Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
   group          Group   @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  scopedHomeworks Homework[] @relation("HomeworkCourseGroup")
+  scopedMaterialFolders MaterialFolder[] @relation("MaterialFolderCourseGroup")
 
   @@unique([courseId, groupId])
   @@index([groupId])
@@ -669,6 +728,11 @@ model Homework {
   assessmentId String? @unique @db.Uuid
   title       String   @db.VarChar(240)
   instructions String @db.Text
+  criteria     String? @db.Text
+  groupId      String? @db.Uuid
+  allowText    Boolean @default(true)
+  allowFile    Boolean @default(false)
+  allowLink    Boolean @default(false)
   deadline    DateTime? @db.Timestamptz(6)
   state       PublicationState @default(DRAFT)
   aiPolicy    Json?
@@ -676,15 +740,19 @@ model Homework {
   createdAt   DateTime @default(now()) @db.Timestamptz(6)
   version     Int      @default(1)
   course      Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  group       Group?   @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  courseGroup CourseGroup? @relation("HomeworkCourseGroup", fields: [courseId, groupId], references: [courseId, groupId], onDelete: Restrict)
   author      User     @relation("HomeworkAuthor", fields: [authorId], references: [id], onDelete: Restrict)
   assessment  Assessment? @relation(fields: [assessmentId], references: [id], onDelete: SetNull)
   submissions Submission[]
   calendarEvents AcademicCalendarEvent[]
   reminders   Reminder[]
   revisions   PublicationVersion[]
+  attachedMaterials HomeworkMaterial[]
 
   @@index([courseId, state, deadline])
   @@index([authorId, createdAt])
+  @@index([groupId, state, deadline])
 }
 
 model Submission {
@@ -699,6 +767,7 @@ model Submission {
   homework    Homework @relation(fields: [homeworkId], references: [id], onDelete: Restrict)
   student     User     @relation(fields: [studentId], references: [id], onDelete: Restrict)
   revisions   SubmissionRevision[]
+  reviews     SubmissionReview[]
 
   @@unique([homeworkId, studentId])
   @@index([studentId, state])
@@ -710,8 +779,30 @@ model SubmissionRevision {
   submissionId String   @db.Uuid
   objectKey    String?  @db.VarChar(1000)
   textContent  String?  @db.Text
+  externalUrl  String?  @db.VarChar(2000)
+  fileName     String?  @db.VarChar(255)
+  mimeType     String?  @db.VarChar(120)
+  byteSize     BigInt?
+  submittedAt  DateTime? @db.Timestamptz(6)
   createdAt    DateTime @default(now()) @db.Timestamptz(6)
   submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Restrict)
+  reviews      SubmissionReview[]
+
+  @@index([submissionId, createdAt])
+  @@unique([id, submissionId])
+}
+
+model SubmissionReview {
+  id           String   @id @default(uuid()) @db.Uuid
+  submissionId String   @db.Uuid
+  revisionId   String   @db.Uuid
+  reviewerId   String   @db.Uuid
+  state        HomeworkSubmissionState
+  comment      String?  @db.Text
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Restrict)
+  revision     SubmissionRevision @relation(fields: [revisionId, submissionId], references: [id, submissionId], onDelete: Restrict)
+  reviewer     User @relation("SubmissionReviewer", fields: [reviewerId], references: [id], onDelete: Restrict)
 
   @@index([submissionId, createdAt])
 }
@@ -795,15 +886,72 @@ model Material {
   authorId    String   @db.Uuid
   title       String   @db.VarChar(240)
   description String?  @db.Text
+  externalUrl String?  @db.VarChar(2000)
+  folderId    String?  @db.Uuid
   state       PublicationState @default(DRAFT)
   publishedAt DateTime? @db.Timestamptz(6)
   version     Int      @default(1)
   course      Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
   author      User     @relation("MaterialAuthor", fields: [authorId], references: [id], onDelete: Restrict)
   versions    PublicationVersion[]
+  folder      MaterialFolder? @relation(fields: [folderId], references: [id], onDelete: Restrict)
+  audiences   MaterialAudience[]
+  files       MaterialFile[]
+  attachedToHomework HomeworkMaterial[]
 
   @@index([courseId, state])
   @@index([authorId])
+  @@index([folderId, state])
+}
+
+model MaterialFolder {
+  id        String   @id @default(uuid()) @db.Uuid
+  courseId  String   @db.Uuid
+  groupId   String   @db.Uuid
+  authorId  String   @db.Uuid
+  name      String   @db.VarChar(160)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  courseGroup CourseGroup @relation("MaterialFolderCourseGroup", fields: [courseId, groupId], references: [courseId, groupId], onDelete: Restrict)
+  author    User     @relation("MaterialFolderAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+  materials Material[]
+
+  @@unique([courseId, groupId, name])
+  @@index([authorId, courseId, groupId])
+}
+
+model MaterialAudience {
+  materialId String @db.Uuid
+  groupId    String @db.Uuid
+  material   Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  group      Group @relation(fields: [groupId], references: [id], onDelete: Restrict)
+
+  @@id([materialId, groupId])
+  @@index([groupId, materialId])
+}
+
+model MaterialFile {
+  id          String   @id @default(uuid()) @db.Uuid
+  materialId  String   @db.Uuid
+  objectKey   String   @unique @db.VarChar(1000)
+  fileName    String   @db.VarChar(255)
+  mimeType    String   @db.VarChar(120)
+  byteSize    BigInt
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  material    Material @relation(fields: [materialId], references: [id], onDelete: Restrict)
+
+  @@index([materialId, createdAt])
+}
+
+model HomeworkMaterial {
+  homeworkId String @db.Uuid
+  materialId String @db.Uuid
+  homework   Homework @relation(fields: [homeworkId], references: [id], onDelete: Restrict)
+  material   Material @relation(fields: [materialId], references: [id], onDelete: Restrict)
+
+  @@id([homeworkId, materialId])
+  @@index([materialId, homeworkId])
 }
 
 // A version may belong to one publishable object. Enforce exactly one owner
@@ -1083,12 +1231,31 @@ model PassRequest {
   state       PassRequestState @default(SUBMITTED)
   submittedAt DateTime @default(now()) @db.Timestamptz(6)
   issuedAt    DateTime? @db.Timestamptz(6)
+  processedById String? @db.Uuid
+  decisionReason String? @db.Text
   version     Int      @default(1)
   student     User     @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  processedBy User?    @relation("PassRequestProcessor", fields: [processedById], references: [id], onDelete: SetNull)
+  history     PassRequestHistory[]
   temporaryPass TemporaryDemoPass?
 
   @@unique([id, studentId])
   @@index([studentId, state, submittedAt])
+  @@index([state, submittedAt])
+}
+
+model PassRequestHistory {
+  id          String   @id @default(uuid()) @db.Uuid
+  requestId   String   @db.Uuid
+  actorId     String   @db.Uuid
+  fromState   PassRequestState?
+  toState     PassRequestState
+  note        String?  @db.Text
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  request     PassRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+  actor       User     @relation(fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([requestId, createdAt])
 }
 
 // One temporary demo pass may be issued per student and Moscow calendar day.
@@ -1180,24 +1347,34 @@ model Acknowledgement {
 model CourseAnnouncement {
   id          String   @id @default(uuid()) @db.Uuid
   courseId    String   @db.Uuid
+  groupId     String?  @db.Uuid
   authorId    String   @db.Uuid
   title       String   @db.VarChar(240)
   body        String   @db.Text
   publishedAt DateTime @default(now()) @db.Timestamptz(6)
   course      Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  group       Group?   @relation(fields: [groupId], references: [id], onDelete: Restrict)
   author      User     @relation(fields: [authorId], references: [id], onDelete: Restrict)
 
   @@index([courseId, publishedAt])
+  @@index([groupId, publishedAt])
 }
 
 model Chat {
   id        String   @id @default(uuid()) @db.Uuid
-  courseId  String   @db.Uuid
+  courseId  String?  @db.Uuid
+  groupId   String?  @db.Uuid
+  kind      ChatKind @default(COURSE)
+  directKey String?  @unique @db.VarChar(80)
   name      String?  @db.VarChar(200)
   createdAt DateTime @default(now()) @db.Timestamptz(6)
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  course    Course?  @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  group     Group?   @relation(fields: [groupId], references: [id], onDelete: Restrict)
   members   ChatMember[]
   messages  Message[]
+
+  @@index([courseId, kind])
+  @@index([groupId, kind])
 }
 
 model ChatMember {
@@ -1206,6 +1383,8 @@ model ChatMember {
   userId   String   @db.Uuid
   joinedAt DateTime @default(now()) @db.Timestamptz(6)
   leftAt   DateTime? @db.Timestamptz(6)
+  lastReadAt DateTime? @db.Timestamptz(6)
+  mutedAt  DateTime? @db.Timestamptz(6)
   chat     Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -1219,10 +1398,45 @@ model Message {
   senderId  String   @db.Uuid
   body      String   @db.Text
   createdAt DateTime @default(now()) @db.Timestamptz(6)
+  replyToId String?  @db.Uuid
+  pinnedAt  DateTime? @db.Timestamptz(6)
+  pinnedById String? @db.Uuid
   chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
   sender    User     @relation(fields: [senderId], references: [id], onDelete: Restrict)
+  replyTo   Message? @relation("MessageReplies", fields: [replyToId, chatId], references: [id, chatId], onDelete: Restrict)
+  replies   Message[] @relation("MessageReplies")
+  pinnedBy  User?    @relation("MessagePinnedBy", fields: [pinnedById], references: [id], onDelete: SetNull)
+  reactions MessageReaction[]
+  attachments MessageAttachment[]
 
   @@index([chatId, createdAt])
+  @@unique([id, chatId])
+  @@index([replyToId, chatId])
+}
+
+model MessageReaction {
+  messageId String @db.Uuid
+  userId    String @db.Uuid
+  reaction  String @db.VarChar(32)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([messageId, userId, reaction])
+  @@index([userId, createdAt])
+}
+
+model MessageAttachment {
+  id        String @id @default(uuid()) @db.Uuid
+  messageId String @db.Uuid
+  objectKey String @unique @db.VarChar(1000)
+  fileName  String @db.VarChar(255)
+  mimeType  String @db.VarChar(120)
+  byteSize  BigInt
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Restrict)
+
+  @@index([messageId, createdAt])
 }
 
 model Notification {
@@ -1376,6 +1590,7 @@ model Reminder {
 model AIConversation {
   id          String   @id @default(uuid()) @db.Uuid
   ownerId     String   @db.Uuid
+  mode        AIConversationMode?
   title       String?  @db.VarChar(240)
   createdAt   DateTime @default(now()) @db.Timestamptz(6)
   updatedAt   DateTime @updatedAt @db.Timestamptz(6)
@@ -1540,13 +1755,117 @@ model CareerOpportunity {
   organization String @db.VarChar(240)
   description String   @db.Text
   location    String?  @db.VarChar(200)
+  kind        CareerOpportunityKind?
+  direction   String?  @db.VarChar(160)
+  externalUrl String?  @db.VarChar(2000)
   closesAt    DateTime? @db.Timestamptz(6)
   isDemo      Boolean  @default(true)
   state       CareerOpportunityState @default(DRAFT)
   createdAt   DateTime @default(now()) @db.Timestamptz(6)
   category    CareerCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  applications CareerApplication[]
 
   @@index([categoryId, state, closesAt])
+  @@index([kind, state, closesAt])
+}
+
+model CareerApplication {
+  id             String @id @default(uuid()) @db.Uuid
+  studentId      String @db.Uuid
+  opportunityId  String @db.Uuid
+  state          CareerApplicationState @default(SUBMITTED)
+  coverLetter    String? @db.Text
+  appliedAt      DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @db.Timestamptz(6)
+  student        User @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  opportunity    CareerOpportunity @relation(fields: [opportunityId], references: [id], onDelete: Restrict)
+  history        CareerApplicationHistory[]
+
+  @@unique([studentId, opportunityId])
+  @@index([studentId, state, appliedAt])
+  @@index([opportunityId, state, appliedAt])
+}
+
+model CareerApplicationHistory {
+  id            String @id @default(uuid()) @db.Uuid
+  applicationId String @db.Uuid
+  actorId       String @db.Uuid
+  fromState     CareerApplicationState?
+  toState       CareerApplicationState
+  note          String? @db.Text
+  createdAt     DateTime @default(now()) @db.Timestamptz(6)
+  application   CareerApplication @relation(fields: [applicationId], references: [id], onDelete: Restrict)
+  actor         User @relation(fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([applicationId, createdAt])
+}
+
+model CareerResume {
+  id        String @id @default(uuid()) @db.Uuid
+  studentId String @unique @db.Uuid
+  headline  String? @db.VarChar(200)
+  summary   String? @db.Text
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  student   User @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  skills    CareerResumeSkill[]
+  entries   CareerResumeEntry[]
+}
+
+model CareerResumeSkill {
+  id       String @id @default(uuid()) @db.Uuid
+  resumeId String @db.Uuid
+  name     String @db.VarChar(100)
+  level    String? @db.VarChar(40)
+  resume   CareerResume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  @@unique([resumeId, name])
+  @@index([resumeId, name])
+}
+
+model CareerResumeEntry {
+  id          String @id @default(uuid()) @db.Uuid
+  resumeId    String @db.Uuid
+  kind        CareerEntryKind
+  title       String @db.VarChar(200)
+  organization String? @db.VarChar(200)
+  description String? @db.Text
+  startedAt   DateTime? @db.Date
+  endedAt     DateTime? @db.Date
+  externalUrl String? @db.VarChar(2000)
+  position    Int @default(0)
+  resume      CareerResume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  @@index([resumeId, kind, position])
+}
+
+model CareerEvent {
+  id          String @id @default(uuid()) @db.Uuid
+  title       String @db.VarChar(240)
+  description String @db.Text
+  startsAt    DateTime @db.Timestamptz(6)
+  endsAt      DateTime? @db.Timestamptz(6)
+  location    String? @db.VarChar(200)
+  externalUrl String? @db.VarChar(2000)
+  isDemo      Boolean @default(true)
+  state       CareerEventState @default(DRAFT)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  registrations CareerEventRegistration[]
+
+  @@index([state, startsAt])
+}
+
+model CareerEventRegistration {
+  id        String @id @default(uuid()) @db.Uuid
+  eventId   String @db.Uuid
+  studentId String @db.Uuid
+  state     CareerRegistrationState @default(ACTIVE)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  event     CareerEvent @relation(fields: [eventId], references: [id], onDelete: Restrict)
+  student   User @relation(fields: [studentId], references: [id], onDelete: Restrict)
+
+  @@unique([eventId, studentId])
+  @@index([studentId, state, createdAt])
 }
 
 model AuditEvent {

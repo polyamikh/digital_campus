@@ -31,8 +31,8 @@ export default function TestingContent({ tests, membershipState, now }: { tests:
   }), [tests]);
   const filtered = tests.filter((item) => testingTabForStatus(item.status) === tab && (course === "all" || item.courseName === course));
 
-  return <main className="testing-page" id="main-content">
-    <header className="testing-heading"><div><span className="profile-heading-kicker">КОНТРОЛЬ ЗНАНИЙ</span><h1>Тестирование</h1><p>Внешние тесты и результаты, опубликованные преподавателем.</p></div></header>
+  return <section className="testing-page" aria-labelledby="testing-page-title">
+    <header className="testing-heading"><div><span className="profile-heading-kicker">КОНТРОЛЬ ЗНАНИЙ</span><h1 id="testing-page-title">Тестирование</h1><p>Внешние тесты и результаты, опубликованные преподавателем.</p></div></header>
     <section className="testing-summary" aria-label="Сводка по тестам">
       <SummaryCard label="Доступные" value={summary.available} accent="cyan" />
       <SummaryCard label="Завершённые" value={summary.completed} accent="pink" />
@@ -59,7 +59,7 @@ export default function TestingContent({ tests, membershipState, now }: { tests:
         </article>;
       })}
     </section>}
-  </main>;
+  </section>;
 }
 
 function SummaryCard({ label, value, accent }: { label: string; value: number; accent: string }) {

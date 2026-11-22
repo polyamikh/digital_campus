@@ -656,6 +656,53 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--color-cyan); ou
   .role-placeholder-top { padding-top: 22px; }
 }
 
+/* Dean workspace sections */
+.dean-workspace-nav { max-width: min(68vw, 980px); overflow-x: auto; gap: 8px; scrollbar-width: thin; }
+.dean-workspace-nav a { white-space: nowrap; }
+.dean-nav-count { display: inline-grid; place-items: center; min-width: 20px; height: 20px; margin-left: 6px; border-radius: 999px; color: #071225; background: #22c7e8; font-size: 11px; font-weight: 800; }
+.dean-workspace-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr)); gap: 14px; margin: 24px 0; }
+.dean-workspace-stat, .dean-workspace-panel { border: 1px solid rgba(132, 161, 207, .22); border-radius: 18px; padding: 20px; background: linear-gradient(145deg, rgba(18, 34, 62, .92), rgba(9, 18, 36, .96)); box-shadow: 0 18px 44px rgba(0, 0, 0, .14); }
+.dean-workspace-stat { display: flex; flex-direction: column; gap: 9px; min-height: 124px; }
+.dean-workspace-stat span, .dean-workspace-panel small { color: #a8bad5; font-size: 13px; }
+.dean-workspace-stat strong { color: #ecf7ff; font-size: clamp(22px, 4vw, 32px); }
+.dean-workspace-panel { margin: 16px 0; }
+.dean-workspace-panel h2 { margin: 0 0 12px; color: #e9f5ff; font-size: 19px; }
+.dean-workspace-panel p { color: #c4d3e8; line-height: 1.6; }
+.dean-workspace-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.dean-workspace-actions a, .dean-workspace-actions button, .dean-workspace-panel button, .dean-workspace-export, .dean-workspace-filters button { display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(34, 199, 232, .45); border-radius: 12px; padding: 10px 14px; color: #eaf8ff; background: rgba(34, 199, 232, .1); font: inherit; text-decoration: none; cursor: pointer; }
+.dean-workspace-actions a:hover, .dean-workspace-panel button:hover, .dean-workspace-filters button:hover { background: rgba(34, 199, 232, .2); }
+.dean-workspace-filters, .dean-workspace-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 12px; align-items: end; }
+.dean-workspace-form h2, .dean-workspace-form fieldset { grid-column: 1 / -1; }
+.dean-workspace-form label, .dean-workspace-filters label { display: grid; gap: 6px; color: #c3d4ea; font-size: 13px; }
+.dean-workspace-form input, .dean-workspace-form textarea, .dean-workspace-form select, .dean-workspace-filters input, .dean-workspace-filters select { width: 100%; min-width: 0; border: 1px solid rgba(142, 169, 211, .28); border-radius: 10px; padding: 11px 12px; color: #edf7ff; background: #0b1730; font: inherit; }
+.dean-workspace-form textarea { resize: vertical; }
+.dean-workspace-form fieldset { display: flex; flex-wrap: wrap; gap: 12px; border: 1px solid rgba(142, 169, 211, .22); border-radius: 12px; padding: 12px; }
+.dean-inline-choice { display: inline-flex !important; grid-template-columns: auto 1fr !important; align-items: center; gap: 8px !important; }
+.dean-inline-choice input { width: auto !important; }
+.dean-directory-list { display: grid; gap: 12px; margin-top: 16px; }
+.dean-person-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.dean-person-row h2, .dean-directory-list h2 { margin: 4px 0 8px; }
+.dean-workspace-alert { border: 1px solid rgba(255, 107, 155, .55); border-radius: 14px; padding: 16px; color: #ffe0ec; background: rgba(120, 26, 67, .22); }
+.dean-workspace-ok { color: #9de8c6; }
+.dean-workspace-export { margin: 16px 0; }
+.dean-calendar-list { display: grid; gap: 8px; padding: 0; list-style: none; }
+.dean-calendar-list li { display: grid; grid-template-columns: 180px 160px 1fr; gap: 12px; align-items: center; border: 1px solid rgba(132, 161, 207, .17); border-radius: 12px; padding: 12px 16px; background: rgba(13, 26, 49, .82); color: #d9e9fb; }
+.dean-calendar-list time { color: #7de2f3; }
+.dean-month-grid-wrap { overflow-x: auto; border: 1px solid rgba(132, 161, 207, .2); border-radius: 16px; }
+.dean-month-grid { display: grid; grid-template-columns: repeat(7, minmax(110px, 1fr)); min-width: 780px; background: rgba(7, 17, 34, .72); }
+.dean-month-weekday { padding: 12px; color: #92a9c9; text-align: left; border-bottom: 1px solid rgba(132, 161, 207, .2); }
+.dean-month-cell { display: flex; flex-direction: column; gap: 6px; min-height: 132px; padding: 8px; border-right: 1px solid rgba(132, 161, 207, .14); border-bottom: 1px solid rgba(132, 161, 207, .14); color: #d8e7f7; }
+.dean-month-cell > time { color: #7de2f3; font-size: 12px; }
+.dean-month-cell.is-outside { opacity: .45; }
+.dean-month-event { display: grid; gap: 3px; border-left: 3px solid #22c7e8; border-radius: 5px; padding: 5px 6px; color: #eff9ff; background: rgba(34, 199, 232, .1); font-size: 11px; text-decoration: none; }
+.dean-month-event small { color: #82dff0; font-size: 9px; }
+.dean-month-event span { overflow: hidden; text-overflow: ellipsis; }
+.dean-month-more { color: #f472b6; font-size: 10px; }
+.dean-notification-preferences { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 8px; }
+.dean-notification-preferences form { display: flex; align-items: center; justify-content: space-between; gap: 8px; border: 1px solid rgba(132, 161, 207, .17); border-radius: 10px; padding: 10px; color: #d9e9fb; }
+.dean-workspace-panel.is-unread { border-color: rgba(34, 199, 232, .55); }
+@media (max-width: 760px) { .dean-workspace-nav { order: 5; width: 100%; max-width: 100%; } .dean-requests-topbar { flex-wrap: wrap; } .dean-calendar-list li { grid-template-columns: 1fr; gap: 5px; } .dean-person-row { align-items: flex-start; flex-direction: column; } }
+
 @media (max-width: 380px) {
   .login-page { padding-right: 12px; padding-left: 12px; }
   .login-panel { padding: 23px 19px; }
@@ -1128,4 +1175,301 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--color-cyan); ou
   .testing-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .testing-tabs button { padding: 0 5px; font-size: 9px; }
   .testing-meta { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Coursework: materials and homework */
+.coursework-page { display: grid; gap: 18px; width: min(100%, 1120px); margin: 0 auto; padding: 4px 0 50px; color: #eaf0ff; }
+.coursework-heading > span { color: #73dff4; font: 700 9px/1.4 var(--font-body); letter-spacing: .15em; }
+.coursework-heading h1 { margin: 7px 0 5px; color: #f3f6ff; font: 400 clamp(30px, 4vw, 46px)/1.04 var(--font-display); }
+.coursework-heading p { margin: 0; color: #aab5d3; font-size: 12px; line-height: 1.6; }
+.coursework-filters { display: grid; grid-template-columns: minmax(160px, 1.4fr) repeat(2, minmax(140px, .8fr)); gap: 10px; padding: 13px; border: 1px solid rgba(80, 99, 177, .24); border-radius: 10px; background: rgba(16, 22, 56, .64); }
+.coursework-filters label, .coursework-answer-form > label, .coursework-folder-form > label { display: grid; min-width: 0; gap: 5px; color: #bdc8e3; font-size: 10px; }
+.coursework-filters input, .coursework-filters select, .coursework-answer-form input:not([type="checkbox"]):not([type="file"]), .coursework-answer-form select, .coursework-answer-form textarea, .coursework-folder-form input, .coursework-folder-form select, .coursework-submission input { width: 100%; min-width: 0; min-height: 39px; padding: 9px 10px; border: 1px solid rgba(94, 117, 193, .34); border-radius: 7px; outline: none; background: #101638; color: #eef2ff; font: 500 11px var(--font-body); }
+.coursework-answer-form textarea { resize: vertical; line-height: 1.6; }
+.coursework-filters :focus-visible, .coursework-answer-form :focus-visible, .coursework-folder-form :focus-visible { outline: 2px solid #22c7e8; outline-offset: 2px; }
+.coursework-tabs { display: flex; flex-wrap: wrap; gap: 7px; padding-bottom: 4px; border-bottom: 1px solid rgba(100, 121, 190, .2); }
+.coursework-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
+.coursework-summary article { display: flex; min-height: 65px; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 13px; border: 1px solid rgba(83, 105, 184, .2); border-radius: 8px; background: rgba(16, 22, 56, .55); }
+.coursework-summary span { color: #a8b5d4; font-size: 9px; }
+.coursework-summary strong { color: #8deeff; font: 500 22px var(--font-display); }
+.coursework-tabs button { display: flex; min-height: 36px; align-items: center; gap: 8px; padding: 0 12px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: #aab5d3; font: 600 10px var(--font-body); cursor: pointer; }
+.coursework-tabs button span { display: grid; min-width: 18px; height: 18px; place-items: center; border-radius: 20px; background: rgba(107, 123, 180, .2); color: #cad5ef; font-size: 9px; }
+.coursework-tabs button.is-active { border-color: rgba(34, 199, 232, .3); background: rgba(34, 199, 232, .08); color: #93efff; }
+.coursework-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.coursework-group { display: grid; gap: 10px; }
+.coursework-group > h2, .coursework-detail-panel h2 { margin: 0; color: #eef3ff; font: 500 18px var(--font-display); }
+.coursework-card, .coursework-detail-panel, .coursework-notification { min-width: 0; padding: 15px; border: 1px solid rgba(83, 105, 184, .24); border-radius: 10px; background: linear-gradient(145deg, rgba(20, 28, 68, .82), rgba(11, 17, 48, .82)); box-shadow: 0 12px 32px rgba(3, 6, 22, .12); }
+.coursework-card h2, .coursework-card h3 { margin: 9px 0 6px; color: #eff3ff; font: 500 17px/1.25 var(--font-display); }
+.coursework-card > p, .coursework-detail-panel > p { color: #b5c0dc; font-size: 11px; line-height: 1.65; white-space: normal; }
+.coursework-meta { margin: 0; color: #91a0c4; font-size: 9px; line-height: 1.6; }
+.coursework-type { color: #70dff5; font-size: 8px; font-weight: 800; letter-spacing: .13em; }
+.coursework-card-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; color: #94a3c4; font-size: 9px; }
+.coursework-status { display: inline-flex; min-height: 22px; align-items: center; padding: 0 8px; border: 1px solid rgba(34, 199, 232, .25); border-radius: 20px; background: rgba(34, 199, 232, .08); color: #91edff; font-size: 9px; font-weight: 650; }
+.coursework-status.status-revision_required { border-color: rgba(244, 114, 182, .35); background: rgba(244, 114, 182, .1); color: #ffabd5; }
+.coursework-status.status-overdue { border-color: rgba(245, 158, 11, .3); color: #ffd17a; }
+.coursework-resource { display: inline-flex; max-width: 100%; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; padding: 9px 10px; border: 1px solid rgba(34, 199, 232, .2); border-radius: 7px; color: #98efff; font-size: 10px; text-decoration: none; overflow-wrap: anywhere; }
+.coursework-resource:hover { border-color: rgba(34, 199, 232, .55); background: rgba(34, 199, 232, .07); }
+.coursework-resource small { color: #a6b4d4; white-space: nowrap; }
+.coursework-empty { padding: 28px 18px; border: 1px dashed rgba(103, 124, 189, .28); border-radius: 10px; background: rgba(12, 18, 48, .35); text-align: center; }
+.coursework-empty h2 { margin: 0 0 7px; color: #e5ecff; font: 500 19px var(--font-display); }
+.coursework-empty p { margin: 0; color: #9caaca; font-size: 11px; line-height: 1.6; }
+.coursework-detail { display: grid; gap: 14px; width: min(100%, 900px); margin: 0 auto; padding: 6px 0 50px; }
+.coursework-back { display: inline-flex; margin: 0 0 12px; color: #8eeaff; font-size: 10px; text-decoration: none; }
+.coursework-detail-heading, .coursework-result { padding: 17px; border: 1px solid rgba(72, 99, 183, .26); border-radius: 10px; background: rgba(17, 24, 60, .72); }
+.coursework-detail-heading > span { color: #77def1; font-size: 10px; }
+.coursework-detail-heading h1 { margin: 8px 0; color: #f3f6ff; font: 400 clamp(26px, 4vw, 38px)/1.12 var(--font-display); }
+.coursework-detail-heading p { margin: 0; color: #aab5d3; font-size: 11px; }
+.coursework-detail-panel { display: grid; gap: 12px; }
+.coursework-preserve-lines { white-space: pre-wrap !important; overflow-wrap: anywhere; }
+.coursework-detail-panel h3 { color: #d9e5ff; font: 500 13px var(--font-display); }
+.coursework-result { color: #aebbd9; font-size: 12px; }.coursework-result strong { color: #8ef1cf; }
+.coursework-feedback { padding: 10px; border-left: 2px solid #f472b6; border-radius: 0 6px 6px 0; background: rgba(244, 114, 182, .07); color: #f7c1dc; font-size: 10px; line-height: 1.55; }
+.coursework-format-switch, .coursework-actions { display: flex; flex-wrap: wrap; gap: 7px; }
+.coursework-format-switch button, .coursework-secondary, .coursework-primary, .coursework-danger { min-height: 36px; padding: 0 12px; border: 1px solid rgba(95, 116, 185, .28); border-radius: 7px; background: rgba(25, 34, 77, .6); color: #c6d4f2; font: 650 10px var(--font-body); cursor: pointer; }
+.coursework-format-switch button.is-active, .coursework-primary { border-color: rgba(34, 199, 232, .35); background: linear-gradient(105deg, rgba(34, 199, 232, .18), rgba(124, 75, 177, .2)); color: #a7f2ff; }
+.coursework-danger { border-color: rgba(244, 114, 182, .3); color: #ffafd5; }
+.coursework-secondary:disabled, .coursework-primary:disabled, .coursework-danger:disabled { opacity: .55; cursor: wait; }
+.coursework-answer-form, .coursework-folder-form { display: grid; gap: 11px; }
+.coursework-answer-form > small, .coursework-detail-panel small { color: #8796b8; font-size: 9px; line-height: 1.5; }
+.coursework-answer-form fieldset { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 10px; border: 1px solid rgba(94, 117, 193, .24); border-radius: 7px; }
+.coursework-answer-form legend { padding: 0 5px; color: #bfcae5; font-size: 10px; }
+.coursework-check { display: flex !important; align-items: center; gap: 7px !important; color: #c4cfe8 !important; }
+.coursework-check input { accent-color: #22c7e8; }
+.coursework-message { padding: 10px 12px; border: 1px solid rgba(34, 199, 232, .26); border-radius: 7px; color: #a7f1ff; font-size: 10px; }
+.coursework-history { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.coursework-history li { display: grid; gap: 5px; padding: 11px; border: 1px solid rgba(82, 103, 179, .19); border-radius: 7px; color: #bdc8e0; font-size: 10px; overflow-wrap: anywhere; }
+.coursework-history time, .coursework-notification time { color: #8595bc; font-size: 9px; }
+.coursework-teacher-page { min-height: 100svh; padding: 30px 24px 60px; }
+.coursework-teacher-wrap { position: relative; width: min(100%, 1120px); margin: 7px auto 0; }
+.coursework-teacher-content { display: grid; gap: 14px; }
+.coursework-teacher-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 12px; }
+.coursework-teacher-list { display: grid; gap: 11px; }
+.coursework-teacher-assignment { display: grid; gap: 11px; padding: 14px; border: 1px solid rgba(80, 99, 177, .2); border-radius: 8px; background: rgba(6, 11, 36, .22); }
+.coursework-teacher-assignment h3 { margin: 0; color: #eef3ff; font: 500 16px var(--font-display); }
+.coursework-teacher-assignment > p { color: #b1bddb; font-size: 10px; line-height: 1.55; }
+.coursework-stat-row { display: flex; flex-wrap: wrap; gap: 7px; color: #95a4c6; font-size: 9px; }
+.coursework-stat-row span { padding: 5px 7px; border-radius: 5px; background: rgba(103, 124, 189, .1); }
+.coursework-submissions { display: grid; gap: 9px; }
+.coursework-submission { display: grid; gap: 9px; padding: 11px; border: 1px solid rgba(88, 111, 186, .2); border-radius: 7px; background: rgba(11, 17, 47, .45); }
+.coursework-submission > div:first-child { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; color: #e5ecff; font-size: 10px; }
+.coursework-submission > div:first-child span { color: #9dadd0; }
+.coursework-answer-preview { padding: 9px; border-radius: 6px; background: rgba(4, 9, 31, .42); color: #c1cce4; font-size: 10px; overflow-wrap: anywhere; }
+.coursework-grade-publish { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; color: #90efce; font-size: 10px; }
+.coursework-list-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.coursework-list-heading label { display: flex; align-items: center; gap: 8px; color: #aab5d3; font-size: 10px; }
+.coursework-list-heading select { min-height: 34px; padding: 0 8px; border: 1px solid rgba(94, 117, 193, .34); border-radius: 6px; background: #101638; color: #eef2ff; }
+.coursework-folder-form { padding-bottom: 10px; border-bottom: 1px solid rgba(100, 121, 190, .17); }
+.coursework-folder-row { display: grid; gap: 3px; padding: 8px 0; border-bottom: 1px solid rgba(100, 121, 190, .12); color: #8f9fbe; font-size: 9px; }
+.coursework-folder-row strong { color: #dfe8ff; font-size: 11px; }
+.coursework-notification-list { display: grid; gap: 10px; }
+.coursework-notification.is-unread { border-color: rgba(34, 199, 232, .38); box-shadow: inset 3px 0 #22c7e8; }
+.coursework-notification h2 { margin: 7px 0 4px; color: #eef3ff; font: 500 16px var(--font-display); }
+.coursework-notification p { color: #afbbd7; font-size: 10px; line-height: 1.5; }
+@media (max-width: 760px) { .coursework-grid, .coursework-teacher-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 520px) { .coursework-page, .coursework-teacher-page { padding-right: 12px; padding-left: 12px; } .coursework-filters { grid-template-columns: minmax(0, 1fr); } .coursework-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); } .coursework-tabs button { justify-content: center; padding: 0 6px; font-size: 9px; } .coursework-summary { gap: 6px; }.coursework-summary article { min-height: 72px; align-items: flex-start; flex-direction: column-reverse; padding: 8px; }.coursework-summary strong { font-size: 20px; }.coursework-summary span { font-size: 8px; } .coursework-detail-panel, .coursework-card { padding: 12px; } .coursework-actions > button { flex: 1 1 auto; } }
+
+/* Teacher workspace extensions */
+.teacher-workspace-page { width: min(100%, 1220px); margin: 0 auto; padding: 24px clamp(12px, 2.2vw, 28px) 56px; color: #e8eeff; }
+.teacher-page-heading { margin: 0 0 22px; }.teacher-page-heading h1 { margin: 7px 0 8px; color: #f4f6ff; font: 400 clamp(30px, 4vw, 44px)/1.08 var(--font-display); }.teacher-page-heading p { max-width: 780px; margin: 0; color: #9eabc9; font-size: 12px; line-height: 1.6; }
+.teacher-overview-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }.teacher-overview-cards article, .teacher-data-card { min-width: 0; padding: 16px; border: 1px solid rgba(80, 99, 177, .25); border-radius: 10px; background: rgba(16, 22, 56, .74); }.teacher-overview-cards article { display: grid; gap: 6px; }.teacher-overview-cards span, .teacher-data-card small { color: #9daac9; font-size: 10px; }.teacher-overview-cards strong { color: #eff5ff; font: 500 27px var(--font-display); }.teacher-overview-cards a, .teacher-data-card a { color: #85e9fa; font-size: 11px; text-decoration: none; }
+.teacher-data-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: start; margin-bottom: 14px; }.teacher-data-card h2 { margin: 0 0 12px; color: #eff3ff; font: 500 18px var(--font-display); }.teacher-data-card > p { color: #aab5d3; font-size: 11px; line-height: 1.6; }.teacher-data-card ul { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }.teacher-data-card li { display: grid; gap: 4px; padding: 9px 0; border-bottom: 1px solid rgba(100, 121, 190, .14); color: #dce4fa; font-size: 11px; }.teacher-data-card li:last-child { border-bottom: 0; }.teacher-data-card li span { color: #aab5d3; }.teacher-data-card li small { color: #8492b4; }
+.teacher-profile-card { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; padding: 20px; border: 1px solid rgba(34, 199, 232, .24); border-radius: 12px; background: linear-gradient(120deg, rgba(19, 34, 81, .94), rgba(65, 26, 76, .52)); }.teacher-profile-avatar { display: grid; width: 64px; height: 64px; flex: 0 0 64px; place-items: center; border: 1px solid rgba(34, 199, 232, .55); border-radius: 50%; color: #b7f6ff; background: #111a3c; font: 600 22px var(--font-display); }.teacher-profile-card h2 { margin: 4px 0; font: 500 24px var(--font-display); }.teacher-profile-card p { color: #aab5d3; font-size: 11px; }.teacher-data-card dl { display: grid; grid-template-columns: minmax(130px, .7fr) 1.3fr; gap: 11px; margin: 0; font-size: 11px; }.teacher-data-card dt { color: #9eabc9; }.teacher-data-card dd { margin: 0; color: #e0e8ff; overflow-wrap: anywhere; }
+.teacher-section-title, .teacher-calendar-nav, .teacher-filter-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }.teacher-section-title h2 { margin: 0; }.teacher-roster { margin-top: 12px; }.teacher-roster summary, .teacher-data-card summary { color: #9eefff; cursor: pointer; font-size: 11px; }.teacher-roster-list { display: grid; gap: 6px; max-height: 430px; overflow: auto; margin-top: 10px; }.teacher-roster-list > div { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; padding: 8px; border-radius: 6px; background: rgba(7, 12, 35, .5); font-size: 10px; }.teacher-roster-list span { color: #9eabc9; }
+.teacher-quick-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }.teacher-quick-links a { position: relative; display: grid; gap: 6px; padding: 12px; border: 1px solid rgba(80, 99, 177, .22); border-radius: 8px; text-decoration: none; }.teacher-quick-links strong { color: #e9efff; font-size: 11px; }.teacher-quick-links span { padding-right: 16px; color: #9eabc9; font-size: 9px; }.teacher-quick-links b { position: absolute; right: 10px; top: 10px; color: #8beeff; }
+.teacher-calendar-nav { margin: 12px 0; padding: 10px 12px; border: 1px solid rgba(80, 99, 177, .22); border-radius: 8px; background: rgba(16, 22, 56, .6); }.teacher-calendar-nav strong { color: #e7efff; font-size: 12px; }.teacher-calendar-nav button, .teacher-calendar-nav a { padding: 8px 10px; border: 1px solid rgba(34, 199, 232, .25); border-radius: 6px; color: #bcefff; background: transparent; text-decoration: none; font: inherit; font-size: 10px; cursor: pointer; }.teacher-week-grid { display: grid; grid-template-columns: repeat(7, minmax(120px, 1fr)); gap: 7px; margin: 12px 0; overflow-x: auto; }.teacher-week-day { min-height: 150px; padding: 9px; border: 1px solid rgba(80, 99, 177, .2); border-radius: 8px; background: rgba(14, 20, 50, .64); }.teacher-week-day h2 { margin: 0 0 8px; color: #b8c6e5; font: 500 11px var(--font-display); }.teacher-event-card { display: grid; gap: 5px; margin-bottom: 7px; padding: 9px; border-left: 2px solid #22c7e8; border-radius: 4px; background: rgba(34, 199, 232, .08); font-size: 10px; }.teacher-event-card strong { color: #e8f7ff; }.teacher-event-card span { color: #a6b6d5; }.teacher-empty-inline { color: #7e8dae; font-size: 10px; }.teacher-substitution-form { display: grid; gap: 7px; margin-top: 5px; }.teacher-substitution-form label, .teacher-task-form label { display: grid; gap: 5px; color: #aab5d3; font-size: 10px; }.teacher-substitution-form select, .teacher-substitution-form textarea, .teacher-task-form input, .teacher-task-form select, .teacher-task-form textarea, .teacher-grade-table input, .teacher-gradebook select, .teacher-chat-thread textarea, .teacher-assistant-thread textarea { min-width: 0; padding: 9px; border: 1px solid rgba(89, 111, 193, .38); border-radius: 6px; color: #e5ecff; background: #101638; font: 11px var(--font-body); }
+.teacher-month-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin: 12px 0; }.teacher-month-grid > strong { padding: 7px; color: #92a2c6; text-align: center; font-size: 10px; }.teacher-month-grid button { display: flex; min-height: 90px; flex-direction: column; align-items: stretch; gap: 3px; padding: 6px; border: 1px solid rgba(80, 99, 177, .18); border-radius: 5px; color: #dce5ff; background: rgba(14, 20, 50, .62); text-align: left; cursor: pointer; }.teacher-month-grid button.is-selected { border-color: #22c7e8; box-shadow: 0 0 0 1px rgba(34, 199, 232, .2); }.teacher-month-grid button.is-muted { opacity: .42; }.teacher-month-grid button > span { font-size: 10px; }.teacher-month-grid small { overflow: hidden; padding: 3px 4px; border-radius: 3px; color: #c8f7ff; background: rgba(34, 199, 232, .13); font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }.teacher-month-grid small[data-kind="Работа"], .teacher-month-grid small[data-kind="Личное"] { color: #ffd2e8; background: rgba(244, 114, 182, .13); }.teacher-task-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }.teacher-task-description { grid-column: 1 / -1; }.teacher-checkbox { display: flex !important; align-items: center; }.teacher-checkbox input { width: auto; }.teacher-feedback { padding: 10px; border: 1px solid rgba(34, 199, 232, .26); border-radius: 7px; color: #b8f5ff !important; }.teacher-small-button, .teacher-secondary-link { display: inline-flex; align-items: center; justify-content: center; padding: 8px 10px; border: 1px solid rgba(34, 199, 232, .28); border-radius: 6px; color: #b8f5ff; background: rgba(34, 199, 232, .06); font-size: 10px; text-decoration: none; cursor: pointer; }
+.teacher-chat-layout, .teacher-assistant-layout { display: grid; grid-template-columns: minmax(210px, .7fr) minmax(0, 1.6fr); gap: 12px; }.teacher-chat-main { display: grid; gap: 12px; }.teacher-chat-list, .teacher-chat-contacts { display: grid; gap: 6px; }.teacher-chat-list a, .teacher-assistant-history { display: grid; gap: 4px; padding: 9px; border: 1px solid transparent; border-radius: 6px; color: #e0e8ff; text-decoration: none; }.teacher-chat-list a.is-selected { border-color: rgba(34, 199, 232, .35); background: rgba(34, 199, 232, .08); }.teacher-chat-list span, .teacher-chat-list small, .teacher-assistant-history small { color: #91a1c4; font-size: 9px; }.teacher-chat-start-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(100, 121, 190, .14); color: #bac7e5; font-size: 10px; }.teacher-chat-contacts { grid-template-columns: repeat(2, minmax(0, 1fr)); }.teacher-chat-contacts button { padding: 8px; border: 1px solid rgba(80, 99, 177, .2); border-radius: 6px; color: #c7d2ee; background: transparent; font-size: 10px; text-align: left; }.teacher-chat-messages { display: grid; max-height: 420px; gap: 8px; overflow: auto; margin-bottom: 12px; }.teacher-chat-messages article, .teacher-assistant-message { padding: 10px; border: 1px solid rgba(80, 99, 177, .18); border-radius: 7px; background: rgba(7, 12, 35, .4); }.teacher-chat-messages p, .teacher-assistant-message p { margin: 5px 0; color: #d6e0f9; font-size: 11px; white-space: pre-wrap; }.teacher-chat-messages time { color: #8493b5; font-size: 9px; }.teacher-chat-thread form, .teacher-assistant-thread form { display: grid; gap: 8px; }.teacher-error { color: #ffb6ce; font-size: 11px; }
+.teacher-assistant-note { margin-bottom: 12px; padding: 11px; border-left: 2px solid #a78bfa; background: rgba(167, 139, 250, .08); }.teacher-assistant-note p { margin: 5px 0 0; color: #aab5d3; font-size: 10px; line-height: 1.5; }.teacher-assistant-thread { display: grid; align-content: start; gap: 10px; }.teacher-assistant-message[data-role="USER"] { border-color: rgba(244, 114, 182, .25); }.teacher-assistant-message[data-role="ASSISTANT"] { border-color: rgba(34, 199, 232, .22); }
+.teacher-gradebook-summary { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin: 10px 0; padding: 10px 12px; border: 1px solid rgba(34, 199, 232, .2); border-radius: 7px; background: rgba(34, 199, 232, .05); }.teacher-gradebook-summary > div { display: grid; gap: 4px; }.teacher-gradebook-summary span { color: #9eabc9; font-size: 10px; }.teacher-grade-table-scroll { overflow-x: auto; }.teacher-grade-table { width: 100%; border-collapse: collapse; font-size: 10px; }.teacher-grade-table th, .teacher-grade-table td { min-width: 130px; padding: 8px; border: 1px solid rgba(80, 99, 177, .16); text-align: left; vertical-align: top; }.teacher-grade-table th:first-child { min-width: 170px; }.teacher-grade-table tbody th { display: grid; gap: 4px; }.teacher-grade-table td label { display: grid; gap: 5px; }.teacher-grade-table input { width: 100%; }.teacher-filter-row label { display: grid; gap: 5px; color: #9eabc9; font-size: 10px; }.teacher-filter-row select { min-height: 36px; padding: 7px; border: 1px solid rgba(89, 111, 193, .38); border-radius: 6px; color: #e5ecff; background: #101638; }
+@media (max-width: 760px) { .teacher-data-grid, .teacher-overview-cards, .teacher-quick-links { grid-template-columns: minmax(0, 1fr); }.teacher-chat-layout, .teacher-assistant-layout { grid-template-columns: minmax(0, 1fr); }.teacher-week-grid { grid-template-columns: repeat(7, minmax(145px, 1fr)); }.teacher-roster-list > div { grid-template-columns: minmax(0, 1fr); }.teacher-month-grid button { min-height: 66px; }.teacher-task-form { grid-template-columns: minmax(0, 1fr); }.teacher-task-description { grid-column: auto; } }
+@media (max-width: 380px) { .teacher-workspace-page { padding-right: 10px; padding-left: 10px; }.teacher-month-grid { gap: 2px; }.teacher-month-grid button { min-height: 52px; padding: 3px; }.teacher-month-grid small { font-size: 7px; }.teacher-calendar-nav { justify-content: center; }.teacher-profile-card { align-items: flex-start; padding: 13px; }.teacher-data-card { padding: 12px; } }
+
+
+/* Focused teacher workspace: compact forms and progressive disclosure for reviews. */
+.coursework-teacher-page { padding-top: 22px; }
+.coursework-teacher-wrap .coursework-heading h1 { font-size: clamp(30px, 3.2vw, 40px); }
+.coursework-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 16px; }
+.coursework-section-heading h2 { margin: 4px 0 0; color: #eef3ff; font: 500 19px/1.2 var(--font-display); }
+.coursework-section-heading > p { max-width: 270px; margin: 0; color: #8f9fbe; font-size: 10px; line-height: 1.55; text-align: right; }
+.coursework-section-kicker { color: #73dff4; font-size: 8px; font-weight: 750; letter-spacing: .14em; }
+.coursework-homework-form { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px 18px; }
+.coursework-homework-form > label:nth-of-type(1), .coursework-homework-form > label:nth-of-type(2), .coursework-homework-form > label:nth-of-type(3), .coursework-homework-form > fieldset, .coursework-homework-form > small, .coursework-homework-form > p, .coursework-homework-form > button { grid-column: 1 / -1; }
+.coursework-homework-form > label:nth-of-type(4), .coursework-homework-form > label:nth-of-type(5), .coursework-homework-form > label:nth-of-type(6), .coursework-homework-form > label:nth-of-type(7) { grid-column: span 1; }
+.coursework-homework-form > button { justify-self: start; min-width: 190px; }
+.coursework-form-note { margin: -6px 0 0; color: #8f9fbe; font-size: 9px; line-height: 1.5; }
+.coursework-teacher-overview { display: flex; flex-wrap: wrap; gap: 8px 20px; padding: 0 0 13px; border-bottom: 1px solid rgba(100, 121, 190, .16); color: #91a0c4; font-size: 10px; }
+.coursework-teacher-overview strong { margin-right: 4px; color: #e8efff; font: 500 15px var(--font-display); }
+.coursework-teacher-overview .has-attention strong { color: #ffd17a; }
+.coursework-teacher-overview .has-warning strong { color: #ffabd5; }
+.coursework-submission-disclosure { border-top: 1px solid rgba(100, 121, 190, .16); }
+.coursework-submission-disclosure > summary { display: flex; min-height: 44px; align-items: center; justify-content: space-between; gap: 10px; color: #cbd6ef; font-size: 10px; cursor: pointer; list-style: none; }
+.coursework-submission-disclosure > summary::-webkit-details-marker { display: none; }
+.coursework-submission-disclosure > summary::after { content: "Показать"; color: #8eeaff; white-space: nowrap; }
+.coursework-submission-disclosure[open] > summary::after { content: "Скрыть"; }
+.coursework-submission-disclosure > summary span { color: #91a0c4; text-align: right; }
+.coursework-submission-disclosure[open] .coursework-submissions { padding-bottom: 12px; }
+@media (max-width: 760px) { .coursework-homework-form { grid-template-columns: minmax(0, 1fr); } .coursework-homework-form > label:nth-of-type(n) { grid-column: 1 / -1; } }
+@media (max-width: 520px) { .coursework-section-heading { align-items: flex-start; flex-direction: column; gap: 7px; } .coursework-section-heading > p { max-width: none; text-align: left; } .coursework-submission-disclosure > summary { align-items: flex-start; flex-direction: column; justify-content: center; padding: 9px 0; } .coursework-submission-disclosure > summary::after { display: none; } }
+
+.assistant-guide summary { color: #eef3ff; font: 500 16px/1.4 var(--font-display); cursor: pointer; }
+.assistant-guide[open] summary { color: #8eeaff; }
+.assistant-guide p { margin-bottom: 0; }
+.assistant-intro { text-align: left; }
+.assistant-search { display: grid; max-width: 680px; gap: 7px; color: #bdc8e3; font-size: 10px; }
+.assistant-search input { min-height: 44px; padding: 10px 13px; border: 1px solid rgba(94, 117, 193, .34); border-radius: 8px; background: #101638; color: #eef2ff; font: 500 12px var(--font-body); }
+.assistant-search input:focus-visible { outline: 2px solid #22c7e8; outline-offset: 2px; }
+.assistant-results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
+.assistant-guide h2 { margin-top: 0; }
+.assistant-guide .coursework-resource { width: fit-content; }
+.chats-page { gap: 14px; }
+.chat-panel { gap: 12px; }
+.chat-messages { display: grid; max-height: 480px; gap: 9px; overflow: auto; padding: 2px; }
+.chat-message { max-width: 86%; padding: 10px 12px; border: 1px solid rgba(83, 105, 184, .2); border-radius: 9px 9px 9px 2px; background: rgba(9, 15, 43, .56); }
+.chat-message.is-own { justify-self: end; border-color: rgba(34, 199, 232, .24); border-radius: 9px 9px 2px 9px; background: rgba(34, 199, 232, .07); }
+.chat-message > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; color: #aebbd7; font-size: 9px; }
+.chat-message strong { color: #dfe8ff; }
+.chat-message time { color: #7f8fb3; }
+.chat-message p { margin: 6px 0 0; color: #d0d9ef; font-size: 11px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+.chat-compose { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 9px; padding-top: 10px; border-top: 1px solid rgba(100, 121, 190, .16); }
+.chat-compose label { min-width: 0; }
+.chat-compose textarea { width: 100%; resize: vertical; padding: 10px; border: 1px solid rgba(94, 117, 193, .34); border-radius: 7px; background: #101638; color: #eef2ff; font: 500 11px/1.5 var(--font-body); }
+@media (max-width: 680px) { .assistant-results { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 520px) { .chat-compose { grid-template-columns: minmax(0, 1fr); } .chat-compose button { justify-self: start; } .chat-message { max-width: 94%; } }
+
+/* Campus communication, career and assistant workspaces */
+.campus-tabs { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0 8px; border-bottom: 1px solid rgba(105, 124, 190, .18); }
+.campus-tabs button, .campus-assistant-toolbar button { flex: 0 0 auto; min-height: 38px; padding: 0 13px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: #aebbd7; font: 600 11px var(--font-body); cursor: pointer; }
+.campus-tabs button[aria-pressed="true"], .campus-assistant-toolbar button[aria-pressed="true"] { border-color: rgba(34,199,232,.28); background: rgba(34,199,232,.08); color: #bff7ff; }
+.campus-tabs button:focus-visible, .campus-assistant-toolbar button:focus-visible, .campus-chat-workspace button:focus-visible, .campus-chat-workspace a:focus-visible { outline: 2px solid #22c7e8; outline-offset: 2px; }
+.campus-filter { display: flex; align-items: center; gap: 8px; color: #aebbd7; font-size: 11px; }
+.campus-filter select, .dean-pass-filters select, .dean-pass-action select, .dean-pass-action input, .dean-pass-action textarea { min-height: 38px; padding: 7px 10px; border: 1px solid rgba(94,117,193,.34); border-radius: 7px; background: #101638; color: #eef2ff; font: 500 11px var(--font-body); }
+.career-filters { display: flex; flex-wrap: wrap; align-items: end; gap: 8px; padding: 10px 0; }
+.career-filters .campus-filter { display: grid; gap: 5px; }
+.career-filters input { min-height: 38px; width: min(290px, 100%); padding: 7px 10px; border: 1px solid rgba(94,117,193,.34); border-radius: 7px; background: #101638; color: #eef2ff; font: 500 11px var(--font-body); }
+.career-detail { display: grid; max-width: 900px; gap: 10px; }
+.career-detail > a { color: #a8eefa; font-size: 11px; text-decoration: none; }
+.career-detail h1 { margin: 5px 0; color: #f2f5ff; font: 400 clamp(22px,4vw,34px)/1.15 var(--font-display); }
+.career-detail .coursework-detail-panel { line-height: 1.55; }
+.campus-form { max-width: 800px; }
+.campus-form label, .dean-pass-action label { display: grid; gap: 6px; color: #bac6e0; font-size: 11px; }
+.campus-form input, .campus-form textarea, .campus-form select { width: 100%; min-height: 40px; padding: 9px 11px; border: 1px solid rgba(94,117,193,.34); border-radius: 7px; background: #101638; color: #eef2ff; font: 500 12px/1.5 var(--font-body); }
+.campus-history { display: grid; gap: 5px; padding-left: 18px; color: #9eaccb; font-size: 10px; }
+.campus-feedback { padding: 10px 12px; border: 1px solid rgba(34,199,232,.26); border-radius: 8px; background: rgba(34,199,232,.06); color: #b9f3fa; font-size: 11px; }
+.coursework-secondary { min-height: 38px; padding: 0 12px; border: 1px solid rgba(123,97,255,.3); border-radius: 7px; background: rgba(123,97,255,.08); color: #d5ceff; font: 600 10px var(--font-body); cursor: pointer; }
+.coursework-secondary:disabled, .coursework-primary:disabled { opacity: .55; cursor: not-allowed; }
+
+.campus-chat-workspace { display: grid; grid-template-columns: minmax(230px, 300px) minmax(0, 1fr); min-height: min(72vh, 760px); overflow: hidden; border: 1px solid rgba(83,102,173,.3); border-radius: 12px; background: rgba(10,15,42,.76); }
+.campus-chat-sidebar { display: flex; min-width: 0; flex-direction: column; border-right: 1px solid rgba(91,110,184,.22); }
+.campus-chat-side-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 14px; border-bottom: 1px solid rgba(91,110,184,.18); }
+.campus-chat-side-head h2 { margin: 3px 0 0; color: #f1f4ff; font: 400 18px var(--font-display); }
+.campus-chat-side-head button, .campus-chat-message-search button { min-height: 34px; padding: 0 9px; border: 1px solid rgba(34,199,232,.25); border-radius: 6px; background: rgba(34,199,232,.07); color: #baf6ff; font: 600 10px var(--font-body); cursor: pointer; }
+.campus-chat-search { padding: 10px 12px; }
+.campus-chat-search input, .campus-chat-message-search input { width: 100%; min-height: 38px; padding: 8px 10px; border: 1px solid rgba(94,117,193,.28); border-radius: 7px; background: #0c1230; color: #edf2ff; font: 500 11px var(--font-body); }
+.campus-chat-list { display: grid; align-content: start; gap: 3px; flex: 1; overflow-y: auto; padding: 0 7px; }
+.campus-chat-list-item { display: grid; grid-template-columns: 36px minmax(0,1fr) auto; align-items: center; gap: 8px; padding: 9px 8px; border-radius: 8px; color: inherit; text-decoration: none; }
+.campus-chat-list-item:hover, .campus-chat-list-item.is-active { background: rgba(79,93,161,.2); }
+.campus-chat-avatar { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid rgba(34,199,232,.28); border-radius: 50%; background: rgba(34,199,232,.08); color: #bff7ff; }
+.campus-chat-list-copy { display: grid; min-width: 0; gap: 4px; }
+.campus-chat-list-copy > span { display: flex; justify-content: space-between; gap: 5px; }
+.campus-chat-list-copy strong { overflow: hidden; color: #e8edff; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.campus-chat-list-copy time, .campus-chat-list-copy small { color: #8795b6; font-size: 9px; }
+.campus-chat-list-copy small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.campus-chat-unread { display: grid; min-width: 18px; height: 18px; place-items: center; padding: 0 4px; border-radius: 10px; background: #22c7e8; color: #071228; font-size: 9px; }
+.campus-chat-contacts { margin: 8px; padding: 10px; border-top: 1px solid rgba(91,110,184,.18); color: #c7d1e9; font-size: 10px; }
+.campus-chat-contacts summary { cursor: pointer; }
+.campus-chat-contacts button { display: flex; width: 100%; justify-content: space-between; gap: 6px; margin-top: 6px; padding: 8px; border: 0; border-radius: 6px; background: rgba(34,199,232,.05); color: #e6ecff; cursor: pointer; text-align: left; }
+.campus-chat-contacts button small { color: #8ea0c4; }
+.campus-chat-main { display: flex; min-width: 0; flex-direction: column; min-height: 0; }
+.campus-chat-header { display: flex; align-items: center; gap: 12px; padding: 12px 15px; border-bottom: 1px solid rgba(91,110,184,.18); }
+.campus-chat-header > div { flex: 1; min-width: 0; }
+.campus-chat-header h2 { margin: 0; color: #f1f4ff; font: 500 15px var(--font-display); }
+.campus-chat-header p { margin: 3px 0 0; color: #8695b6; font-size: 9px; }
+.campus-chat-back { display: none; color: #a9eefa; font-size: 10px; text-decoration: none; }
+.campus-chat-message-search { display: flex; gap: 6px; padding: 7px 14px; }
+.campus-chat-messages { display: flex; flex: 1; min-height: 220px; flex-direction: column; gap: 10px; overflow-y: auto; padding: 14px; }
+.campus-chat-message { width: fit-content; max-width: min(88%, 700px); padding: 10px 12px; border: 1px solid rgba(83,105,184,.22); border-radius: 9px 9px 9px 2px; background: rgba(9,15,43,.78); }
+.campus-chat-message.is-own { align-self: flex-end; border-color: rgba(34,199,232,.25); border-radius: 9px 9px 2px 9px; background: rgba(34,199,232,.065); }
+.campus-chat-message-meta { display: flex; flex-wrap: wrap; gap: 8px; color: #8e9dbc; font-size: 9px; }
+.campus-chat-message-meta strong { color: #dbe8ff; }
+.campus-chat-message p { margin: 7px 0; color: #d4def2; font-size: 11px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+.campus-chat-reply-preview { display: block; margin-top: 7px; padding-left: 8px; border-left: 2px solid #22c7e8; color: #92cbd9; font-size: 10px; text-decoration: none; }
+.campus-chat-file { display: inline-flex; gap: 7px; margin-top: 7px; padding: 8px; border: 1px solid rgba(34,199,232,.2); border-radius: 6px; color: #a6edf6; font-size: 10px; text-decoration: none; }
+.campus-chat-message-actions { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+.campus-chat-message-actions button { min-height: 25px; padding: 0 6px; border: 1px solid rgba(91,110,184,.18); border-radius: 5px; background: transparent; color: #aab8d5; font-size: 9px; cursor: pointer; }
+.campus-chat-pinned { display: flex; gap: 8px; overflow-x: auto; padding: 7px 14px; border-bottom: 1px solid rgba(91,110,184,.14); color: #c8d4ef; font-size: 9px; }
+.campus-chat-pinned a { flex: 0 0 auto; max-width: 300px; overflow: hidden; color: #a8eaf2; text-overflow: ellipsis; white-space: nowrap; }
+.campus-chat-compose { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 8px; padding: 9px 14px; }
+.campus-chat-compose textarea { width: 100%; resize: vertical; padding: 10px; border: 1px solid rgba(94,117,193,.32); border-radius: 7px; background: #101638; color: #edf2ff; font: 500 11px/1.45 var(--font-body); }
+.campus-chat-upload { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 0 14px 11px; color: #9aa9c8; font-size: 9px; }
+.campus-chat-upload label { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
+.campus-chat-upload input { max-width: 230px; color: #c7d1e9; font-size: 9px; }
+.campus-chat-upload small { flex-basis: 100%; }
+.campus-chat-empty { display: grid; flex: 1; align-content: center; justify-items: center; gap: 8px; padding: 30px; text-align: center; }
+.campus-chat-empty h2 { margin: 0; color: #edf3ff; font: 400 24px var(--font-display); }
+.campus-chat-empty p { color: #9baac8; font-size: 11px; }
+.campus-chat-replying { display: flex; justify-content: space-between; padding: 5px 14px; color: #aeeef5; font-size: 10px; }
+.campus-chat-replying button { border: 0; background: transparent; color: #c2b9ff; cursor: pointer; }
+
+.campus-assistant-layout { display: grid; grid-template-columns: 230px minmax(0,1fr); min-height: min(68vh,720px); overflow: hidden; border: 1px solid rgba(83,102,173,.28); border-radius: 12px; background: rgba(10,15,42,.76); }
+.campus-assistant-history { display: flex; min-width: 0; flex-direction: column; gap: 5px; padding: 12px; border-right: 1px solid rgba(91,110,184,.2); }
+.campus-assistant-history-head { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+.campus-assistant-history-head h2 { color: #eaf0ff; font: 500 14px var(--font-display); }
+.campus-assistant-history-head a { color: #9beefa; font-size: 9px; text-decoration: none; }
+.campus-assistant-thread { display: grid; gap: 4px; padding: 8px; border-radius: 6px; color: #c9d4ec; text-decoration: none; }
+.campus-assistant-thread.is-active, .campus-assistant-thread:hover { background: rgba(79,93,161,.18); }
+.campus-assistant-thread span, .campus-assistant-thread time { color: #8c9bbc; font-size: 8px; }
+.campus-assistant-thread strong { overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.campus-assistant-main { display: flex; min-width: 0; flex-direction: column; }
+.campus-assistant-toolbar { display: flex; gap: 5px; padding: 8px 12px; border-bottom: 1px solid rgba(91,110,184,.16); }
+.campus-assistant-disclaimer { margin: 10px 13px 0; padding: 8px 10px; border-left: 2px solid #a78bfa; background: rgba(167,139,250,.06); color: #b3bfd9; font-size: 9px; line-height: 1.45; }
+.campus-assistant-messages { display: flex; flex: 1; min-height: 260px; flex-direction: column; gap: 9px; overflow-y: auto; padding: 14px; }
+.campus-assistant-message { max-width: min(90%,760px); padding: 10px 12px; border: 1px solid rgba(83,105,184,.22); border-radius: 8px; background: rgba(12,19,51,.7); }
+.campus-assistant-message.is-user { align-self: flex-end; border-color: rgba(34,199,232,.25); background: rgba(34,199,232,.06); }
+.campus-assistant-message > span, .campus-assistant-message time { color: #8e9dbc; font-size: 9px; }
+.campus-assistant-message p { margin: 6px 0; color: #dce5f8; font-size: 11px; line-height: 1.55; white-space: pre-wrap; }
+.campus-assistant-welcome { display: grid; align-content: center; justify-items: start; flex: 1; padding: 12px; }
+.campus-assistant-welcome h2 { margin: 5px 0; color: #edf3ff; font: 400 clamp(20px,3vw,28px) var(--font-display); }
+.campus-assistant-welcome p { color: #9eacc8; font-size: 11px; }
+.campus-assistant-prompts { display: grid; width: 100%; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; }
+.campus-assistant-prompts button { min-height: 43px; padding: 9px; border: 1px solid rgba(95,115,186,.24); border-radius: 7px; background: rgba(20,28,67,.65); color: #cdd8ef; font: 500 10px/1.4 var(--font-body); cursor: pointer; text-align: left; }
+.campus-assistant-compose { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 8px; padding: 10px 13px; border-top: 1px solid rgba(91,110,184,.16); }
+.campus-assistant-compose textarea { width: 100%; resize: vertical; padding: 10px; border: 1px solid rgba(94,117,193,.32); border-radius: 7px; background: #101638; color: #edf2ff; font: 500 11px/1.45 var(--font-body); }
+.campus-assistant-compose small { grid-column: 1/-1; color: #7788aa; font-size: 8px; }
+
+.pass-controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.pass-request-panel { gap: 11px; }
+.pass-request-panel h2 { margin: 5px 0; color: #eff4ff; font: 400 19px var(--font-display); }
+.pass-request-panel p, .pass-request-panel small { color: #aab8d2; font-size: 10px; line-height: 1.45; }
+.dean-pass-workspace { display: grid; gap: 12px; }
+.dean-pass-filters { display: flex; justify-content: space-between; align-items: center; gap: 8px; color: #aebbd7; font-size: 10px; }
+.dean-pass-filters label { display: flex; align-items: center; gap: 8px; }
+.dean-pass-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.dean-pass-card { align-content: start; }
+.dean-pass-card h2 { margin: 2px 0; color: #eff4ff; font: 500 15px var(--font-display); }
+.dean-pass-card details { color: #adbad6; font-size: 10px; }
+.dean-pass-card summary { cursor: pointer; }
+.dean-pass-action { display: grid; gap: 8px; padding-top: 9px; border-top: 1px solid rgba(91,110,184,.16); }
+.dean-pass-action textarea { min-height: 65px; resize: vertical; }
+
+@media (max-width: 760px) {
+  .campus-chat-workspace { grid-template-columns: minmax(0,1fr); min-height: 72vh; }
+  .campus-chat-sidebar { display: none; }
+  .campus-chat-workspace:not(.has-chat) .campus-chat-sidebar { display: flex; border-right: 0; }
+  .campus-chat-workspace:not(.has-chat) .campus-chat-main { display: none; }
+  .campus-chat-workspace.has-chat .campus-chat-back { display: inline; }
+  .campus-assistant-layout { grid-template-columns: minmax(0,1fr); }
+  .campus-assistant-history { display: grid; grid-template-columns: auto repeat(2,minmax(0,1fr)); max-height: 125px; overflow: auto; border-right: 0; border-bottom: 1px solid rgba(91,110,184,.2); }
+  .campus-assistant-history-head { grid-column: 1/-1; }
+}
+@media (max-width: 560px) {
+  .dean-pass-list { grid-template-columns: minmax(0,1fr); }
+  .campus-assistant-prompts { grid-template-columns: minmax(0,1fr); }
+  .campus-assistant-compose { grid-template-columns: minmax(0,1fr); }
+  .campus-assistant-compose button { justify-self: start; }
+  .campus-chat-header { align-items: flex-start; flex-wrap: wrap; }
+  .campus-chat-header > div { flex-basis: 70%; }
+  .campus-chat-upload input { width: 100%; }
+  .pass-controls { flex-direction: column; align-items: stretch; }
+  .career-filters { align-items: stretch; }
+  .career-filters .campus-filter, .career-filters .campus-filter input { width: 100%; }
 }
