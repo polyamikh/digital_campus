@@ -30,7 +30,7 @@ export async function getTeacherProfile() {
   ]);
   const settings = profile?.settings && typeof profile.settings === "object" && !Array.isArray(profile.settings) ? profile.settings as Record<string, unknown> : {};
   return {
-    login: teacher.login, displayName: profile?.displayName ?? teacher.login, email: profile?.email ?? null, phone: profile?.phone ?? null,
+    displayName: profile?.displayName ?? teacher.login, email: profile?.email ?? null, phone: profile?.phone ?? null,
     officeHours: typeof settings.officeHours === "string" ? settings.officeHours : null,
     assignments: assignments.map((item) => ({ id: item.id, courseName: item.course.subject.name, groupCode: item.group.code, startsAt: item.startsAt, endsAt: item.endsAt })),
   };
@@ -45,38 +45,41 @@ export async function getTeacherHome(now = new Date()) {
   const week = getMoscowWeekBounds(now);
   const pairs = assignments.map(({ courseId, groupId }) => ({ courseId, groupId }));
   const pairScope = pairs.length ? { OR: pairs } : { id: { in: [] as string[] } };
-  const [lessons, pendingReviews, upcomingWork] = await Promise.all([
+  const [lessons, weeklyLessonCount, pendingReviews, upcomingWork, recentNotifications] = await Promise.all([
     prisma.lesson.findMany({ where: { OR: [{ teacherId: teacher.id }, { substituteId: teacher.id }, { examinerId: teacher.id }], state: "SCHEDULED", startsAt: { gte: week.start, lt: week.end } }, orderBy: { startsAt: "asc" }, take: 12, select: { id: true, title: true, kind: true, startsAt: true, endsAt: true, room: { select: { code: true } }, group: { select: { code: true } }, course: { select: { subject: { select: { name: true } } } } } }),
+    prisma.lesson.count({ where: { OR: [{ teacherId: teacher.id }, { substituteId: teacher.id }, { examinerId: teacher.id }], state: "SCHEDULED", startsAt: { gte: week.start, lt: week.end } } }),
     prisma.submission.count({ where: { state: "UNDER_REVIEW", homework: { authorId: teacher.id, ...pairScope } } }),
     prisma.homework.findMany({ where: { authorId: teacher.id, state: "PUBLISHED", deadline: { gte: now }, ...pairScope }, orderBy: { deadline: "asc" }, take: 5, select: { id: true, title: true, deadline: true, group: { select: { code: true } }, course: { select: { subject: { select: { name: true } } } } } }),
+    prisma.notificationDelivery.findMany({ where: { recipientId: teacher.id, readAt: null, mutedAt: null }, orderBy: { createdAt: "desc" }, take: 3, select: { id: true, createdAt: true, notification: { select: { category: true, title: true } } } }),
   ]);
-  return { displayName: profile?.displayName ?? teacher.login, assignmentCount: assignments.length, lessons, pendingReviews, upcomingWork };
+  return { displayName: profile?.displayName ?? teacher.login, assignmentCount: assignments.length, lessons, weeklyLessonCount, pendingReviews, upcomingWork, recentNotifications };
 }
 
 export async function getTeacherSchedule(dateValue?: string) {
   const teacher = await requireRole(Role.TEACHER);
   const dateKey = dateValue && validTaskDateKey(dateValue) ? dateValue : moscowDateKey(new Date());
   const bounds = getMoscowWeekBounds(new Date(dateKey + "T12:00:00.000Z"));
-  const [lessons, requests, profile] = await Promise.all([
+  const [lessons, requestableLessons, requests, profile] = await Promise.all([
     prisma.lesson.findMany({
       where: { OR: [{ teacherId: teacher.id }, { examinerId: teacher.id }, { substituteId: teacher.id }], startsAt: { gte: bounds.start, lt: bounds.end }, state: { not: "CANCELLED" } },
       orderBy: { startsAt: "asc" },
       select: { id: true, title: true, kind: true, format: true, startsAt: true, endsAt: true, state: true, version: true, courseId: true, groupId: true, teacherId: true, examinerId: true, substituteId: true, room: { select: { code: true, name: true } }, group: { select: { code: true } }, course: { select: { subject: { select: { name: true } } } }, teacher: { select: { profile: { select: { displayName: true } } } }, examiner: { select: { profile: { select: { displayName: true } } } }, substitute: { select: { profile: { select: { displayName: true } } } } },
     }),
+    prisma.lesson.findMany({ where: { teacherId: teacher.id, startsAt: { gt: new Date() }, state: "SCHEDULED" }, orderBy: { startsAt: "asc" }, take: 100, select: { id: true, title: true, kind: true, startsAt: true, endsAt: true, courseId: true, groupId: true, room: { select: { code: true } }, group: { select: { code: true } }, course: { select: { subject: { select: { name: true } } } } } }),
     prisma.scheduleChangeRequest.findMany({ where: { requesterId: teacher.id, submittedAt: { gte: bounds.start, lt: bounds.end } }, orderBy: { submittedAt: "desc" }, select: { id: true, lessonId: true, kind: true, state: true, submittedAt: true, reason: true, lesson: { select: { title: true, startsAt: true, course: { select: { subject: { select: { name: true } } } }, group: { select: { code: true } } } } } }),
     prisma.userProfile.findUnique({ where: { userId: teacher.id }, select: { settings: true } }),
   ]);
   const profileSettings = profile?.settings && typeof profile.settings === "object" && !Array.isArray(profile.settings) ? profile.settings as Record<string, unknown> : {};
-  const lessonPairs = [...new Map(lessons.map((lesson) => [`${lesson.courseId}:${lesson.groupId}`, { courseId: lesson.courseId, groupId: lesson.groupId }])).values()];
+  const lessonPairs = [...new Map([...lessons, ...requestableLessons].map((lesson) => [`${lesson.courseId}:${lesson.groupId}`, { courseId: lesson.courseId, groupId: lesson.groupId }])).values()];
   const substituteRows = lessonPairs.length ? await prisma.teacherAssignment.findMany({ where: { OR: lessonPairs, teacherId: { not: teacher.id }, ...activeAssignment(new Date()), teacher: { isActive: true, roles: { some: { role: Role.TEACHER, revokedAt: null } } } }, select: { courseId: true, groupId: true, teacherId: true, teacher: { select: { login: true, profile: { select: { displayName: true } } } } }, distinct: ["courseId", "groupId", "teacherId"] }) : [];
   const substitutes = substituteRows.map((row) => ({ courseId: row.courseId, groupId: row.groupId, id: row.teacherId, name: row.teacher.profile?.displayName ?? row.teacher.login }));
-  return { teacherId: teacher.id, dateKey, weekStart: bounds.start, weekEnd: bounds.end, lessons, requests, substitutes, officeHours: typeof profileSettings.officeHours === "string" ? profileSettings.officeHours : null };
+  return { teacherId: teacher.id, dateKey, weekStart: bounds.start, weekEnd: bounds.end, lessons, requestableLessons, requests, substitutes, officeHours: typeof profileSettings.officeHours === "string" ? profileSettings.officeHours : null };
 }
 
 export async function getTeacherCalendar(monthValue?: string) {
   const teacher = await requireRole(Role.TEACHER); const now = new Date();
   const month = monthValue && validTaskMonthKey(monthValue) ? monthValue : moscowDateKey(now).slice(0, 7);
-  const bounds = taskMonthUtcBounds(month); const assignments = await assignmentsFor(teacher.id, now);
+  const monthBounds = taskMonthUtcBounds(month); const bounds = { start: new Date(monthBounds.start.getTime() - 7 * 86400000), end: new Date(monthBounds.end.getTime() + 7 * 86400000) }; const assignments = await assignmentsFor(teacher.id, now);
   const pairs = assignments.map(({ courseId, groupId }) => ({ courseId, groupId }));
   const pairScope = pairs.length ? { OR: pairs } : { id: { in: [] as string[] } };
   const [lessons, personalTasks, submissions, homeworkDeadlines] = await Promise.all([
@@ -214,7 +217,7 @@ export async function getTeacherGroups() {
 export async function getTeacherGroupAnnouncements() {
   const teacher = await requireRole(Role.TEACHER); const assignments = await assignmentsFor(teacher.id, new Date());
   const groupIds = [...new Set(assignments.map((item) => item.groupId))];
-  const announcements = groupIds.length ? await prisma.courseAnnouncement.findMany({ where: { groupId: { in: groupIds } }, orderBy: { publishedAt: "desc" }, take: 100, select: { id: true, title: true, body: true, publishedAt: true, groupId: true, course: { select: { name: true } }, group: { select: { code: true } } } }) : [];
+  const announcements = groupIds.length ? await prisma.courseAnnouncement.findMany({ where: { groupId: { in: groupIds } }, orderBy: { publishedAt: "desc" }, take: 100, select: { id: true, title: true, body: true, publishedAt: true, groupId: true, courseId: true, course: { select: { name: true } }, group: { select: { code: true } } } }) : [];
   return announcements;
 }
 

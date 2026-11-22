@@ -1,19 +1,28 @@
 import { Suspense } from "react";
-import Link from "next/link";
 import TeacherAppShell from "../teacher-app-shell";
 import AuthRouteFallback from "@/app/auth-route-fallback";
 import { getTeacherProfile } from "@/lib/teacher/teacher-workspace";
-import { requireTeacherPage, teacherHeader, teacherDate } from "../teacher-route";
+import { requireTeacherPage, teacherDate } from "../teacher-route";
+import ProfilePhotoControl from "@/app/profile/profile-photo-control";
+import { getCurrentTeacherPhotoVersion } from "@/lib/profile/teacher-profile-photo";
 
 export default function TeacherProfilePage() { return <Suspense fallback={<AuthRouteFallback message="Загружаем профиль преподавателя…" />}><Content /></Suspense>; }
 
 async function Content() {
-  await requireTeacherPage(); const profile = await getTeacherProfile();
-  return <TeacherAppShell activeSection="profile"><div className="teacher-workspace-page">
-    {teacherHeader("ПРОФИЛЬ ПРЕПОДАВАТЕЛЯ", "Мой профиль", "Сведения загружены из вашего профиля и действующих назначений.")}
-    <section className="teacher-profile-card"><div className="teacher-profile-avatar" aria-hidden="true">{profile.displayName.split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toLocaleUpperCase("ru-RU")}</div><div><span className="profile-heading-kicker">ПРЕПОДАВАТЕЛЬ</span><h2>{profile.displayName}</h2><p>Логин: {profile.login}</p></div></section>
-    <div className="teacher-data-grid"><section className="teacher-data-card"><h2>Контакты</h2><dl><dt>Email</dt><dd>{profile.email ?? "Не указан"}</dd><dt>Телефон</dt><dd>{profile.phone ?? "Не указан"}</dd><dt>Часы консультаций</dt><dd>{profile.officeHours ?? "Не указаны в профиле"}</dd></dl><small>Эти данные доступны только в авторизованном кабинете.</small></section><section className="teacher-data-card"><h2>Действующие назначения</h2>{profile.assignments.length ? <ul>{profile.assignments.map((item) => <li key={item.id}><strong>{item.courseName}</strong><span>{item.groupCode}</span>{item.startsAt || item.endsAt ? <small>{item.startsAt ? teacherDate(item.startsAt) : "с начала назначения"} — {item.endsAt ? teacherDate(item.endsAt) : "без даты окончания"}</small> : null}</li>)}</ul> : <p>Активных назначений пока нет.</p>}</section></div>
-    <p className="teacher-demo-note">Телефон, email и часы консультаций не редактируются здесь: используйте их только если они уже указаны в профиле.</p>
-    <Link className="teacher-secondary-link" href="/teacher">← Кабинет преподавателя</Link>
+  await requireTeacherPage();
+  const [profile, photoVersion] = await Promise.all([getTeacherProfile(), getCurrentTeacherPhotoVersion()]);
+  const fields = [
+    { label: "Электронная почта", value: profile.email ?? "Не указана" },
+    { label: "Телефон", value: profile.phone ?? "Не указан" },
+    { label: "Часы консультаций", value: profile.officeHours ?? "Не указаны в профиле" },
+  ];
+  return <TeacherAppShell activeSection="profile"><div className="teacher-workspace-page teacher-profile-page">
+    <section className="profile-page-heading" aria-labelledby="teacher-profile-title"><span className="profile-heading-kicker">ЛИЧНЫЙ КАБИНЕТ</span><h1 id="teacher-profile-title">Мой профиль</h1><p>Контакты, назначения и часы консультаций.</p></section>
+    <article className="student-profile-card teacher-student-profile" aria-labelledby="teacher-profile-name">
+      <header className="student-profile-identity"><ProfilePhotoControl displayName={profile.displayName} photoVersion={photoVersion}/><div><span className="profile-heading-kicker">ПРЕПОДАВАТЕЛЬ</span><h2 id="teacher-profile-name">{profile.displayName}</h2><p>Действующие назначения</p></div></header>
+      <dl className="student-profile-grid">{fields.map((field) => <div className="student-profile-field" key={field.label}><dt>{field.label}</dt><dd>{field.value}</dd></div>)}
+        {profile.assignments.map((item) => <div className="student-profile-field" key={item.id}><dt>Дисциплина и группа</dt><dd className="profile-value-accent">{item.courseName} · {item.groupCode}</dd>{item.startsAt || item.endsAt ? <p className="profile-field-note">{item.startsAt ? teacherDate(item.startsAt) : "С начала назначения"} — {item.endsAt ? teacherDate(item.endsAt) : "без даты окончания"}</p> : null}</div>)}
+      </dl>
+    </article>
   </div></TeacherAppShell>;
 }

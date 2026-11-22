@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { Role } from "@/generated/prisma/enums";
-import { detectProfilePhotoFormat, MAX_PROFILE_PHOTO_BYTES, requireStudentPhotoOwner } from "./profile-photo-core";
+import { detectProfilePhotoFormat, MAX_PROFILE_PHOTO_BYTES, requireProfilePhotoOwner, requireStudentPhotoOwner } from "./profile-photo-core";
 import { deleteProfilePhoto, getProfilePhotoMetadata, readProfilePhoto, saveProfilePhoto } from "./profile-photo-store-core";
 
 const png = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 1, 2, 3]);
@@ -28,6 +28,13 @@ test("only an authenticated student identity can own a profile photo", () => {
   assert.equal(requireStudentPhotoOwner({ id: "alice", activeRole: Role.STUDENT }), "alice");
   assert.throws(() => requireStudentPhotoOwner(null), /Student session required/);
   assert.throws(() => requireStudentPhotoOwner({ id: "teacher", activeRole: Role.TEACHER }), /Student session required/);
+});
+
+test("profile photo ownership allows teachers and keeps dean access denied", () => {
+  assert.equal(requireProfilePhotoOwner({ id: "teacher", activeRole: Role.TEACHER }), "teacher");
+  assert.equal(requireProfilePhotoOwner({ id: "student", activeRole: Role.STUDENT }), "student");
+  assert.throws(() => requireProfilePhotoOwner({ id: "dean", activeRole: Role.DEAN }), /Profile photo session required/);
+  assert.throws(() => requireProfilePhotoOwner(null), /Profile photo session required/);
 });
 
 test("stores/replaces a photo privately and isolates files by authenticated user ID", async () => {

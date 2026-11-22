@@ -1,7 +1,7 @@
 import { Role } from "@/generated/prisma/enums";
 import { ForbiddenRoleError, requireRole, UnauthenticatedError } from "@/lib/auth/session";
 import { isSameOriginRequest } from "@/lib/auth/csrf-core";
-import { MAX_PROFILE_PHOTO_BYTES, requireStudentPhotoOwner } from "@/lib/profile/profile-photo-core";
+import { MAX_PROFILE_PHOTO_BYTES, requireProfilePhotoOwner } from "@/lib/profile/profile-photo-core";
 import { deleteProfilePhoto, readProfilePhoto, saveProfilePhoto } from "@/lib/profile/profile-photo-store";
 
 const MAX_MULTIPART_BYTES = MAX_PROFILE_PHOTO_BYTES + 64 * 1024;
@@ -11,11 +11,11 @@ class RequestBodyTooLargeError extends Error {}
 
 async function sessionResponse(): Promise<string | Response> {
   try {
-    return requireStudentPhotoOwner(await requireRole(Role.STUDENT));
+    return requireProfilePhotoOwner(await requireRole(Role.STUDENT, Role.TEACHER));
   } catch (error) {
-    if (error instanceof UnauthenticatedError) return Response.json({ error: "Требуется войти в кабинет студента." }, { status: 401, headers: PRIVATE_HEADERS });
-    if (error instanceof ForbiddenRoleError || error instanceof Error && error.message === "Student session required") {
-      return Response.json({ error: "Фотографию может менять только студент в своём кабинете." }, { status: 403, headers: PRIVATE_HEADERS });
+    if (error instanceof UnauthenticatedError) return Response.json({ error: "Требуется войти в кабинет." }, { status: 401, headers: PRIVATE_HEADERS });
+    if (error instanceof ForbiddenRoleError || error instanceof Error && error.message === "Profile photo session required") {
+      return Response.json({ error: "Фотографию можно менять только в своём кабинете." }, { status: 403, headers: PRIVATE_HEADERS });
     }
     return Response.json({ error: "Не удалось проверить сессию." }, { status: 503, headers: PRIVATE_HEADERS });
   }

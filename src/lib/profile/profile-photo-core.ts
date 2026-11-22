@@ -14,6 +14,11 @@ export function requireStudentPhotoOwner(identity: ProfilePhotoIdentity | null):
   return identity.id;
 }
 
+export function requireProfilePhotoOwner(identity: ProfilePhotoIdentity | null): string {
+  if (!identity || (identity.activeRole !== Role.STUDENT && identity.activeRole !== Role.TEACHER)) throw new Error("Profile photo session required");
+  return identity.id;
+}
+
 export function detectProfilePhotoFormat(bytes: Uint8Array, declaredMimeType?: string): ProfilePhotoFormat {
   if (bytes.byteLength === 0) throw new Error("Выберите непустое изображение.");
   if (bytes.byteLength > MAX_PROFILE_PHOTO_BYTES) throw new Error("Размер фотографии не должен превышать 5 МБ.");
