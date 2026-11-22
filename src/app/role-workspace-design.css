@@ -1,0 +1,933 @@
+/* Role-only skin: selectors intentionally exclude the approved student workspace. */
+.teacher-app-shell,
+.dean-app-shell {
+  --role-ink: #f4f4fa;
+  --role-muted: #a9aab9;
+  --role-subtle: #8589a0;
+  --role-bg: #090b1b;
+  --role-sidebar: #0d0f23;
+  --role-surface: #111428;
+  --role-raised: #171a31;
+  --role-soft: #1d2038;
+  --role-line: #292c46;
+  --role-pink: #f12c9b;
+  --role-violet: #9665e8;
+  --role-blue: #3986f6;
+  --role-cyan: #38c7e1;
+  min-height: 100vh;
+  background: var(--role-bg);
+  color: var(--role-ink);
+  color-scheme: dark;
+}
+
+.teacher-app-shell {
+  --dc-ink: var(--role-ink); --dc-muted: var(--role-muted); --dc-subtle: var(--role-subtle);
+  --dc-bg: var(--role-bg); --dc-surface: var(--role-surface); --dc-raised: var(--role-raised);
+  --dc-soft: var(--role-soft); --dc-line: var(--role-line); --dc-pink: var(--role-pink);
+  --dc-pink-soft: #ff8bc9; --dc-blue: var(--role-blue); --dc-violet: var(--role-violet);
+  --dc-cyan: var(--role-cyan); --dc-green: #46c7a1; --dc-warn: #edb74f;
+  --dc-radius: 12px; --dc-radius-sm: 8px; --dc-shadow: 0 5px 18px rgb(2 6 25 / 9%);
+}
+
+html[data-campus-theme="light"] .teacher-app-shell,
+html[data-campus-theme="light"] .dean-app-shell {
+  --role-ink: #17182c;
+  --role-muted: #55576d;
+  --role-subtle: #73758a;
+  --role-bg: #f6f5fb;
+  --role-sidebar: #fff;
+  --role-surface: #fff;
+  --role-raised: #fcfbff;
+  --role-soft: #f1eef9;
+  --role-line: #e4dfef;
+  --role-pink: #df1686;
+  --role-violet: #7541c5;
+  --role-blue: #276bd1;
+  --role-cyan: #087e9b;
+  color-scheme: light;
+}
+
+.teacher-app-shell .workspace,
+.dean-app-shell .workspace { background: var(--role-bg); }
+.teacher-app-shell .sidebar,
+.dean-app-shell .sidebar { border-color: var(--role-line); background: var(--role-sidebar); }
+.teacher-app-shell .brand-name,
+.dean-app-shell .brand-name { color: var(--role-ink); }
+.teacher-app-shell .brand-name small,
+.dean-app-shell .brand-name small { color: var(--role-muted); }
+.teacher-app-shell .brand-mark i,
+.dean-app-shell .brand-mark i { background: var(--role-pink); }
+.teacher-app-shell .brand-mark i:nth-child(2), .teacher-app-shell .brand-mark i:nth-child(3),
+.dean-app-shell .brand-mark i:nth-child(2), .dean-app-shell .brand-mark i:nth-child(3) { background: var(--role-violet); }
+.teacher-app-shell .role-chip,
+.dean-app-shell .role-chip { border-color: var(--role-line); background: var(--role-surface); color: var(--role-muted); }
+.teacher-app-shell .role-dot,
+.dean-app-shell .role-dot { background: var(--role-pink); box-shadow: 0 0 9px color-mix(in srgb, var(--role-pink) 45%, transparent); }
+.teacher-app-shell .nav-caption,
+.dean-app-shell .nav-caption { color: var(--role-subtle); }
+.teacher-app-shell .nav-item,
+.dean-app-shell .nav-item { color: var(--role-muted); }
+.teacher-app-shell .nav-item:hover,
+.dean-app-shell .nav-item:hover { background: var(--role-soft); color: var(--role-ink); }
+.teacher-app-shell .nav-item.is-active,
+.dean-app-shell .nav-item.is-active { border-color: color-mix(in srgb, var(--role-pink) 28%, transparent); background: color-mix(in srgb, var(--role-pink) 12%, var(--role-surface)); color: var(--role-pink); }
+.teacher-app-shell .nav-item.is-active::before,
+.dean-app-shell .nav-item.is-active::before { background: var(--role-pink); box-shadow: 0 0 12px color-mix(in srgb, var(--role-pink) 44%, transparent); }
+.teacher-app-shell .nav-item:not(.is-active) .icon,
+.dean-app-shell .nav-item:not(.is-active) .icon { color: var(--role-subtle); }
+.teacher-app-shell .sidebar-foot,
+.dean-app-shell .sidebar-foot { border-color: var(--role-line); color: var(--role-subtle); }
+.teacher-app-shell .sidebar-foot .status-light,
+.dean-app-shell .sidebar-foot .status-light { background: #55c9a5; box-shadow: none; }
+.teacher-app-shell .topbar,
+.dean-app-shell .topbar { border-color: var(--role-line); background: color-mix(in srgb, var(--role-bg) 92%, transparent); }
+.teacher-app-shell .breadcrumbs,
+.dean-app-shell .breadcrumbs { color: var(--role-subtle); }
+.teacher-app-shell .breadcrumbs strong,
+.dean-app-shell .breadcrumbs strong { color: var(--role-ink); }
+.teacher-app-shell .icon-button,
+.dean-app-shell .icon-button { border-color: var(--role-line); background: var(--role-surface); color: var(--role-ink); }
+.teacher-app-shell .avatar,
+.dean-app-shell .avatar { border-color: var(--role-line); background: var(--role-soft); color: var(--role-pink); }
+.teacher-app-shell .profile-name,
+.dean-app-shell .profile-name { color: var(--role-ink); }
+.teacher-app-shell .profile-name small,
+.dean-app-shell .profile-name small { color: var(--role-muted); }
+.teacher-app-shell :focus-visible,
+.dean-app-shell :focus-visible { outline-color: var(--role-pink); }
+.teacher-app-shell .teacher-workspace-page,
+.dean-app-shell .main-content { color: var(--role-ink); }
+
+/* Shared page chrome and panels in the teacher workspace. */
+.teacher-app-shell .teacher-page-heading h1,
+.teacher-app-shell .teacher-data-card h2,
+.teacher-app-shell .teacher-data-card li strong,
+.teacher-app-shell .teacher-profile-card h2,
+.teacher-app-shell .teacher-gradebook-summary strong { color: var(--role-ink); }
+.teacher-app-shell .teacher-page-heading p,
+.teacher-app-shell .teacher-data-card li span,
+.teacher-app-shell .teacher-data-card li small,
+.teacher-app-shell .teacher-data-card p,
+.teacher-app-shell .teacher-data-card dt,
+.teacher-app-shell .teacher-data-card dd,
+.teacher-app-shell .teacher-profile-card p,
+.teacher-app-shell .teacher-filter-row label,
+.teacher-app-shell .teacher-gradebook-summary span { color: var(--role-muted); }
+.teacher-app-shell .teacher-data-card,
+.teacher-app-shell .teacher-gradebook-summary,
+.teacher-app-shell .teacher-calendar-nav,
+.teacher-app-shell .teacher-week-day,
+.teacher-app-shell .teacher-month-grid button,
+.teacher-app-shell .teacher-chat-messages article,
+.teacher-app-shell .teacher-assistant-message { border-color: var(--role-line); background: var(--role-surface); color: var(--role-ink); }
+.teacher-app-shell .teacher-profile-card { border-color: var(--role-line); background: var(--role-surface); }
+.teacher-app-shell .teacher-profile-avatar { border-color: var(--role-pink); background: var(--role-soft); color: var(--role-pink); }
+.teacher-app-shell .teacher-quick-links a,
+.teacher-app-shell .teacher-roster-list > div { border-color: var(--role-line); background: var(--role-raised); }
+.teacher-app-shell .teacher-quick-links strong,
+.teacher-app-shell .teacher-chat-messages p,
+.teacher-app-shell .teacher-assistant-message p,
+.teacher-app-shell .teacher-grade-table { color: var(--role-ink); }
+.teacher-app-shell .teacher-quick-links span,
+.teacher-app-shell .teacher-chat-messages time,
+.teacher-app-shell .teacher-chat-list span,
+.teacher-app-shell .teacher-chat-list small { color: var(--role-muted); }
+.teacher-app-shell .teacher-calendar-nav button,
+.teacher-app-shell .teacher-calendar-nav a,
+.teacher-app-shell .teacher-small-button,
+.teacher-app-shell .teacher-secondary-link { border-color: color-mix(in srgb, var(--role-pink) 34%, var(--role-line)); background: color-mix(in srgb, var(--role-pink) 7%, var(--role-surface)); color: var(--role-pink); }
+.teacher-app-shell .teacher-filter-row select,
+.teacher-app-shell .teacher-substitution-form select,
+.teacher-app-shell .teacher-substitution-form textarea,
+.teacher-app-shell .teacher-task-form input,
+.teacher-app-shell .teacher-task-form select,
+.teacher-app-shell .teacher-task-form textarea,
+.teacher-app-shell .teacher-grade-table input,
+.teacher-app-shell .teacher-gradebook select,
+.teacher-app-shell .teacher-chat-thread textarea,
+.teacher-app-shell .teacher-assistant-thread textarea { border-color: var(--role-line); background: var(--role-surface); color: var(--role-ink); }
+.teacher-app-shell .teacher-grade-table th,
+.teacher-app-shell .teacher-grade-table td { border-color: var(--role-line); }
+.teacher-app-shell .teacher-month-grid button.is-selected { border-color: var(--role-pink); }
+.teacher-app-shell .teacher-event-card { background: color-mix(in srgb, var(--role-cyan) 9%, var(--role-surface)); }
+.teacher-app-shell .teacher-event-card strong,
+.teacher-app-shell .teacher-event-card span { color: var(--role-ink); }
+.teacher-app-shell .teacher-empty-inline { color: var(--role-muted); }
+
+/* Dean workspace sections. */
+.dean-app-shell .dean-requests-content { width: min(100%, 1280px); margin: 0 auto; padding: 4px 0 28px; }
+.dean-app-shell .dean-requests-heading { margin-bottom: 18px; }
+.dean-app-shell .dean-requests-heading h1 { color: var(--role-ink); }
+.dean-app-shell .dean-requests-heading p,
+.dean-app-shell .dean-workspace-panel p,
+.dean-app-shell .dean-workspace-panel small,
+.dean-app-shell .dean-workspace-stat span,
+.dean-app-shell .dean-calendar-list { color: var(--role-muted); }
+.dean-app-shell .dean-workspace-stat,
+.dean-app-shell .dean-workspace-panel,
+.dean-app-shell .dean-calendar-list li,
+.dean-app-shell .dean-month-grid-wrap,
+.dean-app-shell .dean-month-grid { border-color: var(--role-line); background: var(--role-surface); color: var(--role-ink); box-shadow: none; }
+.dean-app-shell .dean-workspace-stat strong,
+.dean-app-shell .dean-workspace-panel h2,
+.dean-app-shell .dean-directory-list h2,
+.dean-app-shell .dean-data-list strong { color: var(--role-ink); }
+.dean-app-shell .dean-workspace-actions a,
+.dean-app-shell .dean-workspace-actions button,
+.dean-app-shell .dean-workspace-panel button,
+.dean-app-shell .dean-workspace-export,
+.dean-app-shell .dean-workspace-filters button { border-color: color-mix(in srgb, var(--role-pink) 35%, var(--role-line)); background: color-mix(in srgb, var(--role-pink) 8%, var(--role-surface)); color: var(--role-pink); }
+.dean-app-shell .dean-workspace-form label,
+.dean-app-shell .dean-workspace-filters label { color: var(--role-muted); }
+.dean-app-shell .dean-workspace-form input,
+.dean-app-shell .dean-workspace-form textarea,
+.dean-app-shell .dean-workspace-form select,
+.dean-app-shell .dean-workspace-filters input,
+.dean-app-shell .dean-workspace-filters select { border-color: var(--role-line); background: var(--role-raised); color: var(--role-ink); }
+.dean-app-shell .dean-calendar-list li,
+.dean-app-shell .dean-month-cell { color: var(--role-ink); }
+.dean-app-shell .dean-calendar-list time,
+.dean-app-shell .dean-month-cell > time { color: var(--role-blue); }
+.dean-app-shell .dean-month-weekday { border-color: var(--role-line); color: var(--role-muted); }
+.dean-app-shell .dean-month-cell { border-color: var(--role-line); }
+.dean-app-shell .dean-month-event { color: var(--role-ink); background: color-mix(in srgb, var(--role-cyan) 8%, var(--role-surface)); }
+.dean-app-shell .dean-workspace-alert { color: #8e244d; background: #fff0f5; }
+.dean-app-shell .dean-workspace-ok { color: #167d61; }
+.dean-app-shell .dean-request-summary-card,
+.dean-app-shell .dean-request-queue,
+.dean-app-shell .dean-request-student > div,
+.dean-app-shell .dean-action-form,
+.dean-app-shell .dean-pass-card,
+.dean-app-shell .dean-pass-filters,
+.dean-app-shell .dean-request-notifications { border-color: var(--role-line); background: var(--role-surface); color: var(--role-ink); }
+.dean-app-shell .dean-request-summary-card > span,
+.dean-app-shell .dean-request-card-main > small,
+.dean-app-shell .dean-request-card-meta > small,
+.dean-app-shell .dean-request-filters label > span,
+.dean-app-shell .dean-request-student small,
+.dean-app-shell .dean-clarification small,
+.dean-app-shell .dean-document-upload input { color: var(--role-muted); }
+.dean-app-shell .dean-request-summary-card > strong,
+.dean-app-shell .dean-request-card-main > strong,
+.dean-app-shell .dean-request-student strong,
+.dean-app-shell .dean-request-subsection > h3,
+.dean-app-shell .dean-request-actions > h3,
+.dean-app-shell .dean-request-empty strong { color: var(--role-ink); }
+.dean-app-shell .dean-request-queue,
+.dean-app-shell .dean-pass-card { overflow: hidden; }
+.dean-app-shell .dean-request-queue-heading,
+.dean-app-shell .dean-request-details { border-color: var(--role-line); }
+.dean-app-shell .dean-request-filters { border-color: var(--role-line); }
+.dean-app-shell .dean-request-filters select,
+.dean-app-shell .dean-request-filters input,
+.dean-app-shell .dean-assignment-form select,
+.dean-app-shell .dean-assignment-form textarea,
+.dean-app-shell .dean-action-form input,
+.dean-app-shell .dean-action-form textarea,
+.dean-app-shell .dean-action-form select,
+.dean-app-shell .dean-pass-filters select { border-color: var(--role-line); background: var(--role-raised); color: var(--role-ink); }
+.dean-app-shell .dean-request-card { border-color: var(--role-line); }
+.dean-app-shell .dean-request-card[open] > summary { background: var(--role-soft); }
+.dean-app-shell .dean-request-card > summary::after,
+.dean-app-shell .dean-request-category { color: var(--role-blue); }
+.dean-app-shell .dean-request-body { border-color: var(--role-blue); background: var(--role-soft); color: var(--role-ink); }
+.dean-app-shell .dean-clarification { border-color: #d9b767; }
+.dean-app-shell .dean-clarification p { color: var(--role-ink); }
+.dean-app-shell .dean-clarification strong { color: #875806; }
+.dean-app-shell .dean-assignment-form button,
+.dean-app-shell .dean-action-form > button,
+.dean-app-shell .dean-state-action > button,
+.dean-app-shell .dean-pass-action { border-color: color-mix(in srgb, var(--role-pink) 35%, var(--role-line)); background: color-mix(in srgb, var(--role-pink) 8%, var(--role-surface)); color: var(--role-pink); }
+.dean-app-shell .dean-action-form .request-danger-button { border-color: #e3a6b5; background: #fff1f3; color: #9d304a; }
+.dean-app-shell .dean-action-form .request-outline-button { border-color: #e3c98d; background: #fff9e9; color: #77520a; }
+.dean-app-shell .dean-request-empty p { color: var(--role-muted); }
+.dean-app-shell .dean-request-status { border-color: var(--role-line); background: var(--role-soft); color: var(--role-blue); }
+.dean-app-shell .dean-request-status.state-completed { color: #167d61; }
+.dean-app-shell .dean-request-status.state-rejected { color: #a52b4b; }
+.dean-app-shell .dean-request-status.state-clarification_requested { color: #80570a; }
+.dean-app-shell .dean-pass-card .coursework-card-heading,
+.dean-app-shell .dean-pass-card .coursework-meta { color: var(--role-ink); }
+.dean-app-shell .dean-pass-card .coursework-empty { color: var(--role-muted); }
+.dean-app-shell .dean-request-notifications li > div small { color: var(--role-muted); }
+.dean-app-shell .dean-request-notifications li > div a { display: inline-flex; min-height: 34px; align-items: center; margin-top: 8px; padding: 0 10px; border: 1px solid var(--role-line); border-radius: 7px; background: var(--role-raised); color: var(--role-blue); }
+
+@media (max-width: 760px) {
+  .dean-app-shell .sidebar { width: 76px; padding: 18px 8px; }
+  .dean-app-shell .workspace { margin-left: 76px; }
+  .dean-app-shell .brand { justify-content: center; padding: 0; }
+  .dean-app-shell .brand-name,
+  .dean-app-shell .role-chip,
+  .dean-app-shell .nav-caption,
+  .dean-app-shell .nav-label,
+  .dean-app-shell .sidebar-foot { display: none; }
+  .dean-app-shell .nav-item { justify-content: center; padding: 0; }
+  .dean-app-shell .nav-item .icon { font-size: 19px; }
+  .dean-app-shell .main-content { padding: 16px 12px 24px; }
+}
+
+@media (max-width: 560px) {
+  .teacher-app-shell .topbar,
+  .dean-app-shell .topbar { height: auto; min-height: 60px; gap: 8px; padding: 8px 12px; }
+  .teacher-app-shell .topbar-tools,
+  .dean-app-shell .topbar-tools { gap: 7px; }
+  .teacher-app-shell .profile-name,
+  .dean-app-shell .profile-name { display: none; }
+  .teacher-app-shell .demo-badge { display: none; }
+  .teacher-app-shell .main-content { padding: 14px 10px 24px; }
+}
+
+@media (max-width: 380px) {
+  .teacher-app-shell .campus-theme-toggle span { display: none; }
+  .dean-app-shell .campus-theme-toggle span { display: none; }
+  .dean-app-shell .dean-workspace-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .dean-app-shell .dean-workspace-stat { min-height: 100px; padding: 12px; }
+}
+
+/* Addressed teacher refinements: student dashboard geometry and notification patterns. */
+.teacher-app-shell .student-home-grid { grid-template-columns: minmax(0, 1.16fr) minmax(230px, .9fr) minmax(285px, 1.04fr); grid-template-areas: "welcome welcome deadlines" "schedule tasks events" "performance career ai"; align-items: stretch; gap: 11px; }
+.teacher-app-shell .teacher-group-announcement { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); }
+.teacher-app-shell .teacher-announcement-compose { min-width: 0; padding: 13px; border: 1px solid var(--role-line); border-radius: 9px; background: var(--role-raised); }
+.teacher-app-shell .teacher-announcement-compose h3 { margin: 0 0 12px; color: var(--role-ink); font-size: 15px; }
+.teacher-app-shell .teacher-announcement-form { display: grid; gap: 13px; }
+.teacher-app-shell .teacher-announcement-form label { display: grid; min-width: 0; gap: 6px; color: var(--role-ink); font-size: 11px; font-weight: 650; }
+.teacher-app-shell .teacher-announcement-form :is(input, select, textarea) { width: 100%; min-width: 0; min-height: 42px; padding: 9px 11px; border: 1px solid var(--role-line); border-radius: 7px; background: var(--role-surface); color: var(--role-ink); }
+.teacher-app-shell .teacher-announcement-form textarea { min-height: 132px; resize: vertical; }
+.teacher-app-shell .teacher-announcement-submit { display: flex; flex-wrap: wrap; align-items: center; gap: 9px 14px; }
+.teacher-app-shell .teacher-group-announcement-history { min-width: 0; padding: 13px 0 0 15px; border-left: 1px solid var(--role-line); }
+.teacher-app-shell .teacher-group-gradebook-link { margin: 18px 0 0; }
+.teacher-app-shell .teacher-components-table-scroll { max-width: 100%; overflow-x: auto; }
+.teacher-app-shell .teacher-components-table { width: 100%; border-collapse: collapse; color: var(--role-ink); font-size: 11px; }
+.teacher-app-shell .teacher-components-table :is(th, td) { padding: 9px 10px; border-bottom: 1px solid var(--role-line); text-align: left; vertical-align: middle; }
+.teacher-app-shell .teacher-components-table thead th { color: var(--role-muted); font-size: 10px; font-weight: 700; }
+.teacher-app-shell .teacher-components-table :is(th:nth-child(2), td:nth-child(2)) { width: 190px; }
+.teacher-app-shell .teacher-components-table :is(th:nth-child(3), td:nth-child(3)) { width: 160px; }
+.teacher-app-shell .teacher-components-table td input { width: 100%; min-width: 115px; min-height: 38px; padding: 7px 9px; border: 1px solid var(--role-line); border-radius: 7px; background: var(--role-raised); color: var(--role-ink); }
+.teacher-app-shell .teacher-components-table tfoot :is(th, td) { border-top: 2px solid var(--role-line); border-bottom: 0; background: var(--role-soft); font-weight: 750; }
+.teacher-app-shell .teacher-components-table .is-valid { color: #4bd6a6; }
+.teacher-app-shell .teacher-components-table .is-invalid { color: #ff8eaa; }
+.teacher-app-shell .teacher-components-actions { display: grid; grid-template-columns: auto minmax(180px, 1fr) auto; align-items: end; gap: 10px; margin-top: 12px; }
+.teacher-app-shell .teacher-components-actions label { display: grid; gap: 5px; color: var(--role-muted); font-size: 10px; }
+.teacher-app-shell .teacher-components-actions input { min-height: 38px; padding: 7px 9px; border: 1px solid var(--role-line); border-radius: 7px; background: var(--role-raised); color: var(--role-ink); }
+.teacher-app-shell .teacher-structure-history { margin-top: 14px; padding-top: 11px; border-top: 1px solid var(--role-line); }
+.teacher-app-shell .teacher-schedule-request-panel { display: grid; grid-template-columns: minmax(180px, .7fr) repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin: 12px 0; }
+.teacher-app-shell .teacher-schedule-request-panel details > summary { display: inline-flex; min-height: 36px; align-items: center; padding: 0 12px; border: 1px solid color-mix(in srgb, var(--role-pink) 45%, var(--role-line)); border-radius: 7px; background: color-mix(in srgb, var(--role-pink) 10%, var(--role-surface)); color: var(--role-ink); cursor: pointer; font-size: 11px; font-weight: 700; }
+.teacher-app-shell .teacher-schedule-request-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin-top: 10px; }
+.teacher-app-shell .teacher-schedule-request-panel h2, .teacher-app-shell .teacher-schedule-request-item h3 { margin: 0 0 5px; color: var(--role-ink); font-size: 14px; }
+.teacher-app-shell .teacher-schedule-request-panel p { margin: 0; color: var(--role-muted); font-size: 10px; line-height: 1.5; }
+.teacher-app-shell .teacher-schedule-request-item { min-width: 0; padding: 11px; border: 1px solid var(--role-line); border-radius: 8px; background: var(--role-raised); }
+.teacher-app-shell .teacher-schedule-request-item .teacher-substitution-form { margin-top: 9px; }
+.teacher-app-shell .notifications-layout { grid-template-columns: minmax(0, 1.65fr) minmax(250px, .72fr); gap: 17px; }
+.teacher-app-shell :is(.notifications-main-panel, .notification-settings-panel) { border-color: var(--role-line); border-radius: 13px; background: var(--role-surface); box-shadow: var(--dc-shadow); color: var(--role-ink); }
+.teacher-app-shell .notifications-panel-heading h2, .teacher-app-shell .notification-settings-panel h2 { color: var(--role-ink); }
+.teacher-app-shell :is(.notifications-panel-heading p, .notification-settings-panel > p, .notification-settings-panel li small, .notification-settings-note) { color: var(--role-muted) !important; }
+.teacher-app-shell .notifications-filters { border-color: var(--role-line); }
+.teacher-app-shell .notifications-filters > button { border-color: var(--role-line); background: var(--role-raised); color: var(--role-muted); }
+.teacher-app-shell .notifications-filters > button.is-active { border-color: color-mix(in srgb, var(--role-cyan) 45%, var(--role-line)); background: color-mix(in srgb, var(--role-cyan) 11%, var(--role-surface)); color: var(--role-ink); box-shadow: none; }
+.teacher-app-shell .notifications-filters label { color: var(--role-muted); }
+.teacher-app-shell .notifications-filters select { border-color: var(--role-line); background: var(--role-raised); color: var(--role-ink); }
+.teacher-app-shell .notification-card { border-color: var(--role-line); border-radius: 9px; background: var(--role-raised); }
+.teacher-app-shell .notification-card.is-unread { border-color: color-mix(in srgb, var(--role-cyan) 45%, var(--role-line)); background: color-mix(in srgb, var(--role-cyan) 7%, var(--role-raised)); }
+.teacher-app-shell .notification-card.is-critical { border-color: color-mix(in srgb, #ffc857 55%, var(--role-line)); background: color-mix(in srgb, #ffc857 7%, var(--role-raised)); }
+.teacher-app-shell .notification-card-meta, .teacher-app-shell .notification-card p { color: var(--role-muted); }
+.teacher-app-shell .notification-card-meta > span:first-child, .teacher-app-shell .notification-card h3, .teacher-app-shell .notification-settings-panel li strong { color: var(--role-ink); }
+.teacher-app-shell .notification-card-mark { border-color: color-mix(in srgb, var(--role-cyan) 52%, var(--role-line)); color: var(--role-cyan); text-shadow: none; }
+.teacher-app-shell .notification-read-state { color: var(--role-muted); }
+.teacher-app-shell .notification-read-state.is-new { color: var(--role-pink); }
+.teacher-app-shell .notification-card-actions a { color: var(--role-cyan); }
+.teacher-app-shell .notification-card-actions button { border-color: var(--role-line); background: var(--role-surface); color: var(--role-ink); }
+.teacher-app-shell .notification-settings-panel li { border-color: var(--role-line); }
+.teacher-app-shell .notifications-empty :is(h2, h3) { color: var(--role-ink); }
+.teacher-app-shell .notifications-empty p, .teacher-app-shell .notification-unavailable { color: var(--role-muted); }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-components-table tfoot :is(th, td) { background: #f5f2fa; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-components-table .is-valid { color: #147a56; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-components-table .is-invalid { color: #a3274e; }
+html[data-campus-theme="light"] .teacher-app-shell .notification-card.is-unread { background: #f2fbfd; }
+html[data-campus-theme="light"] .teacher-app-shell .notification-card.is-critical { background: #fffaf0; }
+@media (max-width: 1100px) {
+  .teacher-app-shell .student-home-grid { grid-template-columns: minmax(0, 1.15fr) minmax(250px, .95fr); grid-template-areas: "welcome welcome" "deadlines deadlines" "schedule tasks" "events events" "performance career" "ai ai"; }
+}
+@media (max-width: 760px) {
+  .teacher-app-shell .student-home-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "welcome welcome" "deadlines deadlines" "schedule schedule" "tasks events" "performance career" "ai ai"; }
+  .teacher-app-shell .teacher-components-actions { grid-template-columns: minmax(0, 1fr); }
+  .teacher-app-shell .teacher-components-actions > * { width: 100%; }
+  .teacher-app-shell .teacher-announcement-form :is(input, select, textarea) { font-size: 16px; }
+  .teacher-app-shell .teacher-group-announcement { grid-template-columns: minmax(0, 1fr); }
+  .teacher-app-shell .teacher-group-announcement-history { padding: 12px 0 0; border-top: 1px solid var(--role-line); border-left: 0; }
+  .teacher-app-shell .notifications-layout { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 520px) {
+  .teacher-app-shell .student-home-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "welcome" "deadlines" "schedule" "tasks" "events" "performance" "career" "ai"; gap: 9px; }
+  .teacher-app-shell .home-welcome { min-height: 188px; padding: 18px 15px; }
+  .teacher-app-shell .home-welcome-main { grid-template-columns: minmax(0, 1fr) 2px minmax(92px, .46fr); gap: 8px; }
+  .teacher-app-shell .home-welcome .hero-title { font-size: clamp(27px, 8vw, 39px); }
+  .teacher-app-shell .home-welcome .hero-copy { font-size: 9px; }
+  .teacher-app-shell .home-summary-strip { gap: 5px; }
+  .teacher-app-shell .home-summary-strip > div { min-height: 54px; padding: 6px; }
+  .teacher-app-shell .home-summary-strip span { font-size: 6px; letter-spacing: .05em; }
+  .teacher-app-shell .teacher-schedule-request-panel { grid-template-columns: minmax(0, 1fr); }
+  .teacher-app-shell .teacher-components-table :is(th, td) { padding: 7px 6px; }
+  .teacher-app-shell .teacher-components-table :is(th:nth-child(2), td:nth-child(2)) { width: 130px; }
+  .teacher-app-shell .teacher-components-table :is(th:nth-child(3), td:nth-child(3)) { width: 98px; }
+  .teacher-app-shell .teacher-components-table td input { min-width: 82px; }
+}
+
+/* Teacher UI follows the approved student grid and interior page patterns. */
+.teacher-app-shell .student-home-grid { grid-template-columns: minmax(0, 1.16fr) minmax(230px, .9fr) minmax(285px, 1.04fr); grid-template-areas: "welcome welcome deadlines" "schedule tasks events" "performance career ai"; align-items: stretch; gap: 11px; }
+.teacher-app-shell .home-welcome-stack { grid-area: welcome; display: grid; min-width: 0; grid-template-rows: minmax(205px, 1fr) auto; gap: 9px; }
+.teacher-app-shell .home-welcome { display: flex; min-height: 205px; align-items: center; padding: 22px; border-radius: 16px; background-position: center 49%; }
+.teacher-app-shell .home-welcome::before { background: linear-gradient(90deg, rgb(7 9 27 / 91%) 0%, rgb(7 9 27 / 78%) 43%, rgb(7 9 27 / 21%) 78%, rgb(7 9 27 / 5%) 100%), linear-gradient(0deg, rgb(7 9 27 / 45%), transparent 58%); }
+.teacher-app-shell .home-welcome-main { display: grid; grid-template-columns: minmax(0, 1fr) 2px minmax(155px, .42fr); align-items: center; gap: clamp(13px, 2vw, 25px); }
+.teacher-app-shell .home-welcome-main > div { min-width: 0; }
+.teacher-app-shell .home-welcome .home-eyebrow { color: #ff9dce; font-size: 9px; letter-spacing: .2em; }
+.teacher-app-shell .home-welcome .hero-title { margin-top: 12px; color: #fff; font-family: var(--font-display); font-size: clamp(39px, 4.3vw, 66px); font-style: italic; font-weight: 400; letter-spacing: -.04em; line-height: .97; text-transform: uppercase; white-space: normal; }
+.teacher-app-shell .home-welcome .hero-title span:last-child { color: #fff; }
+.teacher-app-shell .home-welcome .hero-divider { height: 96px; }
+.teacher-app-shell .home-welcome .hero-copy { max-width: 220px; padding: 5px 7px; color: #fff; font-size: clamp(12px, 1.1vw, 15px); }
+.teacher-app-shell .home-welcome .hero-copy::before { inset: -16px -24px; background: radial-gradient(ellipse, rgb(7 9 27 / 86%) 0%, rgb(7 9 27 / 60%) 55%, transparent 82%); }
+.teacher-app-shell .home-summary-strip { width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; margin: 0; overflow: visible; border: 0; background: transparent; }
+.teacher-app-shell .home-summary-strip > div { min-height: 62px; align-content: center; padding: 8px 11px; border: 1px solid var(--role-line); border-radius: 11px; background: var(--role-surface); box-shadow: var(--dc-shadow); }
+.teacher-app-shell .home-summary-strip span { color: var(--role-muted); font-size: 8px; }
+.teacher-app-shell .home-summary-strip strong { color: var(--role-ink); font-size: 12px; }
+.teacher-app-shell .home-deadlines { grid-area: deadlines; }
+.teacher-app-shell .home-schedule { grid-area: schedule; min-height: 0; padding: 13px 14px 10px; }
+.teacher-app-shell .home-tasks { grid-area: tasks; }
+.teacher-app-shell .home-events { grid-area: events; }
+.teacher-app-shell .home-performance { grid-area: performance; }
+.teacher-app-shell .home-career { grid-area: career; }
+.teacher-app-shell .home-ai-panel { grid-area: ai; min-height: 160px; padding: 17px; }
+.teacher-app-shell .student-home-grid .home-panel { padding: 13px 14px; border-color: var(--role-line); border-radius: 11px; background: var(--role-surface); }
+.teacher-app-shell .student-home-grid .home-panel-heading h2, .teacher-app-shell .student-home-grid .home-section-title h2 { color: var(--role-ink); font-size: 15px; }
+.teacher-app-shell .student-home-grid :is(.home-empty, .home-panel-caption) { color: var(--role-muted); }
+.teacher-app-shell .student-home-grid :is(.home-deadline-list li, .home-lesson, .home-notice-list li, .home-opportunities li) { border-color: var(--role-line); }
+.teacher-app-shell .student-home-grid :is(.home-deadline-list strong, .home-lesson h3, .home-notice-list strong, .home-opportunities strong) { color: var(--role-ink); }
+.teacher-app-shell .student-home-grid :is(.home-deadline-list small, .home-lesson p, .home-notice-list small, .home-opportunities small) { color: var(--role-muted); }
+.teacher-app-shell .student-home-grid .home-performance-score strong { color: var(--role-pink); }
+.teacher-app-shell .student-home-grid .home-performance-score span { color: var(--role-muted); }
+.teacher-app-shell .student-home-grid .home-ai-panel h2 { color: var(--role-ink); font-family: var(--font-display); font-size: 20px; font-style: italic; }
+.teacher-app-shell .student-home-grid .home-ai-panel p { color: var(--role-muted); }
+.teacher-app-shell .student-home-grid .home-ai-panel > a { color: var(--role-pink); }
+.teacher-app-shell .teacher-profile-page .profile-page-heading { min-height: 0; margin-bottom: 14px; padding: 0; border: 0; background: transparent; }
+.teacher-app-shell .teacher-profile-page .profile-page-heading::after { display: none; }
+.teacher-app-shell .teacher-profile-page .profile-page-heading h1 { margin: 4px 0; color: var(--role-ink); font-size: clamp(23px, 3vw, 30px); }
+.teacher-app-shell .teacher-profile-page .profile-page-heading p { color: var(--role-muted); }
+.teacher-app-shell .teacher-student-profile { padding: clamp(16px, 3vw, 26px); border-color: var(--role-line); border-radius: 12px; background: var(--role-surface); box-shadow: var(--dc-shadow); }
+.teacher-app-shell .teacher-student-profile .student-profile-identity { gap: 16px; border-color: var(--role-line); background: linear-gradient(100deg, color-mix(in srgb, var(--role-cyan) 7%, transparent), transparent 55%, color-mix(in srgb, var(--role-violet) 8%, transparent)); }
+.teacher-app-shell .teacher-student-profile .student-profile-identity h2 { color: var(--role-ink); }
+.teacher-app-shell .teacher-student-profile .student-profile-identity p, .teacher-app-shell .teacher-student-profile .student-profile-field dt, .teacher-app-shell .teacher-student-profile .profile-field-note { color: var(--role-muted); }
+.teacher-app-shell .teacher-student-profile .student-profile-grid { gap: 1px; overflow: hidden; border: 1px solid var(--role-line); border-radius: 10px; background: var(--role-line); }
+.teacher-app-shell .teacher-student-profile .student-profile-field { min-width: 0; padding: 13px 14px; border: 0; background: var(--role-raised); }
+.teacher-app-shell .teacher-student-profile .student-profile-field dd { color: var(--role-ink); overflow-wrap: anywhere; }
+.teacher-app-shell .teacher-student-profile .student-profile-field dd.profile-value-accent { color: var(--role-cyan); }
+.teacher-app-shell .teacher-student-profile .profile-large-avatar { border-color: var(--role-pink); color: var(--role-ink); }
+.teacher-app-shell .teacher-student-profile .profile-photo-hint { color: var(--role-muted); }
+.teacher-app-shell .teacher-student-profile .profile-photo-button { border-color: var(--role-line); background: var(--role-soft); color: var(--role-ink); }
+.teacher-app-shell .teacher-chat-sidebar-heading, .teacher-app-shell .teacher-chat-thread-heading { display: flex; align-items: center; justify-content: space-between; gap: 9px; }
+.teacher-app-shell .teacher-chat-sidebar-heading span { color: var(--role-subtle); font-size: 10px; }
+.teacher-app-shell .teacher-chat-search { display: block; margin: 9px 0; }
+.teacher-app-shell .teacher-chat-search input { width: 100%; min-height: 38px; padding: 7px 10px; border: 1px solid var(--role-line); border-radius: 8px; background: var(--role-raised); color: var(--role-ink); }
+.teacher-app-shell .teacher-chat-start { margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--role-line); }
+.teacher-app-shell .teacher-chat-start summary { color: var(--role-pink); cursor: pointer; font-size: 11px; font-weight: 700; }
+.teacher-app-shell .teacher-chat-start h3 { margin: 12px 0 6px; color: var(--role-muted); font-size: 10px; }
+.teacher-app-shell .teacher-chat-start-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.teacher-app-shell .teacher-chat-thread { min-height: min(70vh, 720px); padding: 14px; }
+.teacher-app-shell .teacher-chat-thread-heading { padding-bottom: 10px; border-bottom: 1px solid var(--role-line); }
+.teacher-app-shell .teacher-chat-thread-heading h2 { margin: 3px 0 0; }
+.teacher-app-shell .teacher-chat-messages { display: flex; flex-direction: column; gap: 9px; max-height: min(58vh, 640px); overflow: auto; padding: 10px 3px; }
+.teacher-app-shell .teacher-chat-messages article { width: fit-content; max-width: min(82%, 640px); padding: 9px 11px; border: 1px solid var(--role-line); border-radius: 10px 10px 10px 3px; background: var(--role-raised); }
+.teacher-app-shell .teacher-chat-messages article p { margin: 4px 0; color: var(--role-ink); white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; }
+.teacher-app-shell .teacher-chat-messages article time { color: var(--role-muted); font-size: 9px; }
+.teacher-app-shell .teacher-chat-thread form { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 8px; margin-top: auto; }
+.teacher-app-shell .teacher-chat-thread form textarea { min-width: 0; min-height: 44px; resize: vertical; }
+.teacher-app-shell .teacher-chat-thread form button { min-height: 42px; }
+.teacher-app-shell .teacher-chat-empty { display: grid; min-height: 320px; align-content: center; justify-items: center; color: var(--role-muted); text-align: center; }
+.teacher-app-shell .teacher-chat-empty h2 { color: var(--role-ink); }
+.teacher-app-shell .teacher-groups-selector { align-items: end; margin-bottom: 10px; padding: 10px; border: 1px solid var(--role-line); border-radius: 10px; background: var(--role-surface); }
+.teacher-app-shell .teacher-group-overview, .teacher-app-shell .teacher-roster-panel { margin-bottom: 10px; }
+.teacher-app-shell .teacher-group-stats { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 10px; color: var(--role-muted); font-size: 10px; }
+.teacher-app-shell .teacher-group-stats strong { color: var(--role-pink); font-size: 17px; }
+.teacher-app-shell .teacher-roster-table-scroll { max-width: 100%; overflow-x: auto; }
+.teacher-app-shell .teacher-roster-table { width: 100%; border-collapse: collapse; color: var(--role-ink); font-size: 11px; }
+.teacher-app-shell .teacher-roster-table :is(th, td) { padding: 10px; border-bottom: 1px solid var(--role-line); text-align: left; vertical-align: top; }
+.teacher-app-shell .teacher-roster-table thead th { color: var(--role-muted); font-size: 9px; font-weight: 700; }
+.teacher-app-shell .teacher-roster-table tbody th { font-weight: 650; }
+.teacher-app-shell .teacher-group-announcement { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 15px; padding: 15px; border: 1px solid var(--role-line); border-radius: 11px; background: var(--role-surface); }
+.teacher-app-shell .teacher-group-announcement h3 { margin: 0 0 10px; color: var(--role-ink); font-size: 15px; }
+.teacher-app-shell .teacher-group-announcement form { display: grid; gap: 9px; }
+.teacher-app-shell .teacher-group-announcement form label { display: grid; gap: 5px; color: var(--role-muted); font-size: 10px; }
+.teacher-app-shell .teacher-group-announcement :is(input, select, textarea) { min-width: 0; width: 100%; }
+.teacher-app-shell .teacher-group-announcement-history { padding-left: 14px; border-left: 1px solid var(--role-line); }
+.teacher-app-shell .teacher-group-announcement-history h4 { margin: 0 0 8px; color: var(--role-muted); font-size: 11px; }
+.teacher-app-shell .teacher-group-announcement-history ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.teacher-app-shell .teacher-group-announcement-history li { display: grid; gap: 3px; padding: 9px 0; border-top: 1px solid var(--role-line); }
+.teacher-app-shell .teacher-group-announcement-history li strong { color: var(--role-ink); font-size: 11px; }
+.teacher-app-shell .teacher-group-announcement-history li span, .teacher-app-shell .teacher-group-announcement-history p { color: var(--role-muted); font-size: 9px; }
+.teacher-app-shell .teacher-group-announcement-history li p { margin: 3px 0; overflow-wrap: anywhere; color: var(--role-ink); font-size: 10px; }
+.teacher-app-shell .teacher-grade-tabs { display: flex; flex-wrap: wrap; gap: 5px; margin: 10px 0; padding: 4px; border: 1px solid var(--role-line); border-radius: 9px; background: var(--role-surface); }
+.teacher-app-shell .teacher-grade-filter-row label:first-child { order: 2; }
+.teacher-app-shell .teacher-grade-filter-row label:nth-child(2) { order: 1; }
+.teacher-app-shell .teacher-grade-tabs button { min-height: 34px; padding: 5px 11px; border: 1px solid transparent; border-radius: 6px; background: transparent; color: var(--role-muted); cursor: pointer; }
+.teacher-app-shell .teacher-grade-tabs button.is-active { border-color: color-mix(in srgb, var(--role-pink) 40%, var(--role-line)); background: color-mix(in srgb, var(--role-pink) 11%, var(--role-surface)); color: var(--role-pink); }
+.teacher-app-shell .teacher-gradebook-summary { gap: 10px; padding: 11px 13px; border-radius: 9px; }
+.teacher-app-shell .teacher-gradebook-summary span { display: block; margin-top: 3px; }
+.teacher-app-shell .teacher-gradebook-analytics { margin: 9px 0; }
+.teacher-app-shell .teacher-grade-table-scroll { overflow-x: auto; }
+.teacher-app-shell .teacher-grade-table { width: 100%; min-width: 760px; border-collapse: collapse; font-size: 10px; }
+.teacher-app-shell .teacher-grade-table :is(th, td) { padding: 8px; border-bottom: 1px solid var(--role-line); vertical-align: top; }
+.teacher-app-shell .teacher-grade-table thead th { position: sticky; top: 0; z-index: 1; background: var(--role-raised); }
+.teacher-app-shell .teacher-grade-table tbody th { min-width: 170px; text-align: left; }
+.teacher-app-shell .teacher-grade-cell { display: grid; min-width: 92px; gap: 5px; }
+.teacher-app-shell .teacher-grade-cell input { width: 100%; min-width: 0; }
+.teacher-app-shell .teacher-grade-cell small { color: var(--role-muted); }
+.teacher-app-shell .schedule-page-heading { margin-bottom: 12px; }
+.teacher-app-shell .schedule-page-heading h1 { color: var(--role-ink); font-size: clamp(23px, 3vw, 30px); }
+.teacher-app-shell .schedule-page-heading p { color: var(--role-muted); }
+.teacher-app-shell .schedule-page-card { padding: 12px; border: 1px solid var(--role-line); border-radius: 12px; background: var(--role-surface); }
+.teacher-app-shell .schedule-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.teacher-app-shell .schedule-week-navigation { display: flex; min-width: 0; align-items: center; gap: 8px; }
+.teacher-app-shell .schedule-week-navigation h2 { margin: 0; color: var(--role-ink); font-size: 14px; }
+.teacher-app-shell :is(.schedule-nav-arrow, .schedule-today-button) { display: inline-grid; min-width: 34px; min-height: 34px; place-items: center; padding: 0 9px; border: 1px solid var(--role-line); border-radius: 8px; background: var(--role-raised); color: var(--role-ink); text-decoration: none; }
+.teacher-app-shell .schedule-today-button { color: var(--role-pink); }
+.teacher-app-shell .schedule-page-meta { margin: 7px 0; color: var(--role-muted); font-size: 9px; }
+.teacher-app-shell .schedule-week-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 7px; }
+.teacher-app-shell .schedule-week-day { min-width: 0; padding: 7px; border: 1px solid var(--role-line); border-radius: 9px; background: var(--role-surface); }
+.teacher-app-shell .schedule-week-day.is-today { border-color: color-mix(in srgb, var(--role-pink) 62%, var(--role-line)); }
+.teacher-app-shell .schedule-week-day-heading { display: grid; min-height: 53px; justify-items: center; align-content: center; gap: 2px; margin-bottom: 6px; padding: 5px; border: 1px solid var(--role-line); border-radius: 8px; background: var(--role-raised); color: var(--role-muted); text-decoration: none; text-transform: capitalize; }
+.teacher-app-shell .schedule-week-day-heading strong { color: var(--role-ink); font-size: 13px; }
+.teacher-app-shell .schedule-week-day-heading small { color: var(--role-pink); font-size: 8px; }
+.teacher-app-shell .schedule-week-lesson { min-width: 0; margin-bottom: 6px; padding: 7px; border: 1px solid var(--role-line); border-radius: 7px; background: var(--role-raised); overflow-wrap: anywhere; }
+.teacher-app-shell .schedule-week-lesson h3 { margin: 3px 0; color: var(--role-ink); font-size: 10px; }
+.teacher-app-shell .schedule-week-lesson p, .teacher-app-shell .schedule-week-lesson small { display: block; margin: 3px 0; color: var(--role-muted); font-size: 8px; }
+.teacher-app-shell .schedule-week-lesson-time { display: flex; flex-wrap: wrap; gap: 5px; color: var(--role-pink); font-size: 9px; }
+.teacher-app-shell .schedule-day-empty { color: var(--role-subtle); font-size: 9px; }
+.teacher-app-shell .teacher-schedule-secondary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+html[data-campus-theme="light"] .teacher-app-shell .hero.home-welcome::before { background: linear-gradient(90deg, rgb(250 249 255 / 97%) 0%, rgb(250 249 255 / 92%) 43%, rgb(250 249 255 / 58%) 64%, rgb(250 249 255 / 4%) 100%), linear-gradient(0deg, rgb(250 249 255 / 42%), transparent 62%); }
+html[data-campus-theme="light"] .teacher-app-shell .home-welcome .home-eyebrow { color: #9c145f; }
+html[data-campus-theme="light"] .teacher-app-shell .home-welcome .hero-title, html[data-campus-theme="light"] .teacher-app-shell .home-welcome .hero-title span:last-child { color: #11152e; text-shadow: 0 2px 15px rgb(255 255 255 / 72%); }
+html[data-campus-theme="light"] .teacher-app-shell .home-welcome .hero-copy { color: #18192f; text-shadow: 0 1px 6px rgb(255 255 255 / 80%); }
+html[data-campus-theme="light"] .teacher-app-shell .home-welcome .hero-copy::before { background: radial-gradient(ellipse, rgb(255 255 255 / 83%), rgb(255 255 255 / 46%) 58%, transparent 82%); }
+html[data-campus-theme="light"] .teacher-app-shell .home-summary-strip { border: 0; background: transparent; }
+html[data-campus-theme="light"] .teacher-app-shell .home-summary-strip > div { border-color: var(--role-line); background: #fff; }
+html[data-campus-theme="light"] .teacher-app-shell .home-summary-strip span { color: var(--role-muted); }
+html[data-campus-theme="light"] .teacher-app-shell .home-summary-strip strong { color: var(--role-ink); }
+html[data-campus-theme="light"] .teacher-app-shell .home-summary-strip small { color: var(--role-muted); }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-student-profile .student-profile-field, html[data-campus-theme="light"] .teacher-app-shell .teacher-student-profile .student-profile-identity { background: #fff; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-chat-search input, html[data-campus-theme="light"] .teacher-app-shell .schedule-week-lesson { background: #fff; color: var(--role-ink); }
+.teacher-app-shell .teacher-calendar-controls { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 7px; }
+.teacher-app-shell .teacher-calendar-controls .teacher-calendar-view-switch { margin-bottom: 0; }
+.teacher-app-shell .teacher-calendar-week-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
+.teacher-app-shell .teacher-calendar-week-grid > section { min-width: 0; min-height: 145px; padding: 6px; border: 1px solid var(--role-line); border-radius: 8px; background: var(--role-surface); }
+.teacher-app-shell .teacher-calendar-week-grid > section.is-today { border-color: color-mix(in srgb, var(--role-pink) 58%, var(--role-line)); }
+.teacher-app-shell .teacher-calendar-day-heading { display: flex; width: 100%; justify-content: space-between; padding: 5px; border: 0; border-bottom: 1px solid var(--role-line); background: transparent; color: var(--role-muted); cursor: pointer; font-size: 9px; text-transform: capitalize; }
+.teacher-app-shell .teacher-calendar-day-heading strong { color: var(--role-ink); }
+.teacher-app-shell .teacher-calendar-week-grid article { display: grid; gap: 3px; margin-top: 5px; padding: 6px; border-left: 2px solid var(--role-blue); border-radius: 5px; background: var(--role-raised); overflow-wrap: anywhere; }
+.teacher-app-shell .teacher-calendar-week-grid article[data-kind="PERSONAL"] { border-color: var(--role-pink); }
+.teacher-app-shell .teacher-calendar-week-grid article :is(time, a) { color: var(--role-muted); font-size: 8px; }
+.teacher-app-shell .teacher-calendar-week-grid article strong { color: var(--role-ink); font-size: 9px; }
+.teacher-app-shell .teacher-groups-selector label { display: grid; min-width: min(100%, 180px); flex: 1 1 180px; gap: 5px; color: var(--role-muted); font-size: 10px; }
+.teacher-app-shell .teacher-groups-selector select { width: 100%; min-width: 0; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-calendar-week-grid > section, html[data-campus-theme="light"] .teacher-app-shell .teacher-calendar-week-grid article { background: #fff; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-calendar-week-grid article strong { color: var(--role-ink); }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-chat-thread-heading { border-color: var(--role-line); }
+@media (max-width: 1100px) {
+  .teacher-app-shell .student-home-grid { grid-template-columns: minmax(0, 1.15fr) minmax(250px, .95fr); grid-template-areas: "welcome welcome" "deadlines deadlines" "schedule tasks" "events events" "performance career" "ai ai"; }
+  .teacher-app-shell .schedule-week-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .teacher-app-shell .teacher-calendar-week-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .teacher-app-shell .student-home-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "welcome welcome" "deadlines deadlines" "schedule schedule" "tasks events" "performance career" "ai ai"; }
+  .teacher-app-shell .teacher-chat-layout { grid-template-columns: minmax(0, 1fr); }
+  .teacher-app-shell .teacher-chat-sidebar { position: static !important; }
+  .teacher-app-shell .teacher-group-announcement { grid-template-columns: minmax(0, 1fr); }
+  .teacher-app-shell .teacher-group-announcement-history { padding: 12px 0 0; border-top: 1px solid var(--role-line); border-left: 0; }
+  .teacher-app-shell .schedule-week-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .teacher-app-shell .teacher-calendar-week-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .teacher-app-shell .student-home-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "welcome" "deadlines" "schedule" "tasks" "events" "performance" "career" "ai"; gap: 9px; }
+  .teacher-app-shell .home-welcome { min-height: 188px; padding: 18px 15px; }
+  .teacher-app-shell .home-welcome-main { grid-template-columns: minmax(0, 1fr) 2px minmax(105px, .5fr); gap: 10px; }
+  .teacher-app-shell .home-welcome .hero-title { font-size: clamp(34px, 10vw, 47px); }
+  .teacher-app-shell .home-welcome .hero-copy { padding: 3px; font-size: 10px; }
+  .teacher-app-shell .home-welcome .hero-divider { height: 76px; }
+  .teacher-app-shell .home-summary-strip { gap: 5px; }
+  .teacher-app-shell .home-summary-strip > div { min-height: 48px; padding: 6px; }
+  .teacher-app-shell .home-summary-strip span { font-size: 6px; letter-spacing: .04em; }
+  .teacher-app-shell .home-summary-strip strong { font-size: 11px; }
+  .teacher-app-shell .schedule-week-grid { grid-template-columns: minmax(0, 1fr); }
+  .teacher-app-shell .schedule-toolbar { align-items: flex-start; }
+  .teacher-app-shell .teacher-schedule-secondary { grid-template-columns: minmax(0, 1fr); }
+  .teacher-app-shell .teacher-profile-page .profile-photo-control { flex-wrap: wrap; }
+  .teacher-app-shell .teacher-calendar-week-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Role dashboards follow the approved student home composition without changing it. */
+.teacher-app-shell .teacher-workspace-page,
+.dean-app-shell .main-content > .dean-home-grid { width: min(100%, 1440px); margin: 0 auto; padding: 4px 0 30px; }
+.teacher-app-shell .teacher-home-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(260px, .82fr); grid-template-areas: "welcome deadlines" "schedule deadlines" "schedule queue" "links queue"; align-items: start; gap: 12px; }
+.teacher-app-shell .teacher-home-welcome-stack { grid-area: welcome; display: grid; gap: 10px; min-width: 0; }
+.teacher-app-shell .teacher-home-welcome { min-height: 245px; margin: 0; border-color: rgb(111 124 195 / 32%); }
+.teacher-app-shell .teacher-home-welcome .hero-title { white-space: normal; font-size: clamp(36px, 4.5vw, 60px); }
+.teacher-app-shell .teacher-home-deadlines { grid-area: deadlines; min-height: 250px; }
+.teacher-app-shell .teacher-home-schedule { grid-area: schedule; }
+.teacher-app-shell .teacher-home-queue { grid-area: queue; }
+.teacher-app-shell .teacher-home-links { grid-area: links; }
+.teacher-app-shell .teacher-overview-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0; }
+.teacher-app-shell .teacher-overview-cards article { min-height: 82px; gap: 4px; padding: 10px 12px; border: 1px solid var(--role-line); border-radius: 9px; background: var(--role-surface); }
+.teacher-app-shell .teacher-overview-cards span { font-size: 8px; letter-spacing: .08em; }
+.teacher-app-shell .teacher-overview-cards strong { color: var(--role-ink); font-size: 23px; line-height: 1.1; }
+.teacher-app-shell .teacher-overview-cards a { color: var(--role-pink); font-size: 9px; }
+.teacher-app-shell .teacher-data-grid { gap: 10px; }
+.teacher-app-shell .teacher-data-card { padding: 14px; border-radius: 10px; box-shadow: 0 5px 18px rgb(2 6 25 / 9%); }
+.teacher-app-shell .teacher-data-card h2 { font-size: 16px; }
+.teacher-app-shell .teacher-page-heading { margin-bottom: 14px; }
+.teacher-app-shell .teacher-page-heading h1 { font-size: clamp(24px, 3vw, 32px); }
+.teacher-app-shell :is(.coursework-heading, .testing-teacher-wrap) { width: min(100%, 1220px); margin: 0 auto; }
+.teacher-app-shell :is(.coursework-heading h1, .testing-teacher-wrap h1, .testing-heading h1) { font-size: clamp(24px, 3vw, 33px); }
+.teacher-app-shell .coursework-teacher-page { min-height: 0; padding: 0; }
+.teacher-app-shell :is(.coursework-back, .testing-back-link) { display: none; }
+.teacher-app-shell .coursework-teacher-wrap { width: 100%; margin: 0; }
+.teacher-app-shell :is(.coursework-teacher-content, .testing-teacher-panel, .teacher-data-card) { border-radius: 10px; }
+.teacher-app-shell .teacher-calendar-nav { justify-content: flex-start; gap: 7px; }
+.teacher-app-shell .teacher-week-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 7px; overflow: visible; }
+.teacher-app-shell .teacher-week-day { min-width: 0; min-height: 145px; border-radius: 9px; }
+.teacher-app-shell .teacher-week-day.is-today { border-color: color-mix(in srgb, var(--role-pink) 62%, var(--role-line)); background: color-mix(in srgb, var(--role-pink) 7%, var(--role-surface)); }
+.teacher-app-shell .teacher-week-day h2 { display: flex; justify-content: space-between; gap: 4px; font-size: 10px; text-transform: capitalize; }
+.teacher-app-shell .teacher-week-day h2 span { color: var(--role-pink); font-size: 8px; }
+.teacher-app-shell .teacher-event-card { min-width: 0; overflow-wrap: anywhere; border: 1px solid var(--role-line); border-left: 2px solid var(--role-pink); border-radius: 7px; background: var(--role-raised); }
+.teacher-app-shell .teacher-calendar-view-switch { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.teacher-app-shell .teacher-calendar-view-switch button { min-height: 32px; padding: 5px 10px; border: 1px solid var(--role-line); border-radius: 7px; background: var(--role-surface); color: var(--role-muted); cursor: pointer; }
+.teacher-app-shell .teacher-calendar-view-switch button.is-active { border-color: color-mix(in srgb, var(--role-pink) 52%, var(--role-line)); background: color-mix(in srgb, var(--role-pink) 11%, var(--role-surface)); color: var(--role-pink); }
+.teacher-app-shell .teacher-month-grid button.is-today { border-color: color-mix(in srgb, var(--role-pink) 60%, var(--role-line)); background: color-mix(in srgb, var(--role-pink) 8%, var(--role-surface)); }
+.teacher-app-shell .teacher-calendar-agenda,
+.teacher-app-shell .teacher-calendar-list { display: grid; gap: 6px; margin: 9px 0; padding: 0; list-style: none; }
+.teacher-app-shell .teacher-calendar-agenda-item,
+.teacher-app-shell .teacher-calendar-list li { display: grid; grid-template-columns: minmax(125px, .5fr) minmax(75px, .3fr) minmax(0, 1fr) auto; align-items: center; gap: 9px; padding: 10px 12px; border: 1px solid var(--role-line); border-radius: 8px; background: var(--role-surface); color: var(--role-ink); font-size: 10px; }
+.teacher-app-shell .teacher-calendar-agenda-item > span,
+.teacher-app-shell .teacher-calendar-list li > span { color: var(--role-muted); }
+.teacher-app-shell .teacher-calendar-agenda-item a,
+.teacher-app-shell .teacher-calendar-list li a { color: var(--role-pink); }
+.teacher-app-shell .teacher-chat-layout { grid-template-columns: minmax(220px, .7fr) minmax(0, 1.5fr); align-items: stretch; }
+.teacher-app-shell .teacher-chat-layout > aside { position: sticky; top: 76px; align-self: start; }
+.teacher-app-shell .teacher-chat-list a { min-width: 0; border-color: var(--role-line); background: var(--role-raised); overflow-wrap: anywhere; }
+.teacher-app-shell .teacher-chat-list a.is-selected { border-color: color-mix(in srgb, var(--role-pink) 54%, var(--role-line)); background: color-mix(in srgb, var(--role-pink) 9%, var(--role-surface)); }
+.teacher-app-shell .teacher-chat-thread { min-height: 430px; align-content: start; }
+.teacher-app-shell .teacher-chat-messages { max-height: min(55vh, 620px); padding: 2px; }
+.teacher-app-shell .teacher-chat-messages article { position: relative; min-width: 0; overflow-wrap: anywhere; border-radius: 9px 9px 9px 3px; }
+.teacher-app-shell .teacher-chat-messages p { overflow-wrap: anywhere; word-break: break-word; }
+.teacher-app-shell .teacher-chat-thread form { grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+.teacher-app-shell .teacher-chat-thread form textarea { min-height: 44px; resize: vertical; }
+.teacher-app-shell .teacher-chat-thread form button { min-height: 42px; }
+.teacher-app-shell .teacher-notification-list { display: grid; gap: 8px; margin: 10px 0 0; padding: 0; list-style: none; }
+.teacher-app-shell .teacher-notification-list > li { min-width: 0; padding: 13px 14px; border: 1px solid var(--role-line); border-radius: 9px; background: var(--role-surface); color: var(--role-ink); }
+.teacher-app-shell .teacher-notification-list > li.is-unread { border-left: 3px solid var(--role-pink); }
+.teacher-app-shell .teacher-notification-list > li > div,
+.teacher-app-shell .teacher-notification-list footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 7px 12px; }
+.teacher-app-shell .teacher-notification-list > li > strong { display: block; margin: 7px 0 3px; color: var(--role-ink); font-size: 13px; }
+.teacher-app-shell .teacher-notification-list > li p { color: var(--role-muted); font-size: 11px; line-height: 1.5; }
+.teacher-app-shell .teacher-notification-list footer { align-items: center; margin-top: 8px; }
+.teacher-app-shell .teacher-notification-list footer button,
+.teacher-app-shell .teacher-preferences button { min-height: 32px; padding: 5px 9px; border: 1px solid var(--role-line); border-radius: 7px; background: var(--role-raised); color: var(--role-pink); }
+.teacher-app-shell .teacher-grade-table-scroll { max-width: 100%; border-radius: 8px; }
+.teacher-app-shell .teacher-grade-table { min-width: 720px; }
+.teacher-app-shell :is(.teacher-filter-row, .teacher-task-form) { gap: 9px; }
+.teacher-app-shell :is(.teacher-filter-row select, .teacher-substitution-form select, .teacher-substitution-form textarea, .teacher-task-form input, .teacher-task-form select, .teacher-task-form textarea, .teacher-grade-table input, .teacher-gradebook select, .teacher-chat-thread textarea, .teacher-assistant-thread textarea) { min-height: 38px; border-radius: 7px; }
+.teacher-app-shell :is(.teacher-quick-links a, .teacher-roster-list > div) { border-radius: 8px; }
+.teacher-app-shell .teacher-roster-list > div { grid-template-columns: minmax(0, 1fr); }
+.teacher-app-shell .teacher-feedback { border-color: var(--role-line); background: var(--role-soft); color: var(--role-ink) !important; }
+.teacher-app-shell :is(.teacher-assistant-note, .teacher-notification-center, .teacher-preferences) { border-color: var(--role-line); border-radius: 9px; }
+.teacher-app-shell :is(.teacher-assistant-layout, .teacher-chat-layout) > *,
+.teacher-app-shell :is(.coursework-teacher-content, .testing-teacher-content),
+.teacher-app-shell :is(.teacher-data-card, .teacher-page-heading, .teacher-chat-layout, .teacher-calendar-content, .teacher-notification-center) { min-width: 0; }
+
+/* Dean workspace: compact queue and directory surfaces based on student request patterns. */
+.dean-app-shell .main-content > :is(.dean-requests-heading, .dean-workspace-stats, .dean-workspace-panel, .dean-directory-list, .dean-workspace-filters, .dean-workspace-actions, .dean-month-grid-wrap) { width: min(100%, 1280px); margin-right: auto; margin-left: auto; }
+.dean-app-shell .dean-home-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(250px, .8fr); grid-template-areas: "hero hero" "stats queue" "lessons queue" "actions actions"; gap: 11px; }
+.dean-app-shell .dean-home-welcome { grid-area: hero; min-height: 220px; margin: 0; }
+.dean-app-shell .dean-workspace-stats { grid-area: stats; grid-template-columns: repeat(auto-fit, minmax(min(100%, 115px), 1fr)); gap: 8px; margin: 0; }
+.dean-app-shell .dean-workspace-stat { min-height: 82px; gap: 5px; padding: 11px 12px; border-radius: 9px; }
+.dean-app-shell .dean-workspace-stat span { font-size: 9px; }
+.dean-app-shell .dean-workspace-stat strong { font-size: 22px; }
+.dean-app-shell .dean-workspace-stat a { color: var(--role-pink); font-size: 9px; }
+.dean-app-shell .dean-home-queue { grid-area: queue; align-self: stretch; }
+.dean-app-shell .dean-home-lessons { grid-area: lessons; }
+.dean-app-shell .dean-home-actions { grid-area: actions; }
+.dean-app-shell .dean-home-panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 9px; }
+.dean-app-shell .dean-home-panel-heading h2 { margin: 0 0 10px; }
+.dean-app-shell .dean-home-panel-heading a { color: var(--role-pink); font-size: 10px; }
+.dean-app-shell .dean-home-queue-links { display: grid; gap: 8px; }
+.dean-app-shell .dean-home-queue-links a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 8px; padding: 12px; border: 1px solid var(--role-line); border-radius: 8px; background: var(--role-raised); color: var(--role-ink); text-decoration: none; }
+.dean-app-shell .dean-home-queue-links strong { grid-column: 2; grid-row: 1 / span 2; align-self: center; color: var(--role-pink); font-size: 24px; }
+.dean-app-shell .dean-home-queue-links small { color: var(--role-muted); }
+.dean-app-shell .dean-requests-heading { margin-bottom: 12px; }
+.dean-app-shell .dean-requests-heading h1 { font-size: clamp(24px, 3vw, 32px); }
+.dean-app-shell .dean-workspace-panel { margin: 0 0 10px; padding: 14px; border-radius: 10px; }
+.dean-app-shell .dean-workspace-panel h2 { font-size: 16px; }
+.dean-app-shell .dean-workspace-actions { display: flex; flex-wrap: wrap; gap: 7px; margin: 8px 0; }
+.dean-app-shell .dean-workspace-actions a,
+.dean-app-shell .dean-workspace-actions button,
+.dean-app-shell .dean-workspace-panel button,
+.dean-app-shell .dean-workspace-export,
+.dean-app-shell .dean-workspace-filters button { min-height: 36px; padding: 7px 11px; border-radius: 7px; font-size: 10px; }
+.dean-app-shell .dean-workspace-filters { display: flex; flex-wrap: wrap; align-items: end; gap: 8px; margin: 10px auto; padding: 11px; border: 1px solid var(--role-line); border-radius: 9px; background: var(--role-surface); }
+.dean-app-shell .dean-workspace-filters :is(input, select) { min-width: 0; min-height: 36px; flex: 1 1 150px; padding: 7px 9px; border: 1px solid var(--role-line); border-radius: 7px; background: var(--role-raised); color: var(--role-ink); }
+.dean-app-shell .dean-directory-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); align-items: start; gap: 9px; }
+.dean-app-shell .dean-directory-list .dean-workspace-panel { margin: 0; }
+.dean-app-shell .dean-person-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.dean-app-shell .dean-person-row > div { min-width: 0; }
+.dean-app-shell .dean-workspace-panel :is(p, li, small, time) { font-size: 11px; line-height: 1.5; }
+.dean-app-shell .dean-workspace-form { display: grid; gap: 10px; }
+.dean-app-shell .dean-workspace-form label { display: grid; gap: 5px; font-size: 10px; }
+.dean-app-shell .dean-workspace-form :is(input, select, textarea) { width: 100%; min-width: 0; min-height: 38px; padding: 8px 10px; border-radius: 7px; }
+.dean-app-shell .dean-workspace-form fieldset { display: flex; flex-wrap: wrap; gap: 7px; min-width: 0; padding: 10px; border: 1px solid var(--role-line); border-radius: 8px; }
+.dean-app-shell .dean-workspace-form .dean-inline-choice { display: inline-flex; grid-template-columns: auto 1fr; align-items: center; gap: 6px; }
+.dean-app-shell .dean-workspace-form .dean-inline-choice input { width: auto; min-height: 0; }
+.dean-app-shell .dean-month-grid-wrap { overflow-x: auto; border-radius: 9px; }
+.dean-app-shell .dean-month-grid { min-width: 650px; }
+.dean-app-shell :is(.dean-request-queue, .dean-pass-card, .dean-request-notifications, .dean-request-summary-card, .dean-action-form) { border-radius: 9px; box-shadow: none; }
+.dean-app-shell .dean-request-filters { gap: 8px; }
+.dean-app-shell :is(.dean-request-filters select, .dean-assignment-form select, .dean-assignment-form textarea, .dean-action-form input, .dean-action-form textarea, .dean-action-form select, .dean-pass-filters select) { min-height: 38px; border-radius: 7px; }
+.dean-app-shell :is(.dean-request-card, .dean-pass-card, .dean-request-student > div) { border-radius: 8px; }
+.dean-app-shell .dean-request-notifications li > div { min-width: 0; overflow-wrap: anywhere; }
+.dean-app-shell :is(.dean-workspace-panel, .dean-directory-list, .dean-workspace-form, .dean-workspace-filters) { min-width: 0; }
+
+/* Explicit, readable light-theme surfaces for both workspaces. */
+html[data-campus-theme="light"] .teacher-app-shell .hero::before,
+html[data-campus-theme="light"] .dean-app-shell .hero::before { background: linear-gradient(90deg, rgb(7 11 37 / 68%) 0%, rgb(7 11 37 / 48%) 45%, rgb(7 11 37 / 14%) 100%); }
+html[data-campus-theme="light"] .teacher-app-shell :is(.teacher-data-card, .teacher-gradebook-summary, .teacher-calendar-nav, .teacher-week-day, .teacher-month-grid button, .teacher-chat-messages article, .teacher-assistant-message, .teacher-profile-card, .teacher-notification-list > li, .teacher-calendar-agenda-item, .teacher-calendar-list li) { border-color: var(--role-line); background: var(--role-surface); color: var(--role-ink); box-shadow: 0 3px 12px rgb(31 25 61 / 5%); }
+html[data-campus-theme="light"] .teacher-app-shell :is(.teacher-page-heading h1, .teacher-data-card h2, .teacher-data-card li strong, .teacher-profile-card h2, .teacher-gradebook-summary strong, .teacher-calendar-nav strong, .teacher-week-day h2, .teacher-event-card strong, .teacher-event-card span, .teacher-chat-messages p, .teacher-assistant-message p, .teacher-grade-table) { color: var(--role-ink); }
+html[data-campus-theme="light"] .teacher-app-shell :is(.teacher-page-heading p, .teacher-data-card li span, .teacher-data-card li small, .teacher-data-card p, .teacher-data-card dt, .teacher-data-card dd, .teacher-profile-card p, .teacher-filter-row label, .teacher-gradebook-summary span, .teacher-chat-messages time, .teacher-chat-list span, .teacher-chat-list small, .teacher-empty-inline, .teacher-notification-list > li p, .teacher-calendar-agenda-item > span, .teacher-calendar-list li > span) { color: var(--role-muted); }
+html[data-campus-theme="light"] .teacher-app-shell :is(.teacher-filter-row select, .teacher-substitution-form select, .teacher-substitution-form textarea, .teacher-task-form input, .teacher-task-form select, .teacher-task-form textarea, .teacher-grade-table input, .teacher-gradebook select, .teacher-chat-thread textarea, .teacher-assistant-thread textarea) { border-color: var(--role-line); background: #fff; color: var(--role-ink); }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-quick-links a,
+html[data-campus-theme="light"] .teacher-app-shell .teacher-roster-list > div,
+html[data-campus-theme="light"] .teacher-app-shell .teacher-chat-list a { border-color: var(--role-line); background: var(--role-raised); }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-overview-cards article { border-color: var(--role-line); background: #fff; }
+html[data-campus-theme="light"] .teacher-app-shell .teacher-week-day.is-today { background: #fff4fa; }
+html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-detail-panel, .coursework-card, .coursework-group, .coursework-teacher-assignment, .coursework-submission, .coursework-answer-preview, .coursework-edit-form, .coursework-stat-row span, .testing-teacher-panel, .testing-teacher-test, .testing-edit-form, .testing-teacher-attempt, .teacher-assistant-history, .teacher-chat-list a, .teacher-assistant-message) { border-color: var(--role-line); background: #fff; color: var(--role-ink); box-shadow: 0 3px 12px rgb(31 25 61 / 4%); }
+html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-heading h1, .coursework-section-heading h2, .coursework-card h2, .coursework-card h3, .coursework-teacher-assignment h3, .coursework-submission strong, .coursework-teacher-overview strong, .coursework-grade-publish, .testing-teacher-wrap h1, .testing-teacher-panel h2, .testing-teacher-test-heading h3, .testing-teacher-attempt strong, .teacher-chat-list a strong, .teacher-assistant-history strong) { color: var(--role-ink); }
+html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-heading p, .coursework-meta, .coursework-teacher-assignment > p, .coursework-stat-row, .coursework-teacher-overview, .coursework-submission-disclosure > summary, .coursework-submission-disclosure > summary span, .coursework-form-note, .testing-teacher-intro, .testing-teacher-panel > p, .testing-teacher-test-heading span, .testing-teacher-test > p, .testing-teacher-attempt span, .testing-result-form small, .teacher-assistant-note p) { color: var(--role-muted); }
+html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-teacher-assignment .coursework-card-heading small, .coursework-submission > div:first-child span, .coursework-history li, .coursework-folder-row) { color: var(--role-muted); }
+html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-answer-form input, .coursework-answer-form textarea, .coursework-answer-form select, .coursework-list-heading select, .testing-teacher-content input, .testing-teacher-content select, .testing-teacher-content textarea, .testing-edit-form input, .testing-edit-form textarea, .teacher-task-form input, .teacher-task-form textarea, .teacher-task-form select) { border-color: var(--role-line); background: #fff; color: var(--role-ink); }
+html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-submission-disclosure, .coursework-folder-form, .coursework-folder-row, .testing-result-form) { border-color: var(--role-line); }
+html[data-campus-theme="light"] .teacher-app-shell .coursework-submission-disclosure > summary::after,
+html[data-campus-theme="light"] .teacher-app-shell :is(.coursework-card a, .coursework-resource, .teacher-chat-list a, .teacher-assistant-history) { color: #145a9e; }
+html[data-campus-theme="light"] .dean-app-shell :is(.dean-workspace-stat, .dean-workspace-panel, .dean-calendar-list li, .dean-month-grid-wrap, .dean-month-grid, .dean-request-summary-card, .dean-request-queue, .dean-request-student > div, .dean-action-form, .dean-pass-card, .dean-pass-filters, .dean-request-notifications) { border-color: var(--role-line); background: #fff; color: var(--role-ink); box-shadow: 0 3px 12px rgb(31 25 61 / 5%); }
+html[data-campus-theme="light"] .dean-app-shell :is(.dean-workspace-form input, .dean-workspace-form textarea, .dean-workspace-form select, .dean-workspace-filters input, .dean-workspace-filters select, .dean-request-filters select, .dean-assignment-form select, .dean-assignment-form textarea, .dean-action-form input, .dean-action-form textarea, .dean-action-form select, .dean-pass-filters select) { background: #fff; color: var(--role-ink); }
+html[data-campus-theme="light"] .dean-app-shell .dean-home-queue-links a { border-color: var(--role-line); background: #fff; }
+html[data-campus-theme="light"] .dean-app-shell .dean-workspace-alert { border-color: #efc0ce; background: #fff2f6; color: #842945; }
+
+@media (max-width: 980px) {
+  .teacher-app-shell .teacher-home-grid { grid-template-columns: minmax(0, 1fr) minmax(230px, .78fr); }
+  .teacher-app-shell .teacher-week-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .teacher-app-shell .teacher-week-day:nth-child(n + 5) { min-height: 110px; }
+  .dean-app-shell .dean-home-grid { grid-template-columns: minmax(0, 1fr) minmax(220px, .76fr); }
+}
+@media (max-width: 720px) {
+  .teacher-app-shell .teacher-workspace-page { padding: 0; }
+  .teacher-app-shell .teacher-home-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "welcome" "deadlines" "schedule" "queue" "links"; }
+  .teacher-app-shell .teacher-home-welcome { min-height: 205px; }
+  .teacher-app-shell .teacher-overview-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .teacher-app-shell .teacher-data-grid,
+  .teacher-app-shell .teacher-chat-layout,
+  .teacher-app-shell .teacher-assistant-layout { grid-template-columns: minmax(0, 1fr); }
+  .teacher-app-shell .teacher-chat-layout > aside { position: static; }
+  .teacher-app-shell .teacher-week-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .teacher-app-shell .teacher-calendar-nav { justify-content: flex-start; }
+  .teacher-app-shell .teacher-task-form { grid-template-columns: minmax(0, 1fr); }
+  .teacher-app-shell .teacher-calendar-agenda-item,
+  .teacher-app-shell .teacher-calendar-list li { grid-template-columns: minmax(0, 1fr) auto; }
+  .teacher-app-shell .teacher-calendar-agenda-item strong,
+  .teacher-app-shell .teacher-calendar-list li strong { grid-column: 1 / -1; }
+  .dean-app-shell .main-content > .dean-home-grid { padding-top: 0; }
+  .dean-app-shell .dean-home-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "hero" "stats" "queue" "lessons" "actions"; }
+}
+@media (max-width: 680px) {
+  .teacher-app-shell .sidebar,
+  .dean-app-shell .sidebar { position: fixed; z-index: 6; inset: auto 0 0; width: auto; height: 68px; flex-direction: row; justify-content: center; padding: 5px 8px max(5px, env(safe-area-inset-bottom)); border-top: 1px solid var(--role-line); border-right: 0; background: var(--role-sidebar); }
+  .teacher-app-shell .sidebar :is(.brand, .role-chip, .sidebar-foot),
+  .dean-app-shell .sidebar :is(.brand, .role-chip, .sidebar-foot) { display: none; }
+  .teacher-app-shell .side-nav,
+  .dean-app-shell .side-nav { width: 100%; max-width: 100%; flex-direction: row; justify-content: flex-start; gap: 5px; margin: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+  .teacher-app-shell .side-nav::-webkit-scrollbar,
+  .dean-app-shell .side-nav::-webkit-scrollbar { display: none; }
+  .teacher-app-shell .side-nav .nav-caption,
+  .dean-app-shell .side-nav .nav-caption { display: none; }
+  .teacher-app-shell .nav-item,
+  .dean-app-shell .nav-item { display: flex; width: auto; min-width: 78px; height: 54px; flex: 0 0 auto; flex-direction: column; justify-content: center; gap: 1px; padding: 3px 8px; }
+  .teacher-app-shell .nav-item .nav-label,
+  .dean-app-shell .nav-item .nav-label { display: block; flex: initial; font-size: 8px; }
+  .teacher-app-shell .nav-item .icon,
+  .dean-app-shell .nav-item .icon { width: 21px; height: 21px; font-size: 16px; }
+  .teacher-app-shell .workspace,
+  .dean-app-shell .workspace { margin-left: 0; padding-bottom: 73px; }
+}
+@media (max-width: 460px) {
+  .teacher-app-shell .teacher-overview-cards { grid-template-columns: minmax(0, 1fr); }
+  .teacher-app-shell .teacher-overview-cards article { min-height: 65px; grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+  .teacher-app-shell .teacher-overview-cards article > strong { grid-column: 2; grid-row: 1 / span 2; }
+  .teacher-app-shell .teacher-home-welcome .hero-title { font-size: clamp(30px, 9vw, 40px); }
+  .teacher-app-shell .teacher-week-grid { grid-template-columns: minmax(0, 1fr); }
+  .teacher-app-shell .teacher-week-day { min-height: 90px; }
+  .teacher-app-shell .teacher-month-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
+  .teacher-app-shell .teacher-month-grid button { min-height: 54px; padding: 3px; }
+  .teacher-app-shell .teacher-month-grid button small { max-width: 100%; }
+  .teacher-app-shell .teacher-chat-thread form { grid-template-columns: minmax(0, 1fr); }
+  .teacher-app-shell .teacher-chat-thread form button { justify-self: end; }
+  .teacher-app-shell .teacher-data-card dl { grid-template-columns: minmax(0, 1fr); gap: 3px; }
+  .dean-app-shell .dean-workspace-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dean-app-shell .dean-workspace-actions { align-items: stretch; }
+  .dean-app-shell .dean-workspace-actions a,
+  .dean-app-shell .dean-workspace-actions button { flex: 1 1 130px; }
+  .dean-app-shell .dean-person-row { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 380px) {
+  .teacher-app-shell .main-content { padding-right: 10px; padding-left: 10px; }
+  .dean-app-shell .main-content { padding-right: 10px; padding-left: 10px; }
+  .teacher-app-shell .teacher-data-card,
+  .dean-app-shell .dean-workspace-panel { padding: 11px; }
+}
+
+/* Dean dashboard and administrative views use the same campus tokens and compact student-dashboard grid. */
+.dean-app-shell {
+  --dc-ink: var(--role-ink); --dc-muted: var(--role-muted); --dc-subtle: var(--role-subtle);
+  --dc-bg: var(--role-bg); --dc-sidebar: var(--role-sidebar); --dc-surface: var(--role-surface);
+  --dc-raised: var(--role-raised); --dc-soft: var(--role-soft); --dc-line: var(--role-line);
+  --dc-pink: var(--role-pink); --dc-pink-soft: #ff8bc9; --dc-violet: var(--role-violet);
+  --dc-blue: var(--role-blue); --dc-cyan: var(--role-cyan); --dc-green: #46c7a1; --dc-warn: #edb74f;
+  --dc-radius: 12px; --dc-radius-sm: 8px; --dc-shadow: 0 5px 18px rgb(2 6 25 / 9%);
+}
+html[data-campus-theme="light"] .dean-app-shell { --dc-pink-soft: #ad176f; --dc-green: #167d61; --dc-warn: #8a5a04; }
+.dean-app-shell .student-home-grid.dean-dashboard-grid {
+  grid-template-columns: minmax(0, 1.16fr) minmax(230px, .9fr) minmax(285px, 1.04fr);
+  grid-template-areas: "welcome welcome deadlines" "schedule tasks events" "performance career notices";
+  align-items: stretch; gap: 11px;
+}
+.dean-app-shell .home-welcome-stack { grid-area: welcome; display: grid; min-width: 0; grid-template-rows: minmax(205px, 1fr) auto; gap: 9px; }
+.dean-app-shell .home-welcome { display: flex; min-height: 205px; align-items: center; padding: 22px; border-radius: 16px; background-position: center 49%; }
+.dean-app-shell .home-welcome::before { background: linear-gradient(90deg, rgb(7 9 27 / 91%) 0%, rgb(7 9 27 / 78%) 43%, rgb(7 9 27 / 21%) 78%, rgb(7 9 27 / 5%) 100%), linear-gradient(0deg, rgb(7 9 27 / 45%), transparent 58%); }
+.dean-app-shell .home-welcome-main { display: grid; grid-template-columns: minmax(0, 1fr) 2px minmax(155px, .42fr); align-items: center; gap: clamp(13px, 2vw, 25px); }
+.dean-app-shell .home-welcome .home-eyebrow { color: #ff9dce; font-size: 9px; letter-spacing: .2em; }
+.dean-app-shell .home-welcome .hero-title { margin-top: 12px; color: #fff; font-family: var(--font-display); font-size: clamp(39px, 4.3vw, 66px); font-style: italic; font-weight: 400; letter-spacing: -.04em; line-height: .97; text-transform: uppercase; white-space: normal; }
+.dean-app-shell .home-welcome .hero-title span:last-child { color: #fff; }
+.dean-app-shell .home-welcome .hero-divider { height: 96px; }
+.dean-app-shell .home-welcome .hero-copy { max-width: 220px; padding: 5px 7px; color: #fff; font-size: clamp(12px, 1.1vw, 15px); }
+.dean-app-shell .home-welcome .hero-copy::before { inset: -16px -24px; background: radial-gradient(ellipse, rgb(7 9 27 / 86%) 0%, rgb(7 9 27 / 60%) 55%, transparent 82%); }
+.dean-app-shell .home-summary-strip { width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; margin: 0; overflow: visible; border: 0; border-radius: 0; background: transparent; }
+.dean-app-shell .home-summary-strip > div { min-height: 62px; align-content: center; padding: 8px 11px; border: 1px solid var(--role-line); border-radius: 11px; background: var(--role-surface); box-shadow: var(--dc-shadow); }
+.dean-app-shell .home-summary-strip span { color: var(--role-muted); font-size: 8px; }
+.dean-app-shell .home-summary-strip strong { color: var(--role-ink); font-size: 11px; }
+.dean-app-shell .home-deadlines { grid-area: deadlines; min-height: 100%; }
+.dean-app-shell .home-schedule { grid-area: schedule; min-height: 0; padding: 13px 14px 10px; }
+.dean-app-shell .home-tasks { grid-area: tasks; }
+.dean-app-shell .home-events { grid-area: events; }
+.dean-app-shell .home-performance { grid-area: performance; }
+.dean-app-shell .home-career { grid-area: career; }
+.dean-app-shell .home-notices { grid-area: notices; }
+.dean-app-shell .dean-week-navigation,
+.dean-app-shell .dean-schedule-navigation,
+.dean-app-shell .dean-calendar-navigation { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin: 9px 0; }
+.dean-app-shell .dean-week-navigation a,
+.dean-app-shell .dean-schedule-navigation a,
+.dean-app-shell .dean-calendar-navigation a { display: inline-flex; min-height: 32px; align-items: center; justify-content: center; padding: 5px 9px; border: 1px solid var(--role-line); border-radius: 7px; background: var(--role-raised); color: var(--role-pink); font-size: 10px; text-decoration: none; }
+.dean-app-shell .dean-week-navigation strong,
+.dean-app-shell .dean-schedule-navigation strong,
+.dean-app-shell .dean-calendar-navigation strong { flex: 1; color: var(--role-ink); font-size: 11px; text-align: center; }
+.dean-app-shell .dean-week-strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; margin: 7px 0; }
+.dean-app-shell .dean-week-strip .calendar-day { min-height: 42px; gap: 2px; padding: 2px; border-color: var(--role-line); background: var(--role-raised); text-decoration: none; }
+.dean-app-shell .dean-week-strip .calendar-day > span { color: var(--role-subtle); font-size: 7px; }
+.dean-app-shell .dean-week-strip .calendar-day > strong { color: var(--role-ink); font-size: 12px; }
+.dean-app-shell .dean-week-strip .calendar-day > i { min-height: 7px; color: var(--role-muted); font-size: 7px; font-style: normal; }
+.dean-app-shell .dean-week-strip .calendar-day.is-today { border-color: var(--role-pink); background: var(--role-pink); }
+.dean-app-shell .dean-week-strip .calendar-day.is-today :is(span, strong, i) { color: #fff; }
+.dean-app-shell .dean-home-inline-link { display: inline-flex; margin-top: 8px; color: var(--role-pink); font-size: 10px; font-weight: 700; }
+.dean-app-shell .dean-home-lesson-list { max-height: 160px; overflow: auto; }
+.dean-app-shell .dean-home-lesson-list li { display: grid; gap: 3px; padding: 7px 0; border-top: 1px solid var(--role-line); }
+.dean-app-shell .dean-home-lesson-list li strong { color: var(--role-ink); font-size: 10px; }
+.dean-app-shell .dean-home-lesson-list li span { color: var(--role-muted); font-size: 9px; }
+.dean-app-shell .dean-request-filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 155px), 1fr)); gap: 8px; }
+.dean-app-shell .dean-notifications-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.dean-app-shell .dean-notifications-toolbar .dean-workspace-filters { flex: 1 1 520px; margin: 8px 0; }
+.dean-app-shell .dean-notifications-list { display: grid; gap: 8px; width: min(100%, 1280px); margin: 0 auto; }
+.dean-app-shell .dean-notification-card { margin: 0; padding: 13px 15px; }
+.dean-app-shell .dean-notification-card.is-unread { border-left: 3px solid var(--role-pink); }
+.dean-app-shell .dean-notification-card h2 { margin: 7px 0 4px; font-size: 14px; }
+.dean-app-shell .dean-notification-card p { margin: 0; overflow-wrap: anywhere; }
+.dean-app-shell .dean-notification-meta,
+.dean-app-shell .dean-notification-card footer { display: flex; flex-wrap: wrap; align-items: center; gap: 7px 12px; }
+.dean-app-shell .dean-notification-meta { color: var(--role-muted); font-size: 9px; }
+.dean-app-shell .dean-notification-meta time { margin-left: auto; color: var(--role-subtle); }
+.dean-app-shell .dean-notification-state { padding: 3px 7px; border: 1px solid var(--role-line); border-radius: 99px; background: var(--role-soft); color: var(--role-muted); }
+.dean-app-shell .dean-notification-state.is-new { border-color: color-mix(in srgb, var(--role-pink) 40%, var(--role-line)); color: var(--role-pink); }
+.dean-app-shell .dean-notification-card footer { margin-top: 9px; }
+.dean-app-shell .dean-notification-card footer a { color: var(--role-pink); font-size: 10px; font-weight: 700; }
+.dean-app-shell .dean-notification-card footer button { min-height: 30px; padding: 5px 9px; border: 1px solid var(--role-line); border-radius: 6px; background: var(--role-raised); color: var(--role-pink); font-size: 9px; }
+.dean-app-shell .dean-notification-settings { width: min(100%, 1280px); margin: 8px auto; padding: 11px 13px; }
+.dean-app-shell .dean-notification-settings > summary { color: var(--role-ink); font-size: 11px; font-weight: 700; cursor: pointer; }
+.dean-app-shell .dean-notification-preferences { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 7px; margin-top: 9px; }
+.dean-app-shell .dean-notification-preferences form { display: flex; align-items: center; justify-content: space-between; gap: 7px; padding: 8px; border: 1px solid var(--role-line); border-radius: 7px; background: var(--role-raised); }
+.dean-app-shell .dean-notification-preferences span { color: var(--role-ink); font-size: 9px; }
+.dean-app-shell .dean-notification-preferences button { min-height: 29px; padding: 4px 7px; border: 1px solid var(--role-line); border-radius: 6px; background: var(--role-surface); color: var(--role-pink); font-size: 8px; }
+.dean-app-shell .dean-pass-filters input { min-width: 0; min-height: 38px; padding: 7px 9px; border: 1px solid var(--role-line); border-radius: 7px; background: var(--role-raised); color: var(--role-ink); }
+html[data-campus-theme="light"] .dean-app-shell :is(.dean-request-filters input, .dean-pass-filters input, .dean-workspace-filters input, .dean-workspace-form input, .dean-workspace-form textarea, .dean-workspace-form select) { border-color: var(--role-line); background: #fff; color: var(--role-ink); }
+html[data-campus-theme="light"] .dean-app-shell .dean-notification-preferences form { background: var(--role-raised); }
+.dean-app-shell .dean-table-scroll { width: min(100%, 1280px); margin: 10px auto; overflow-x: auto; border: 1px solid var(--role-line); border-radius: 9px; background: var(--role-surface); }
+.dean-app-shell .dean-directory-table { width: 100%; min-width: 690px; border-collapse: collapse; color: var(--role-ink); font-size: 11px; }
+.dean-app-shell .dean-directory-table :is(th, td) { padding: 10px 12px; border-bottom: 1px solid var(--role-line); text-align: left; vertical-align: middle; }
+.dean-app-shell .dean-directory-table th { color: var(--role-muted); background: var(--role-raised); font-size: 9px; }
+.dean-app-shell .dean-directory-table td:first-child { min-width: 220px; }
+.dean-app-shell .dean-directory-table td strong,
+.dean-app-shell .dean-directory-table td small { display: block; }
+.dean-app-shell .dean-directory-table td small { margin-top: 3px; color: var(--role-muted); font-size: 9px; }
+.dean-app-shell .dean-directory-table a { color: var(--role-pink); font-weight: 700; white-space: nowrap; }
+.dean-app-shell .dean-data-status { display: inline-flex; padding: 4px 8px; border: 1px solid var(--role-line); border-radius: 99px; background: var(--role-soft); color: var(--role-blue); font-size: 9px; }
+.dean-app-shell .dean-schedule-week-scroll { max-width: 100%; overflow-x: auto; border: 1px solid var(--role-line); border-radius: 9px; background: var(--role-surface); }
+.dean-app-shell .dean-schedule-week-grid { display: grid; grid-template-columns: repeat(7, minmax(148px, 1fr)); min-width: 1050px; }
+.dean-app-shell .dean-schedule-day { min-width: 0; min-height: 190px; padding: 8px; border-right: 1px solid var(--role-line); background: var(--role-surface); }
+.dean-app-shell .dean-schedule-day.is-today { background: color-mix(in srgb, var(--role-pink) 5%, var(--role-surface)); }
+.dean-app-shell .dean-schedule-day > header { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 0 2px 7px; border-bottom: 1px solid var(--role-line); }
+.dean-app-shell .dean-schedule-day > header span { color: var(--role-muted); font-size: 9px; }
+.dean-app-shell .dean-schedule-day > header strong { color: var(--role-ink); font-size: 12px; }
+.dean-app-shell .dean-schedule-day.is-today > header strong { color: var(--role-pink); }
+.dean-app-shell .dean-schedule-day ol { display: grid; gap: 5px; margin: 7px 0; padding: 0; list-style: none; }
+.dean-app-shell .dean-schedule-day details { border-left: 2px solid var(--role-pink); border-radius: 5px; background: var(--role-soft); }
+.dean-app-shell .dean-schedule-day summary { display: grid; gap: 3px; padding: 6px; cursor: pointer; list-style: none; }
+.dean-app-shell .dean-schedule-day summary::-webkit-details-marker { display: none; }
+.dean-app-shell .dean-schedule-day summary time { color: var(--role-blue); font-size: 8px; }
+.dean-app-shell .dean-schedule-day summary strong { overflow-wrap: anywhere; color: var(--role-ink); font-size: 9px; }
+.dean-app-shell .dean-schedule-day summary small,
+.dean-app-shell .dean-schedule-day details > :is(p, a, small) { color: var(--role-muted); font-size: 8px; }
+.dean-app-shell .dean-schedule-day details > :is(p, a, small) { display: block; margin: 4px 6px 6px; }
+.dean-app-shell .dean-schedule-empty { color: var(--role-subtle); font-size: 9px; }
+.dean-app-shell .dean-calendar-toolbar { display: grid; gap: 8px; margin: 8px auto 12px; }
+.dean-app-shell .dean-calendar-periods { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; border: 1px solid var(--role-line); border-radius: 8px; background: var(--role-surface); }
+.dean-app-shell .dean-calendar-periods a { min-height: 32px; padding: 7px 11px; border-radius: 6px; color: var(--role-muted); font-size: 10px; text-decoration: none; }
+.dean-app-shell .dean-calendar-periods a.is-active { background: color-mix(in srgb, var(--role-pink) 13%, var(--role-surface)); color: var(--role-pink); }
+.dean-app-shell .dean-calendar-navigation { margin: 0; padding: 9px; border: 1px solid var(--role-line); border-radius: 9px; background: var(--role-surface); }
+.dean-app-shell .dean-calendar-navigation strong { flex: initial; min-width: 130px; }
+.dean-app-shell .dean-calendar-list { width: min(100%, 1280px); margin: 0 auto; }
+.dean-app-shell .dean-calendar-list.is-month-list { max-height: 70vh; overflow-y: auto; }
+.dean-app-shell .dean-calendar-list a { color: var(--role-pink); }
+.dean-app-shell .dean-calendar-list li { min-width: 0; }
+.dean-app-shell .dean-month-grid { min-width: 780px; }
+.dean-app-shell .dean-month-cell { min-width: 0; overflow-wrap: anywhere; }
+html[data-campus-theme="light"] .dean-app-shell .home-summary-strip span { color: var(--role-muted); }
+html[data-campus-theme="light"] .dean-app-shell .home-summary-strip strong { color: var(--role-ink); }
+
+@media (max-width: 980px) {
+  .dean-app-shell .student-home-grid.dean-dashboard-grid { grid-template-columns: minmax(0, 1.16fr) minmax(230px, .9fr); grid-template-areas: "welcome welcome" "deadlines deadlines" "schedule tasks" "events events" "performance career" "notices notices"; }
+}
+@media (max-width: 720px) {
+  .dean-app-shell .student-home-grid.dean-dashboard-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "welcome welcome" "deadlines deadlines" "schedule schedule" "tasks events" "performance career" "notices notices"; }
+}
+@media (max-width: 520px) {
+  .dean-app-shell .student-home-grid.dean-dashboard-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "welcome" "deadlines" "schedule" "tasks" "events" "performance" "career" "notices"; gap: 9px; }
+  .dean-app-shell .home-welcome { min-height: 188px; padding: 18px 15px; }
+  .dean-app-shell .home-welcome-main { grid-template-columns: minmax(0, 1fr) 2px minmax(92px, .46fr); gap: 8px; }
+  .dean-app-shell .home-welcome .hero-title { font-size: clamp(31px, 9vw, 43px); }
+  .dean-app-shell .home-welcome .hero-copy { font-size: 9px; }
+  .dean-app-shell .home-welcome .hero-divider { height: 76px; }
+  .dean-app-shell .dean-week-navigation { gap: 4px; }
+  .dean-app-shell .dean-week-navigation strong { flex-basis: 100%; order: -1; }
+  .dean-app-shell .dean-schedule-navigation { align-items: stretch; }
+  .dean-app-shell .dean-schedule-navigation strong { flex-basis: 100%; order: -1; }
+  .dean-app-shell .dean-calendar-list li { grid-template-columns: minmax(0, 1fr); gap: 5px; }
+}

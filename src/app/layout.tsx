@@ -3,6 +3,7 @@ import { Manrope, Russo_One } from "next/font/google";
 import "./globals.css";
 import "./student-design-system.css";
 import "./student-interior-pages.css";
+import "./role-workspace-design.css";
 import "./teacher-workspace-design.css";
 
 const manrope = Manrope({

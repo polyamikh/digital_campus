@@ -90,21 +90,24 @@ export async function getDeanSchedule(input: { from?: Date; to?: Date; groupId?:
   return { lessons, groups, courses, teachers, rooms, changes, conflicts };
 }
 
-export async function getDeanAnalytics(groupId?: string, courseId?: string) {
+export async function getDeanAnalytics(groupId?: string, courseId?: string, studentId?: string) {
   await requireRole(Role.DEAN);
   const scope = { ...(groupId ? { groupId } : {}), ...(courseId ? { courseId } : {}) };
-  const [assessments, attendance, submissions, assignmentRows, courses] = await Promise.all([
-    prisma.assessment.findMany({ where: { ...scope, state: "PUBLISHED" }, select: { id: true, title: true, group: { select: { id: true, code: true } }, course: { select: { id: true, subject: { select: { name: true } } } }, gradeEntries: { where: { currentRevision: { is: { state: "PUBLISHED", publishedAt: { not: null } } } }, select: { currentRevision: { select: { score: true } } } } }, take: 500 }),
-    prisma.attendanceRecord.findMany({ where: { ...(groupId ? { groupId } : {}), ...(courseId ? { lesson: { courseId } } : {}) }, select: { status: true } }),
-    prisma.submission.findMany({ where: { homework: { ...scope } }, select: { state: true } }),
+  const publishedEntry = { currentRevision: { is: { state: "PUBLISHED" as const, publishedAt: { not: null } } } };
+  const [assessments, attendance, submissions, assignmentRows, courses, students, debts] = await Promise.all([
+    prisma.assessment.findMany({ where: { ...scope, state: "PUBLISHED", ...(studentId ? { gradeEntries: { some: { studentId, ...publishedEntry } } } : {}) }, select: { id: true, title: true, group: { select: { id: true, code: true } }, course: { select: { id: true, subject: { select: { name: true } } } }, component: { select: { name: true } }, gradeEntries: { where: { ...publishedEntry, ...(studentId ? { studentId } : {}) }, select: { studentId: true, student: { select: { login: true, profile: { select: { displayName: true } } } }, currentRevision: { select: { score: true } } } } }, take: 500 }),
+    prisma.attendanceRecord.findMany({ where: { ...(groupId ? { groupId } : {}), ...(courseId ? { lesson: { courseId } } : {}), ...(studentId ? { studentId } : {}) }, select: { status: true } }),
+    prisma.submission.findMany({ where: { homework: { ...scope }, ...(studentId ? { studentId } : {}) }, select: { state: true } }),
     prisma.group.findMany({ where: groupId ? { id: groupId } : {}, orderBy: { code: "asc" }, select: { id: true, code: true } }),
     prisma.course.findMany({ orderBy: { subject: { name: "asc" } }, select: { id: true, subject: { select: { name: true } } } }),
+    prisma.user.findMany({ where: { isActive: true, roles: { some: { role: Role.STUDENT, revokedAt: null } }, ...(groupId ? { memberships: { some: { groupId, ...activeWindow(new Date()) } } } : {}) }, orderBy: [{ profile: { displayName: "asc" } }, { login: "asc" }], take: 300, select: { id: true, login: true, profile: { select: { displayName: true } }, memberships: { where: activeWindow(new Date()), take: 1, select: { group: { select: { code: true } } } } } }),
+    prisma.confirmedAcademicDebt.findMany({ where: { resolvedAt: null, ...(studentId ? { studentId } : {}), ...(groupId ? { student: { memberships: { some: { groupId, ...activeWindow(new Date()) } } } } : {}), ...(courseId ? { courseId } : {}) }, orderBy: { confirmedAt: "desc" }, take: 500, select: { id: true, confirmedAt: true, reason: true, course: { select: { subject: { select: { name: true } } } }, student: { select: { login: true, profile: { select: { displayName: true } }, memberships: { where: activeWindow(new Date()), take: 1, select: { group: { select: { code: true } } } } } } } }),
   ]);
   const scoreSummary = publishedScoreSummary(assessments.flatMap((assessment) => assessment.gradeEntries.map((entry) => Number(entry.currentRevision?.score))));
   const states = submissions.reduce<Record<string, number>>((all, row) => ({ ...all, [row.state]: (all[row.state] ?? 0) + 1 }), {});
   const attendanceCounts = attendance.reduce<Record<string, number>>((all, row) => ({ ...all, [row.status]: (all[row.status] ?? 0) + 1 }), {});
-  const debts = await prisma.confirmedAcademicDebt.count({ where: { resolvedAt: null, ...(groupId ? { student: { memberships: { some: { groupId, ...activeWindow(new Date()) } } } } : {}), ...(courseId ? { courseId } : {}) } });
-  return { assessmentCount: assessments.length, publishedGradeCount: scoreSummary.count, averagePublishedScore: scoreSummary.average, attendanceCounts, submissionStates: states, unresolvedDebtCount: debts, groups: assignmentRows, courses };
+  const results = assessments.flatMap((assessment) => assessment.gradeEntries.map((entry) => ({ id: entry.studentId + assessment.id, studentId: entry.studentId, studentName: entry.student.profile?.displayName ?? entry.student.login, groupCode: assessment.group.code, courseName: assessment.course.subject.name, componentName: assessment.component.name, assessmentTitle: assessment.title, score: entry.currentRevision?.score.toString() ?? "—" })));
+  return { assessmentCount: assessments.length, publishedGradeCount: scoreSummary.count, averagePublishedScore: scoreSummary.average, attendanceCounts, submissionStates: states, unresolvedDebtCount: debts.length, debts, results, groups: assignmentRows, courses, students };
 }
 
 export async function getDeanAnnouncements() {

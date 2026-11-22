@@ -37,9 +37,17 @@ export default function DeanRequestsContent({ requests, assignments, notificatio
   const [category, setCategory] = useState<RequestCategory | "ALL">("ALL");
   const [state, setState] = useState<RequestState | "ALL">("ALL");
   const [deadline, setDeadline] = useState<DeadlineFilter>("ALL");
+  const [search, setSearch] = useState("");
+  const [submittedFrom, setSubmittedFrom] = useState("");
+  const [submittedTo, setSubmittedTo] = useState("");
   const visible = requests.filter((request) => {
     if (category !== "ALL" && request.category !== category) return false;
     if (state !== "ALL" && request.state !== state) return false;
+    const normalizedSearch = search.trim().toLocaleLowerCase("ru-RU");
+    if (normalizedSearch && !`${request.title} ${request.studentName} ${request.studentLogin} ${request.groupCode}`.toLocaleLowerCase("ru-RU").includes(normalizedSearch)) return false;
+    const submittedDate = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Moscow", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(request.submittedAt));
+    if (submittedFrom && submittedDate < submittedFrom) return false;
+    if (submittedTo && submittedDate > submittedTo) return false;
     if (deadline === "ALL") return true;
     if (!request.deadlineAt || isFinished(request.state) || request.state === ServiceRequestState.CLARIFICATION_REQUESTED) return false;
     const remaining = new Date(request.deadlineAt).getTime() - now;
@@ -54,8 +62,11 @@ export default function DeanRequestsContent({ requests, assignments, notificatio
     <section className="dean-request-queue" aria-labelledby="dean-request-queue-title">
       <div className="dean-request-queue-heading"><div><span className="profile-heading-kicker">ОЧЕРЕДЬ ДЕКАНАТА</span><h2 id="dean-request-queue-title">Поступившие заявки</h2></div><span>{visible.length} из {requests.length}</span></div>
       <div className="dean-request-filters">
+        <label><span>Поиск по студенту или заявке</span><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Имя, логин, группа, название" /></label>
         <label><span>Категория</span><select value={category} onChange={(event) => setCategory(event.target.value as RequestCategory | "ALL")}><option value="ALL">Все категории</option>{Object.entries(REQUEST_CATEGORY_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
         <label><span>Статус</span><select value={state} onChange={(event) => setState(event.target.value as RequestState | "ALL")}><option value="ALL">Все статусы</option>{Object.entries(REQUEST_STATE_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+        <label><span>Подана с</span><input type="date" value={submittedFrom} onChange={(event) => setSubmittedFrom(event.target.value)} /></label>
+        <label><span>Подана по</span><input type="date" value={submittedTo} onChange={(event) => setSubmittedTo(event.target.value)} /></label>
         <label><span>Срок</span><select value={deadline} onChange={(event) => setDeadline(event.target.value as DeadlineFilter)}><option value="ALL">Любой срок</option><option value="OVERDUE">Просроченные</option><option value="SOON">До 3 дней</option></select></label>
       </div>
       {requests.length === 0 ? <div className="dean-request-empty" role="status"><strong>Новых заявок пока нет</strong><p>Заявки студентов появятся здесь после отправки.</p></div>
