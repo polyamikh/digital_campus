@@ -1,0 +1,14 @@
+meta:
+  environment: node
+  toolchain:
+    name: npm
+    version: "24"
+
+build:
+  additionalCommands: >-
+    DATABASE_URL=postgresql://127.0.0.1:5432/digital_campus_build npx prisma generate &&
+    DATABASE_URL=postgresql://127.0.0.1:5432/digital_campus_build npm run build
+
+run:
+  command: npm run start -- --hostname 0.0.0.0
+  containerPort: 3000
