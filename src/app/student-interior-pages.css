@@ -190,3 +190,175 @@ html[data-campus-theme="light"] .student-app-shell--interior :is(.coursework-sta
   .student-app-shell--interior .campus-chat-action-trigger { min-width: 40px; min-height: 40px; }
   .student-app-shell--interior .campus-chat-message-actions button { min-height: 40px; }
 }
+
+/* Light-only contrast corrections; the homepage and dark theme never match these selectors. */
+html[data-campus-theme="light"] .student-app-shell--interior { --dc-subtle: #626478; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.coursework-page, .testing-page, .tasks-page, .career-page, .campus-chat-workspace, .campus-assistant-layout) { color: #17182c; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.coursework-card, .coursework-detail-panel, .coursework-detail-heading, .coursework-result, .coursework-empty, .student-profile-card, .profile-empty-state, .grades-course-list, .grades-detail, .grades-component, .grades-no-result-summary, .grades-no-structure, .grades-final-status, .grades-debts, .grades-empty, .notifications-main-panel, .notification-settings-panel, .request-notifications, .requests-list-panel, .tasks-calendar-workspace, .tasks-selected-day, .tasks-editor, .tasks-calendar-panel, .testing-summary-card, .testing-card, .schedule-page-card, .schedule-week-day, .schedule-week-lesson, .pass-request-panel, .campus-chat-workspace, .campus-chat-sidebar, .campus-chat-main, .campus-chat-message, .campus-chat-pinned, .campus-assistant-layout, .campus-assistant-history, .campus-assistant-main, .campus-assistant-message) {
+  border-color: #ddd8e9;
+  background-color: #fff;
+  background-image: none;
+  box-shadow: 0 4px 14px rgb(31 25 61 / 5%);
+  color: #17182c;
+}
+html[data-campus-theme="light"] .student-app-shell--interior :is(.coursework-group, .student-profile-identity, .grades-detail-heading, .grades-component, .request-create-panel, .request-details-panel, .request-row, .request-card, .schedule-week-day, .schedule-week-lesson, .tasks-event-card, .tasks-time-day, .tasks-time-track, .tasks-list-date, .notification-card, .notification-settings-panel, .campus-chat-list-item, .campus-chat-message, .campus-assistant-thread, .campus-assistant-message) { border-color: #e2deec; background-color: #fff; background-image: none; color: #17182c; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(h1, h2, h3, h4, h5, th, dt, legend, summary) { color: #17182c; text-shadow: none; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(p, li, dd, td, label, small, time, .coursework-meta, .profile-field-note, .profile-data-note, .profile-photo-hint, .schedule-page-meta, .schedule-day-empty, .grades-summary-note, .grades-work-list li, .grades-work-list li > small, .grades-component-average, .grades-component-empty, .grades-no-debts, .grades-summary-score span, .grades-summary-percent span, .tasks-filters label, .tasks-calendar-legend, .tasks-event-card-content small, .tasks-event-card-content p, .tasks-empty-inline, .tasks-empty p, .tasks-time-empty, .tasks-time-gutter > span, .tasks-all-day-lane > span, .tasks-weekday, .testing-summary-card span, .testing-card p, .testing-note, .notification-card-meta, .notification-card p, .notification-settings-panel li small, .notification-settings-note, .request-notifications li p, .request-notifications li small, .campus-chat-header p, .campus-chat-message-meta, .campus-chat-upload, .campus-chat-list-copy time, .campus-chat-list-copy small, .campus-assistant-disclaimer, .campus-assistant-message time, .campus-assistant-thread time) { color: #4f5064; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(a, .coursework-resource, .tasks-event-link, .tasks-readonly, .career-detail > a, .campus-chat-file, .campus-chat-reply-preview) { color: #145a9e; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(a, button, input, select, textarea, summary):focus-visible { outline: 2px solid #b01469; outline-offset: 2px; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(button, input, select, textarea):disabled { opacity: .7; }
+
+/* Task calendar controls, filters, dates and event cards. */
+html[data-campus-theme="light"] .student-app-shell--interior :is(.tasks-mode-switch, .tasks-filter-row) { border-color: #ddd8e9; background: #f7f5fb; }
+html[data-campus-theme="light"] .student-app-shell--interior .tasks-mode-switch a { color: #45465b; }
+html[data-campus-theme="light"] .student-app-shell--interior .tasks-mode-switch a.is-active { border: 1px solid #e6a5ca; background: #fce8f3; color: #95145c; box-shadow: none; }
+html[data-campus-theme="light"] .student-app-shell--interior .tasks-calendar-navigation > button { border-color: #d8d2e3; background: #fff; color: #37384d; }
+html[data-campus-theme="light"] .student-app-shell--interior .tasks-calendar-navigation > button:hover { border-color: #d64a9a; background: #fff5fa; color: #97165f; }
+html[data-campus-theme="light"] .student-app-shell--interior .tasks-calendar-navigation .tasks-today-button { border-color: #e5a2c7; background: #fce8f3; color: #8f1558; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.tasks-calendar-navigation h2, .tasks-selected-day h2, .tasks-list-date h3) { color: #17182c; }
+html[data-campus-theme="light"] .student-app-shell--interior .tasks-category-filters button { border-color: #d9d5e2; background: #fff; color: #37384d; }
+html[data-campus-theme="light"] .student-app-shell--interior .tasks-category-filters button.is-active { border-color: color-mix(in srgb, var(--task-category-color) 55%, #d9d5e2); background: color-mix(in srgb, var(--task-category-color) 13%, #fff); color: #25263a; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.tasks-filters select, .tasks-editor input, .tasks-editor select, .tasks-editor textarea) { border-color: #d8d2e3; background: #fff; color: #17182c; color-scheme: light; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.tasks-filters select, .tasks-editor input, .tasks-editor select, .tasks-editor textarea):focus { border-color: #b01469; box-shadow: 0 0 0 2px rgb(176 20 105 / 12%); }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.tasks-month-cell, .tasks-time-day) { border-color: #e8e4ef; background: #fff; }
+html[data-campus-theme="light"] .student-app-shell--interior .tasks-time-track { border-color: #e8e4ef; background: repeating-linear-gradient(to bottom, transparent 0, transparent 47px, rgb(91 87 116 / 10%) 47px, rgb(91 87 116 / 10%) 48px), #fff; }
+html[data-campus-theme="light"] .student-app-shell--interior .tasks-month-cell.is-outside { background: #f4f2f8; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.tasks-month-cell-date, .tasks-time-day-head button, .tasks-time-day-head strong) { color: #24253a; }
+html[data-campus-theme="light"] .student-app-shell--interior .tasks-month-cell.is-outside .tasks-month-cell-date { color: #686a7d; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.tasks-month-cell.is-today .tasks-month-cell-date, .tasks-time-day.is-today .tasks-time-day-head strong) { background: #df1686; color: #fff; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.tasks-event-chip, .tasks-timed-event, .tasks-event-card) { border-color: color-mix(in srgb, var(--task-category-color, #276bd1) 42%, #d8d2e3); background: color-mix(in srgb, var(--task-category-color, #276bd1) 12%, #fff); color: #202136; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.tasks-event-chip span, .tasks-event-chip strong, .tasks-event-card-time, .tasks-event-title-row > strong, .tasks-event-card-content p, .tasks-event-card-content small) { color: #27283d; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.tasks-event-actions button, .tasks-secondary-button, .tasks-empty button) { border-color: #d7d2e1; background: #fff; color: #34354a; }
+html[data-campus-theme="light"] .student-app-shell--interior .tasks-primary-button { border-color: #c11678; background: #d71983; color: #fff; }
+html[data-campus-theme="light"] .student-app-shell--interior .tasks-export-button { border-color: #d6cbe6; background: #fff; color: #34354a; }
+html[data-campus-theme="light"] .student-app-shell--interior .tasks-priority { border-color: #c8c3d3; color: #34354a; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.tasks-priority.priority-high, .tasks-error, .tasks-inline-error) { color: #8e174f; }
+html[data-campus-theme="light"] .student-app-shell--interior .tasks-priority.priority-medium { color: #56349b; }
+html[data-campus-theme="light"] .student-app-shell--interior .tasks-priority.priority-low { color: #145a70; }
+html[data-campus-theme="light"] .student-app-shell--interior .tasks-editor { border-color: #d8d2e3; background: #fff; box-shadow: 0 20px 60px rgb(31 25 61 / 22%); }
+html[data-campus-theme="light"] .student-app-shell--interior .tasks-editor-head h2 { color: #17182c; }
+html[data-campus-theme="light"] .student-app-shell--interior .tasks-editor-head button { border-color: #d8d2e3; background: #f7f5fb; color: #34354a; }
+
+/* Testing, materials and homework. */
+html[data-campus-theme="light"] .student-app-shell--interior .testing-tabs { border-color: #ddd8e9; background: #f5f3f9; }
+html[data-campus-theme="light"] .student-app-shell--interior .testing-tabs button { color: #45465b; }
+html[data-campus-theme="light"] .student-app-shell--interior .testing-tabs button.is-active { border: 1px solid #e6a5ca; background: #fce8f3; color: #95145c; box-shadow: none; }
+html[data-campus-theme="light"] .student-app-shell--interior .testing-summary-card { background: #fff; }
+html[data-campus-theme="light"] .student-app-shell--interior .testing-summary-card strong { color: #202136; }
+html[data-campus-theme="light"] .student-app-shell--interior .testing-summary-card.accent-cyan strong { color: #12647a; }
+html[data-campus-theme="light"] .student-app-shell--interior .testing-summary-card.accent-pink strong { color: #a51466; }
+html[data-campus-theme="light"] .student-app-shell--interior .testing-summary-card.accent-violet strong { color: #5b379e; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.testing-status, .testing-course, .coursework-status, .grades-state-badge, .request-status, .notification-category) { border-color: #d8d2e3; background-color: #f7f5fb; color: #313247; }
+html[data-campus-theme="light"] .student-app-shell--interior .testing-status.status-completed { border-color: #e4a5c8; background: #fff0f7; color: #94145b; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.testing-status.status-overdue, .testing-status.status-attempts_exhausted) { border-color: #d4b36b; background: #fff8e7; color: #684100; }
+html[data-campus-theme="light"] .student-app-shell--interior .testing-status.status-upcoming { border-color: #c5b6e5; background: #f4efff; color: #50318c; }
+html[data-campus-theme="light"] .student-app-shell--interior .testing-start { border-color: #c11678; background: #d71983; color: #fff; }
+html[data-campus-theme="light"] .student-app-shell--interior .coursework-filters { border-color: #ddd8e9; background: #f7f5fb; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.coursework-filters label, .coursework-answer-form > label, .coursework-folder-form > label, .coursework-list-heading label) { color: #3f4054; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.coursework-filters input, .coursework-filters select, .coursework-answer-form input:not([type="checkbox"]):not([type="file"]), .coursework-answer-form select, .coursework-answer-form textarea, .coursework-folder-form input, .coursework-folder-form select, .coursework-submission input, .coursework-list-heading select) { border-color: #d8d2e3; background: #fff; color: #17182c; color-scheme: light; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.coursework-filters input, .coursework-answer-form input, .coursework-answer-form textarea)::placeholder { color: #65667a; opacity: 1; }
+html[data-campus-theme="light"] .student-app-shell--interior .coursework-summary article { border-color: #ddd8e9; background: #fff; }
+html[data-campus-theme="light"] .student-app-shell--interior .coursework-summary span { color: #4f5064; }
+html[data-campus-theme="light"] .student-app-shell--interior .coursework-summary strong { color: #145a70; }
+html[data-campus-theme="light"] .student-app-shell--interior .coursework-tabs button { border-color: transparent; color: #45465b; }
+html[data-campus-theme="light"] .student-app-shell--interior .coursework-tabs button span { background: #eeebf4; color: #34354a; }
+html[data-campus-theme="light"] .student-app-shell--interior .coursework-tabs button.is-active { border-color: #e6a5ca; background: #fce8f3; color: #95145c; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.coursework-card h2, .coursework-card h3, .coursework-group > h2, .coursework-detail-panel h2) { color: #17182c; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.coursework-card > p, .coursework-detail-panel > p, .coursework-meta, .coursework-card-heading, .coursework-status, .coursework-history li, .coursework-empty p, .coursework-detail-panel small) { color: #4f5064; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.coursework-type, .coursework-detail-heading > span) { color: #145a70; }
+html[data-campus-theme="light"] .student-app-shell--interior .coursework-primary { border-color: #c11678; background: #d71983; color: #fff; }
+html[data-campus-theme="light"] .student-app-shell--interior .coursework-secondary { border-color: #d8d2e3; background: #fff; color: #34354a; }
+html[data-campus-theme="light"] .student-app-shell--interior .coursework-danger { border-color: #d89ab8; background: #fff; color: #94145b; }
+
+/* Requests, grades, notifications and profile. */
+html[data-campus-theme="light"] .student-app-shell--interior .request-notifications { border-color: #ddd8e9; background: #fff; box-shadow: 0 4px 14px rgb(31 25 61 / 5%); }
+html[data-campus-theme="light"] .student-app-shell--interior .request-notifications-heading h2 { color: #17182c; }
+html[data-campus-theme="light"] .student-app-shell--interior .request-notifications-heading > span { color: #4f5064; }
+html[data-campus-theme="light"] .student-app-shell--interior .request-notifications li { border-color: #e2deec; background: #fff; }
+html[data-campus-theme="light"] .student-app-shell--interior .request-notifications li.is-unread { border-color: #e4a5c8; background: #fff5fa; }
+html[data-campus-theme="light"] .student-app-shell--interior .request-notifications li strong { color: #202136; }
+html[data-campus-theme="light"] .student-app-shell--interior .request-notifications li p,
+html[data-campus-theme="light"] .student-app-shell--interior .request-notifications li small { color: #4f5064; }
+html[data-campus-theme="light"] .student-app-shell--interior .request-notifications li > div a { border-color: #b7dce7; background: #eefaff; color: #12617c; }
+html[data-campus-theme="light"] .student-app-shell--interior .request-notifications li > div a:hover { border-color: #e8a4ca; background: #fce8f3; color: #a51466; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.grades-semester-switcher, .grades-course-list, .grades-detail, .grades-component, .grades-final-status, .grades-debts, .grades-no-result-summary, .grades-no-structure, .grades-empty) { border-color: #ddd8e9; background: #fff; color: #17182c; box-shadow: 0 4px 14px rgb(31 25 61 / 5%); }
+html[data-campus-theme="light"] .student-app-shell--interior .grades-semester-switcher { background: #f7f5fb; }
+html[data-campus-theme="light"] .student-app-shell--interior .grades-semester-option { color: #424357; }
+html[data-campus-theme="light"] .student-app-shell--interior .grades-semester-option:hover { border-color: #e6a5ca; background: #fff5fa; color: #95145c; }
+html[data-campus-theme="light"] .student-app-shell--interior .grades-semester-option.is-selected { border-color: #e6a5ca; background: #fce8f3; color: #95145c; box-shadow: none; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.grades-section-heading h2, .grades-debts-heading h3, .grades-detail-heading h2, .grades-components > h3, .grades-component-heading h4, .grades-no-structure strong, .grades-final-status h3, .grades-empty h2) { color: #17182c; }
+html[data-campus-theme="light"] .student-app-shell--interior .grades-course-option { border-color: #e2deec; background: #fff; color: #202136; }
+html[data-campus-theme="light"] .student-app-shell--interior .grades-course-option:hover,
+html[data-campus-theme="light"] .student-app-shell--interior .grades-course-option.is-selected { border-color: #df78b1; background: #fff5fa; color: #202136; box-shadow: inset 3px 0 #c11678; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.grades-course-option-score strong, .grades-component-result strong, .grades-work-list li > strong) { color: #202136; text-shadow: none; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.grades-course-option-score small, .grades-course-option-state, .grades-summary-score span, .grades-summary-percent span, .grades-summary-note, .grades-components > h3 span, .grades-component-heading > div:first-child > span, .grades-component-result span, .grades-component-unscored, .grades-component-average, .grades-component-empty, .grades-work-list li, .grades-work-list li > small, .grades-no-structure p, .grades-final-status > p, .grades-no-debts) { color: #4f5064; }
+html[data-campus-theme="light"] .student-app-shell--interior .grades-summary { border-color: #ded4ea; background: #f8f5fb; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.grades-summary-score strong, .grades-summary-percent strong) { color: #9a155f; text-shadow: none; }
+html[data-campus-theme="light"] .student-app-shell--interior .grades-component { background: #fbfaff; }
+html[data-campus-theme="light"] .student-app-shell--interior .grades-work-list li > strong em { border-color: #e6a5ca; background: #fff0f7; color: #94145b; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.grades-state-badge.state-AWAITING_PUBLICATION, .grades-state-badge.state-PARTIAL) { border-color: #d6b76f; background: #fff8e7; color: #654200; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.grades-state-badge.state-NO_GRADES, .grades-state-badge.state-NO_PUBLISHED_STRUCTURE) { border-color: #d8d2e3; background: #f5f3f9; color: #45465b; }
+html[data-campus-theme="light"] .student-app-shell--interior .notification-card { border-color: #e2deec; background: #fff; }
+html[data-campus-theme="light"] .student-app-shell--interior .notification-card.is-unread { border-color: #a8dce5; background: #f2fbfd; }
+html[data-campus-theme="light"] .student-app-shell--interior .notification-card.is-critical { border-color: #d6b76f; background: #fffaf0; }
+html[data-campus-theme="light"] .student-app-shell--interior .notification-card-mark { border-color: #76bac8; color: #12617c; text-shadow: none; }
+html[data-campus-theme="light"] .student-app-shell--interior .notification-card.is-critical .notification-card-mark { border-color: #c89a3c; color: #704a00; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.notification-card-meta > span:first-child, .notification-card h3, .notification-settings-panel li strong) { color: #202136; }
+html[data-campus-theme="light"] .student-app-shell--interior .notification-read-state.is-new { color: #97165f; }
+html[data-campus-theme="light"] .student-app-shell--interior .notification-card-actions a { color: #145a70; }
+html[data-campus-theme="light"] .student-app-shell--interior .notification-card-actions button { border-color: #d8d2e3; background: #fff; color: #34354a; }
+html[data-campus-theme="light"] .student-app-shell--interior .notification-settings-panel li { border-color: #e8e4ef; }
+html[data-campus-theme="light"] .student-app-shell--interior .notification-switch { border-color: #aaa7b8; background: #e6e3ec; }
+html[data-campus-theme="light"] .student-app-shell--interior .notification-switch > span { background: #66677a; }
+html[data-campus-theme="light"] .student-app-shell--interior .notification-switch.is-on { border-color: #137b63; background: #dff4ec; }
+html[data-campus-theme="light"] .student-app-shell--interior .notification-switch.is-on > span { background: #137b63; box-shadow: none; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.student-profile-identity, .student-profile-field, .profile-empty-state) { border-color: #e2deec; background: #fff; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.student-profile-identity h2, .student-profile-field dd, .profile-empty-state h2) { color: #17182c; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.student-profile-identity p, .student-profile-field dt, .profile-field-note, .profile-data-note, .profile-empty-state p) { color: #4f5064; }
+html[data-campus-theme="light"] .student-app-shell--interior .student-profile-field dd.profile-value-accent { color: #145a70; }
+html[data-campus-theme="light"] .student-app-shell--interior .profile-demo-tag { border-color: #d6b76f; background: #fff8e7; color: #654200; }
+html[data-campus-theme="light"] .student-app-shell--interior .profile-photo-button { border-color: #c11678; background: #d71983; color: #fff; }
+html[data-campus-theme="light"] .student-app-shell--interior .profile-photo-delete-button { border-color: #d89ab8; background: #fff; color: #94145b; }
+
+/* Schedule, communication, career and assistant surfaces. */
+html[data-campus-theme="light"] .student-app-shell--interior .schedule-week-day.is-selected:not(.is-today) { border-color: #72b9c7; background: #f2fbfd; box-shadow: inset 0 0 0 1px rgb(18 97 124 / 10%); }
+html[data-campus-theme="light"] .student-app-shell--interior .schedule-week-day.is-today { border-color: #df78b1; background: #fff5fa; box-shadow: none; }
+html[data-campus-theme="light"] .student-app-shell--interior .schedule-week-day-heading { border-color: #e8e4ef; color: #333449; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.schedule-week-day-heading > span, .schedule-week-day-heading > strong) { color: #202136; text-shadow: none; }
+html[data-campus-theme="light"] .student-app-shell--interior .schedule-week-day-heading > small { color: #145a70; }
+html[data-campus-theme="light"] .student-app-shell--interior .schedule-week-day.is-today .schedule-week-day-heading > strong,
+html[data-campus-theme="light"] .student-app-shell--interior .schedule-week-day.is-selected:not(.is-today) .schedule-week-day-heading > strong { color: #202136; text-shadow: none; }
+html[data-campus-theme="light"] .student-app-shell--interior .schedule-week-lesson { background: color-mix(in srgb, var(--lesson-color, #276bd1) 9%, #fff); }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.schedule-week-lesson-time strong, .schedule-week-lesson-time span, .schedule-week-lesson h3, .schedule-week-lesson p) { color: #24253a; text-shadow: none; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.schedule-page-meta, .schedule-page-meta span:first-child, .schedule-day-empty, .schedule-page-empty, .schedule-page-empty strong) { color: #4f5064; }
+html[data-campus-theme="light"] .student-app-shell--interior .schedule-page-empty { border-color: #d8d2e3; background: #fff; }
+html[data-campus-theme="light"] .student-app-shell--interior .schedule-nav-arrow { border-color: #d8d2e3; background: #fff; color: #34354a; }
+html[data-campus-theme="light"] .student-app-shell--interior .schedule-today-button { border-color: #e6a5ca; background: #fce8f3; color: #95145c; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.campus-chat-header h2, .campus-chat-side-head h2, .campus-chat-message-meta strong, .campus-chat-message p, .campus-chat-list-copy strong) { color: #202136; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.campus-chat-list-item:hover, .campus-chat-list-item.is-active) { background: #fce8f3; }
+html[data-campus-theme="light"] .student-app-shell--interior .campus-chat-message.is-own { border-color: #cbb8e6; background: #f7f2fc; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.campus-chat-search input, .campus-chat-message-search input, .campus-chat-compose textarea) { border-color: #d8d2e3; background: #fff; color: #17182c; color-scheme: light; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.campus-chat-side-head button, .campus-chat-message-search button) { border-color: #d8d2e3; background: #fff; color: #34354a; }
+html[data-campus-theme="light"] .student-app-shell--interior .campus-chat-contacts button { background: #f7f5fb; color: #202136; }
+html[data-campus-theme="light"] .student-app-shell--interior .campus-chat-unread { color: #fff; }
+html[data-campus-theme="light"] .student-app-shell--interior .campus-assistant-thread.is-active { border-color: #e6a5ca; background: #fce8f3; color: #95145c; }
+html[data-campus-theme="light"] .student-app-shell--interior .campus-assistant-message.is-user { border-color: #cbb8e6; background: #f7f2fc; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.campus-assistant-message p, .campus-assistant-message strong, .campus-assistant-welcome h2) { color: #202136; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.campus-assistant-prompts button, .campus-assistant-history-head button, .campus-assistant-toolbar button) { border-color: #d8d2e3; background: #fff; color: #34354a; }
+html[data-campus-theme="light"] .student-app-shell--interior .campus-assistant-toolbar button[aria-pressed="true"] { border-color: #e6a5ca; background: #fce8f3; color: #95145c; }
+
+/* Common action controls, inputs, dropdowns, error states and empty panels. */
+html[data-campus-theme="light"] .student-app-shell--interior :is(.coursework-primary, .requests-create-button, .profile-photo-button, .tasks-primary-button, .testing-start) { border-color: #c11678; background: #d71983; color: #fff; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.coursework-secondary, .coursework-danger, .tasks-secondary-button, .tasks-export-button, .tasks-event-actions button, .tasks-empty button, .testing-card-actions button) { border-color: #d8d2e3; background: #fff; color: #34354a; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.campus-chat-action-trigger, .campus-chat-message-actions, .campus-chat-message-actions button) { border-color: #d8d2e3; background: #fff; color: #34354a; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.campus-chat-message-actions button:hover, .campus-chat-action-trigger:hover) { border-color: #e6a5ca; background: #fff5fa; color: #95145c; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.campus-feedback, .tasks-notice, .grades-pending-note, .schedule-data-warning, .coursework-feedback, .coursework-message, .request-form-error, .request-create-success, .tasks-empty, .testing-empty, .coursework-empty, .notifications-empty) { border-color: #ddd8e9; background-color: #f7f5fb; color: #34354a; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.request-row-trigger, .request-create-panel, .request-details-panel, .request-card, .pass-request-panel, .pass-request-card) { border-color: #ddd8e9; background-color: #fff; color: #202136; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.request-row-trigger strong, .request-row-trigger small, .request-details-panel h2, .request-details-panel h3, .request-card strong) { color: #202136; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.request-row-trigger small, .request-details-panel p, .request-card small, .request-history-empty) { color: #4f5064; }
+html[data-campus-theme="light"] .student-app-shell--interior select option { background: #fff; color: #17182c; }
+html[data-campus-theme="light"] .student-app-shell--interior input::placeholder,
+html[data-campus-theme="light"] .student-app-shell--interior textarea::placeholder { color: #65667a; opacity: 1; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.coursework-empty, .grades-empty, .testing-empty, .notifications-empty, .requests-empty, .schedule-page-empty, .campus-chat-empty, .profile-empty-state) { border-color: #ddd8e9; background: #fff; color: #34354a; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.coursework-empty h2, .coursework-empty h3, .grades-empty h2, .testing-empty h2, .notifications-empty h2, .requests-empty h2, .schedule-page-empty strong, .campus-chat-empty h2) { color: #17182c; }
+html[data-campus-theme="light"] .student-app-shell--interior :is(.request-status, .coursework-status, .grades-state-badge, .testing-status, .notification-category) { text-shadow: none; }
