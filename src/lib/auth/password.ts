@@ -1,4 +1,4 @@
-import { scrypt, timingSafeEqual } from "node:crypto";
+import { randomBytes, scrypt, timingSafeEqual } from "node:crypto";
 
 const SCRYPT_N = 32_768;
 const SCRYPT_R = 8;
@@ -43,4 +43,11 @@ export async function verifyPassword(password: string, encodedHash: string): Pro
   } catch {
     return false;
   }
+}
+
+/** Creates a password hash in the exact format accepted by verifyPassword. */
+export async function hashPassword(password: string): Promise<string> {
+  const salt = randomBytes(SALT_LENGTH);
+  const key = await deriveKey(password, salt);
+  return `scrypt$${SCRYPT_N}$${SCRYPT_R}$${SCRYPT_P}$${salt.toString("base64url")}$${key.toString("base64url")}`;
 }

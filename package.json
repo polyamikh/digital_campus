@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "db:seed": "prisma db seed",
+    "db:seed:production-demo": "tsx prisma/production-demo-seed.ts",
     "db:update-demo-schedule": "tsx prisma/update-demo-schedule.ts",
     "db:reschedule-demo-classes": "tsx prisma/reschedule-demo-classes.ts",
     "db:update-demo-academic-year": "tsx prisma/apply-demo-academic-year.ts",
