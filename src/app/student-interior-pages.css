@@ -83,9 +83,21 @@
 .student-app-shell--interior .grades-course-list { padding: 14px; }
 .student-app-shell--interior .campus-chat-workspace { min-height: min(70vh, 720px); }
 .student-app-shell--interior .campus-chat-message { padding: 8px 10px; }
-.student-app-shell--interior .campus-chat-message-actions { opacity: .72; }
-.student-app-shell--interior .campus-chat-message:hover .campus-chat-message-actions,
-.student-app-shell--interior .campus-chat-message:focus-within .campus-chat-message-actions { opacity: 1; }
+.student-app-shell--interior .campus-chat-message { min-width: 0; overflow-wrap: anywhere; }
+.student-app-shell--interior .campus-chat-action-menu { display: flex; min-width: 0; max-width: 100%; flex-wrap: wrap; align-items: flex-start; justify-content: flex-end; gap: 6px; margin-top: 6px; }
+.student-app-shell--interior .campus-chat-action-trigger { display: inline-grid; min-width: 34px; min-height: 32px; place-items: center; padding: 0 7px; border: 1px solid var(--dc-line); border-radius: 7px; background: var(--dc-raised); color: var(--dc-ink); font-size: 16px; line-height: 1; cursor: pointer; }
+.student-app-shell--interior .campus-chat-message-actions { position: static; z-index: auto; display: none; min-width: 0; max-width: 100%; flex: 1 1 100%; flex-wrap: wrap; justify-content: flex-end; gap: 5px; margin: 0; padding: 5px; border-color: var(--dc-line); border-radius: 8px; background: var(--dc-raised); opacity: 1; pointer-events: auto; }
+.student-app-shell--interior .campus-chat-message-actions button { min-width: 32px; min-height: 32px; max-width: 100%; padding: 4px 8px; border: 1px solid var(--dc-line); border-radius: 6px; background: var(--dc-surface); color: var(--dc-ink); font-size: 11px; overflow-wrap: anywhere; }
+.student-app-shell--interior .campus-chat-message-actions button:hover { background: var(--dc-soft); color: var(--dc-pink-soft); }
+.student-app-shell--interior .campus-chat-message.has-actions-open .campus-chat-message-actions { display: flex; }
+@media (hover: hover) and (pointer: fine) {
+  .student-app-shell--interior .campus-chat-message:hover .campus-chat-message-actions { display: flex; }
+  .student-app-shell--interior .campus-chat-message:hover .campus-chat-action-trigger { border-color: var(--dc-pink); color: var(--dc-pink-soft); }
+}
+.student-app-shell--interior .request-notifications li > div small { display: block; margin-top: 6px; }
+.student-app-shell--interior .request-notifications li > div a { display: inline-flex; min-height: 36px; align-items: center; margin-top: 8px; padding: 0 10px; border: 1px solid color-mix(in srgb, var(--dc-cyan) 35%, var(--dc-line)); border-radius: 7px; background: color-mix(in srgb, var(--dc-cyan) 9%, var(--dc-surface)); color: var(--dc-cyan); font-size: 10px; font-weight: 700; text-decoration: none; }
+.student-app-shell--interior .request-notifications li > div a:hover { border-color: var(--dc-pink); background: color-mix(in srgb, var(--dc-pink) 10%, var(--dc-surface)); color: var(--dc-pink-soft); }
+.student-app-shell--interior .request-notifications li > div a:focus-visible { outline: 2px solid var(--dc-pink); outline-offset: 2px; }
 .student-app-shell--interior .campus-chat-compose textarea,
 .student-app-shell--interior .campus-assistant-compose textarea { min-height: 42px; }
 .student-app-shell--interior .tasks-calendar-toolbar { min-height: 52px; }
@@ -142,6 +154,12 @@ html[data-campus-theme="light"] .student-app-shell--interior :is(.schedule-week-
 html[data-campus-theme="light"] .student-app-shell--interior :is(.campus-chat-message p, .campus-assistant-message p, .campus-chat-header h2, .campus-chat-side-head h2, .campus-assistant-history-head h2, .campus-assistant-welcome h2, .tasks-calendar-navigation h2, .tasks-selected-day h2, .tasks-list-date h3) { color: var(--dc-ink); }
 html[data-campus-theme="light"] .student-app-shell--interior :is(.campus-chat-message-meta, .campus-chat-message-meta strong, .campus-chat-header p, .campus-chat-upload, .campus-assistant-message > span, .campus-assistant-message time, .campus-assistant-disclaimer, .campus-assistant-thread span, .campus-assistant-thread time, .tasks-time-gutter > span, .tasks-calendar-legend, .tasks-filters label, .tasks-weekday) { color: var(--dc-muted); }
 html[data-campus-theme="light"] .student-app-shell--interior .campus-chat-unread { background: var(--dc-pink); color: #fff; }
+html[data-campus-theme="light"] .student-app-shell--interior .campus-chat-action-trigger { border-color: #d8d2e3; background: #fff; color: #24243a; }
+html[data-campus-theme="light"] .student-app-shell--interior .campus-chat-message-actions { border-color: #d8d2e3; background: #fff; }
+html[data-campus-theme="light"] .student-app-shell--interior .campus-chat-message-actions button { border-color: #ddd8e7; background: #fff; color: #24243a; }
+html[data-campus-theme="light"] .student-app-shell--interior .campus-chat-message-actions button:hover { background: #fce8f3; color: #a51466; }
+html[data-campus-theme="light"] .student-app-shell--interior .request-notifications li > div a { border-color: #b7dce7; background: #eefaff; color: #12617c; }
+html[data-campus-theme="light"] .student-app-shell--interior .request-notifications li > div a:hover { border-color: #e8a4ca; background: #fce8f3; color: #a51466; }
 html[data-campus-theme="light"] .student-app-shell--interior :is(.tasks-month-cell, .tasks-time-day, .tasks-time-track) { background-color: #fff; background-image: none; }
 html[data-campus-theme="light"] .student-app-shell--interior .tasks-month-cell.is-outside { background: #f3f1f7; }
 html[data-campus-theme="light"] .student-app-shell--interior .tasks-month-cell-date { color: var(--dc-ink); }
@@ -167,4 +185,8 @@ html[data-campus-theme="light"] .student-app-shell--interior :is(.coursework-sta
   .student-app-shell--interior .campus-assistant-compose { grid-template-columns: minmax(0, 1fr); }
   .student-app-shell--interior .campus-chat-compose button,
   .student-app-shell--interior .campus-assistant-compose button { justify-self: end; }
+}
+@media (hover: none) {
+  .student-app-shell--interior .campus-chat-action-trigger { min-width: 40px; min-height: 40px; }
+  .student-app-shell--interior .campus-chat-message-actions button { min-height: 40px; }
 }
