@@ -23,6 +23,22 @@
 # misc
 .DS_Store
 *.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# local database files and backups
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+*.backup
+
+# local credential files
+credentials.json
+secrets.json
 
 # debug
 npm-debug.log*
